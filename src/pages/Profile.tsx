@@ -1,10 +1,12 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { Banner, Button, Card, Field, inputClass, ScreenHeader } from '../components/ui';
-import { saveProfile, type Profile as ProfileRecord } from '../db/db';
+import { listWeights, saveProfile, type Profile as ProfileRecord } from '../db/db';
+import { latestWeightKg } from '../lib/weight';
 import { WEEKDAYS } from '../lib/nextDose';
 import { calculatedTargets, effectiveTargets } from '../lib/profileTargets';
 import { PROTEIN_PER_KG_DEFAULT, type Activity, type Sex, type Targets } from '../lib/targets';
-import { cmToFeetInches, flOzToMl, inToCm, kgToLb, lbToKg, mlToFlOz, parseNum, round1, type UnitSystem } from '../lib/units';
+import { cmToFeetInches, flOzToMl, inToCm, kgToLb, lbToKg, mlToFlOz, parseNum, round1, displayWeight, weightUnit, type UnitSystem } from '../lib/units';
 
 const ACTIVITIES: { value: Activity; label: string }[] = [
   { value: 'sedentary', label: 'Sedentary — mostly sitting' },
@@ -125,8 +127,9 @@ export default function Profile({ profile, backHref, section }: { profile: Profi
 
   // Only preview targets once the inputs they depend on are valid (avoids nonsense mid-typing).
   const coreValid = !CORE_FIELDS.some((f) => f in validate(draft));
-  const calc = coreValid ? calculatedTargets(draft) : null;
-  const effective = coreValid ? effectiveTargets(draft) : null;
+  const latestKg = latestWeightKg(useLiveQuery(listWeights) ?? []);
+  const calc = coreValid ? calculatedTargets(draft, latestKg) : null;
+  const effective = coreValid ? effectiveTargets(draft, latestKg) : null;
   const imperial = draft.units === 'imperial';
 
   return (
@@ -214,6 +217,11 @@ export default function Profile({ profile, backHref, section }: { profile: Profi
         {calc && effective ? (
           <div className="space-y-3">
             <p className="text-sm text-muted">Estimates. Leave a box blank to use the estimate, or type your own number.</p>
+            <p className="text-sm text-muted">
+              {latestKg !== undefined
+                ? `Calories and water are based on your latest weigh-in, ${displayWeight(latestKg, draft.units)} ${weightUnit(draft.units)}, and update as you log new ones. Protein uses your goal weight.`
+                : 'Calories and water are based on your starting weight until you log a weigh-in. Protein uses your goal weight.'}
+            </p>
             {TARGET_ROWS.map(({ key, label }) => {
               const unitLabel = key === 'waterMl' ? (imperial ? 'Water (fl oz)' : 'Water (L)') : label;
               // Blank boxes show the estimate, re-balanced around any numbers the owner typed.

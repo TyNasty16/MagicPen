@@ -1,5 +1,5 @@
 # Workflow 05 — Nutrition: food log, My Foods, water
-Status: Approved
+Status: Built — 2026-11-25
 Milestone: 5 — Nutrition (PLAN.md §2 item 5; §5 order). Open Food Facts search is split out as 05b.
 
 ## Ideas considered
@@ -26,7 +26,7 @@ Let the owner log food and water and see today's totals against their targets on
 - Any advice: no "eat more protein", no dose links, no warning text beyond the factual count.
 - Export/backup (Milestone 7); a Symptoms-style tab for food.
 - Per-100g storage. Entries are stored per serving only.
-- Changing how targets are calculated.
+- Changing the target formulas themselves (only the weight they use changes; see below).
 
 ## Steps
 1. `src/db/db.ts`: add types `Food` (`id`, `name`, `servingDesc?`, `kcal`, `proteinG`, `carbsG`, `fatG`, `fiberG?`), `FoodLogEntry` (`id`, `date` local day key `YYYY-MM-DD`, `meal`, `name`, `kcal`, `proteinG`, `carbsG`, `fatG`, `fiberG?`, `servings`), `WaterEntry` (`id`, `date`, `ml`). Add `db.version(6)` with `foods: '++id, name'`, `foodLog: '++id, date'`, `water: '++id, date'`, keeping every earlier version. Add list/save/delete helpers. Extend `resetAllData` (tables list and `clear()` calls) with the three tables.
@@ -98,7 +98,11 @@ The owner asked how the app knows a food's nutrition, then chose to fold a built
 - **Acceptance added:** searching "chocolate chip muffin" offline finds it; choosing "1 medium" fills the values above; no network request goes anywhere but the app's own site.
 - **Still out of scope:** branded and packaged foods (Open Food Facts, 05b), barcode scanning.
 
-## Review checkpoints
+## Added by owner: targets follow the latest weigh-in (2026-11-25)
+- Calories (via resting energy) and water use the **most recent weigh-in**; with no weigh-ins, the starting weight. Protein still uses the goal weight. Overrides still win.
+- `calculatedTargets(profile, latestKg?)` / `effectiveTargets(profile, latestKg?)` take the latest weight; Home, Food and Profile pass it. Profile's targets card says which weight was used ("Based on your latest weigh-in, 212.4 lb").
+- Tests: latest weight changes calories and water but not protein; no weigh-in falls back to starting weight.
+
 - Token Steward: before start (USDA section: merged tests, file check moved into the script; not applied: dropping the network allowance — it was already approved and used once to fetch the file; it only matters for future refreshes. Earlier, applied: dropped `foodId`, 4 screenshots, merged day tests, removed duplicate rules, custom water deferred; upgrade/reset checks moved to the browser pass since fake-indexeddb isn't installed. Not applied: the "move Milestone 7 up" note stays — food data grows with no backup, and the owner should know)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner

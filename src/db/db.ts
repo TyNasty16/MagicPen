@@ -66,6 +66,46 @@ export interface Symptom {
   notes?: string;
 }
 
+/** Nutrition per serving, shared by My Foods and log entries. */
+export interface FoodValues {
+  name: string;
+  servingDesc?: string;
+  kcal: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  fiberG?: number;
+}
+
+/** A saved favourite ("My Foods"). */
+export interface Food extends FoodValues {
+  id?: number;
+}
+
+export type Meal = 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'none';
+
+/** A logged food. Stores its own per-serving values, so editing or deleting a favourite never changes the log. `date` is YYYY-MM-DD. */
+export interface FoodLogEntry extends FoodValues {
+  id?: number;
+  date: string;
+  meal: Meal;
+  servings: number;
+  createdAt: string;
+}
+
+/** Water drunk, in ml. `date` is YYYY-MM-DD. */
+export interface WaterEntry {
+  id?: number;
+  date: string;
+  ml: number;
+}
+
+/** A day the owner marked as "barely ate". Keyed by date. */
+export interface DayMark {
+  date: string;
+  kind: 'low-intake';
+}
+
 export const db = new Dexie('steady') as Dexie & {
   profile: EntityTable<Profile, 'id'>;
   injections: EntityTable<Injection, 'id'>;
@@ -73,6 +113,10 @@ export const db = new Dexie('steady') as Dexie & {
   photos: EntityTable<Photo, 'id'>;
   measurements: EntityTable<Measurement, 'id'>;
   symptoms: EntityTable<Symptom, 'id'>;
+  foods: EntityTable<Food, 'id'>;
+  foodLog: EntityTable<FoodLogEntry, 'id'>;
+  water: EntityTable<WaterEntry, 'id'>;
+  dayMarks: EntityTable<DayMark, 'date'>;
 };
 
 // Keep every version declared: Dexie upgrades existing databases in place, so profile data is kept.
@@ -81,6 +125,10 @@ db.version(2).stores({ profile: 'id', injections: '++id, datetime', weights: '++
 db.version(3).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId' });
 db.version(4).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date' });
 db.version(5).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime' });
+db.version(6).stores({
+  profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
+  foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date',
+});
 
 export const getProfile = async (): Promise<Profile | null> => (await db.profile.get('me')) ?? null;
 
@@ -133,13 +181,33 @@ export const listSymptoms = () => db.symptoms.orderBy('datetime').reverse().toAr
 export const saveSymptoms = (entries: Symptom[]) => db.transaction('rw', db.symptoms, () => db.symptoms.bulkPut(entries));
 export const deleteSymptom = (id: number) => db.symptoms.delete(id);
 
+export const listFoods = () => db.foods.orderBy('name').toArray();
+/** Saves a favourite; a favourite with the same name (any case) is updated instead of duplicated. */
+export async function saveFood(values: FoodValues): Promise<void> {
+  await db.transaction('rw', db.foods, async () => {
+    const same = await db.foods.filter((f) => f.name.trim().toLowerCase() === values.name.trim().toLowerCase()).first();
+    await db.foods.put({ ...values, ...(same?.id ? { id: same.id } : {}) });
+  });
+}
+export const deleteFood = (id: number) => db.foods.delete(id);
+
+/** All food entries on or after a day (inclusive), oldest first. */
+export const listFoodLogSince = (fromDay: string) => db.foodLog.where('date').aboveOrEqual(fromDay).sortBy('date');
+export const saveFoodLog = (e: FoodLogEntry) => db.foodLog.put(e);
+export const deleteFoodLog = (id: number) => db.foodLog.delete(id);
+
+export const listWaterSince = (fromDay: string) => db.water.where('date').aboveOrEqual(fromDay).toArray();
+export const addWater = (date: string, ml: number) => db.water.add({ date, ml });
+export const deleteWater = (id: number) => db.water.delete(id);
+
+export const listDayMarksSince = (fromDay: string) => db.dayMarks.where('date').aboveOrEqual(fromDay).toArray();
+export const setLowIntake = (date: string, on: boolean) => (on ? db.dayMarks.put({ date, kind: 'low-intake' }) : db.dayMarks.delete(date));
+
 const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen'];
 
 /** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
 export async function resetAllData(): Promise<void> {
-  await db.transaction('rw', [db.profile, db.injections, db.weights, db.photos, db.measurements, db.symptoms], () =>
-    Promise.all([db.profile.clear(), db.injections.clear(), db.weights.clear(), db.photos.clear(), db.measurements.clear(), db.symptoms.clear()]),
-  );
+  await db.transaction('rw', db.tables, () => Promise.all(db.tables.map((t) => t.clear())));
   for (const k of UI_KEYS) {
     try { localStorage.removeItem(k); } catch { /* storage blocked: nothing saved there */ }
   }
