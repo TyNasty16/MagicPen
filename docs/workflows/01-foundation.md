@@ -1,5 +1,5 @@
 # Workflow 01 — Foundation: scaffold, PWA, design system, disclaimer, profile + targets
-Status: Awaiting approval
+Status: Built — 2026-11-25
 Milestone: 1 — Project scaffold, PWA install, design system, disclaimer, profile + target calculator (with tests)
 
 ## Goal
@@ -96,4 +96,4 @@ Token Steward trims applied: corrected the worked example; open questions turned
 Reply "defaults OK" or change any of these.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (proposed defaults accepted)
