@@ -90,11 +90,14 @@ By hand, owner only: real iPhone camera, in the Home Screen app. Check that it f
   - The zxing chunk is **not** precached: it downloads (about 126 KB) the first time you open the scanner, from the app's own site. Scanning needs a connection for the lookup anyway, and this keeps every app update small.
   - Lookup uses `world.openfoodfacts.org`, the same company and database as 05b.
 - Approve the exact text above, or send edits.
-- Honest limits: `@zxing/browser` is in maintenance mode, though fine for these four formats. The camera permission may be asked on every launch on some iOS versions, and a backgrounded app can freeze the video; the scanner closes when the page is hidden. Camera behaviour on iPhone cannot be proven here, only on the owner’s phone.
+- Honest limits: ZXing-js is actively released (library 0.23.0 April 2026, browser 0.2.1 July 2026) — the earlier "maintenance mode" note was wrong. The camera permission may be asked on every launch on some iOS versions, and a backgrounded app can freeze the video; the scanner closes when the page is hidden. Camera behaviour on iPhone cannot be proven here, only on the owner’s phone.
 - Volunteer data can be wrong; the warning and editable fields are the only guard. Scanned foods in OFF are also incomplete (about 4 in 10 lack nutrition in search tests).
 - The "Settings" path wording is from general iOS knowledge and may differ by iOS version; hand check needed.
 
-## Review checkpoints
+## Added by owner: security checks (2026-11-25)
+Owner asked to scan ZXing for vulnerabilities, verify dependencies and sanitize outputs. Results: `docs/sources/05c-zxing-security.md` (0 vulnerabilities; 4 packages, all signatures valid, ZXing provenance traced to its GitHub release workflows; no install scripts; no network or eval code in the shipped bundle).
+Build adds: `cleanBarcode` (digits only, 8/12/13, check digit, length cap) before any request; `cleanText` for OFF strings (control/invisible characters removed, 120-char cap); the reply's `code` must match the request; OFF text shown only as React text. Install with `--save-exact`; the lockfile keeps the verified hashes. These checks are repeated in the build (npm audit, bundle grep) and the hostile-input cases become Vitest tests.
+
 - Token Steward: before start (applied: zxing chunk not precached, one browser script, duplicate test bullet removed. Partly: 3 screenshots instead of 2, since the owner reviews from screenshots. Not applied: merging the measured-facts file — it already exists and the plan cites it)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
