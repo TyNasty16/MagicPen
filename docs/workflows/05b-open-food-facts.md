@@ -58,7 +58,7 @@ Let the owner find packaged and branded foods online and log them in the same fo
 Automatic (Vitest, `offSearch.test.ts`, fixture JSON only, never the live API):
 - `buildOffUrl`: exact host, params and encoding of the term; nothing else in the URL.
 - `parseOffResults`: complete product shown; missing kcal, missing protein, missing name hidden; 0 kcal is kept; fiber missing stays missing; brand taken from the first of `brands`.
-- Portions: g serving with matching quantity; ml serving; no `serving_quantity`; serving text with no unit; falls back to "100 g".
+- Portions: g serving with matching quantity; ml serving scaled per 100 ml and labelled ml (fields: `serving_quantity_unit`); no `serving_quantity`; serving text with no unit; falls back to "100 g".
 
 One browser pass at 390px with Playwright route interception serving the fixture (no live call), asserting in the script: the request carries only the expected parameters and no cookies, the cooldown, and the offline message. Three screenshots: (1) online button and privacy notice, (2) results with a picked product, warning and attribution, (3) one error state. The `sw.js` check runs on that same final build. One live search is made once, by the builder, to confirm the endpoint still answers (no owner decision needed).
 
@@ -67,7 +67,7 @@ One browser pass at 390px with Playwright route interception serving the fixture
   - Products missing kcal or protein: hidden, with a count line (alternative: shown greyed "nutrition not listed").
   - Online picks: "Save to My Foods" pre-ticked (untick to skip).
   - Cooldown 3 s; timeout 8 s; 20 results; English only.
-  - **ml servings:** treated as grams (1 ml = 1 g), labelled "340 ml (≈ 340 g)". Close for most drinks, slightly low for milk-based ones; editable. Alternative: ignore ml servings and offer only "100 g".
+  - **ml servings (owner, 2026-11-25: "only if there is no other way"):** no conversion. OFF stores drinks per 100 ml in its `_100g` fields and gives `serving_quantity_unit` ("ml" or "g"), so a "340 ml" serving scales the per-100 values by 3.4 and is labelled in ml; the amount box says "ml" for drinks. Verified live: fairlife 8.82 g protein per 100 ml × 3.4 = 30 g, matching the label. The ≈ g approximation is not used.
   - Brand shown on its own line under the name; saved name is "Name (Brand)".
 - Approve the exact text above (notice, warning, attribution, messages), or send edits.
 - Honest limits: OFF necessarily sees the phone's internet address and the site name (Origin); browsers cannot set the User-Agent, so the "generic app identifier" is only the site name. The notice says so.
@@ -99,4 +99,4 @@ One browser pass at 390px with Playwright route interception serving the fixture
 - Approve the exact text: the privacy notice, the "check against the label" warning, the source credit, and the error messages.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [ ] Approved by owner — date: (defaults 1, 2, 3, 5 approved 2026-11-25; 4 changed to the ml rule above; exact text not yet approved)
