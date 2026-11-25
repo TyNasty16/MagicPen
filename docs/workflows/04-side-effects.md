@@ -1,5 +1,5 @@
 # Workflow 04 — Side effects, tips and "When to get help"
-Status: Built — awaiting owner final approval (screenshots sent)
+Status: Built — final approval by owner 2026-11-25
 Milestone: 4 — Side-effect log + tips + red flags (PLAN.md §5; scope §2 item 4)
 
 ## Goal

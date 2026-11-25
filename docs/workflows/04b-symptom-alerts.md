@@ -1,5 +1,5 @@
 # Workflow 04b — Symptom "take a closer look" alerts
-Status: Built — awaiting owner screenshot approval
+Status: Built — final approval by owner 2026-11-25
 Milestone: Addition to Milestone 4 (owner request), before Milestone 4 goes live
 
 ## Goal
