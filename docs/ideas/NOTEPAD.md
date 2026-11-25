@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-25 · Totals: 💡 13 · ✅ 9 · ⏭️ 9_
+_Last updated: 2026-11-25 (after 04e) · Totals: 💡 17 · ✅ 13 · ⏭️ 12_
 
 ---
 
@@ -26,6 +26,10 @@ _Last updated: 2026-11-25 · Totals: 💡 13 · ✅ 9 · ⏭️ 9_
 | I-11 | Large alert card pushes the map down — consider a slimmer card on the Symptoms screen | 04d after-build | Home already uses a pop-up. |
 | I-12 | Steps 3 and 4 are close in colour (numbers carry the difference) | 04d after-build | Colour alone doesn't separate them; see I-13. |
 | I-13 | Distinct mark for 5 only (corner dot), if numbers ever feel busy | 04d opening (approach 2) | Held in reserve. |
+| I-14 | Show item counts in the reset sheet ("14 injections, 22 weights, 6 photos") | 04e opening | Deferred until Milestone 7 export. |
+| I-15 | "Save a copy first" link inside the reset card | 04e opening | Deferred until Milestone 7 export. |
+| I-16 | Short "All data erased" note after the reload | 04e after-build | Owner lands on the disclaimer with no sign the wipe worked. |
+| I-18 | Check other open tabs / installed app after a reset (stale data until refresh) | 04e after-build | Possibly a refresh prompt. |
 
 ## ✅ Done
 
@@ -40,6 +44,10 @@ _Last updated: 2026-11-25 · Totals: 💡 13 · ✅ 9 · ⏭️ 9_
 | D-07 | Remove the 3-day timing phrases and tests along with the 3-day view | 04d opening (watch-out) | 04d |
 | D-08 | Keep the "3 days in a row" alert rule separate from the map view | 04d opening (watch-out) | 04d — unchanged |
 | D-09 | Grid shifts when switching 3 ↔ 7 days | 04c after-build | 04d — no longer applies (3-day view removed) |
+| D-10 | Type-to-confirm full wipe (type RESET), one transaction, then reload | 04e opening (approach 2, recommended) | 04e — Settings "Reset all data" card |
+| D-11 | Disclaimer shows again after a reset | 04e opening | 04e — comes with the wipe |
+| D-12 | Say plainly that photos are deleted too, and that there is no backup | 04e opening | 04e — confirm sheet lists what is erased |
+| D-13 | Auto-capitalise (autocorrect off) in the RESET box on phones | 04e after-build | Already built in 04e — the box capitalises and has autocorrect off. |
 
 ## ⏭️ Skipped
 
@@ -54,7 +62,10 @@ _Last updated: 2026-11-25 · Totals: 💡 13 · ✅ 9 · ⏭️ 9_
 | S-07 | Keep the red help row always and remove the alert card's button | 04d plan (alternative) | Owner chose the default; keeps the approved 04b card |
 | S-08 | Tips card hidden behind the tab bar | 04c after-build | Not a real issue — full-page screenshot artifact |
 | S-09 | 3-day map view | 04c (owner-approved design) | Owner removed it in 04d: 7 days only |
+| S-10 | Simple Yes/Cancel confirm dialog | 04e opening (approach 1) | Too easy to tap through; wipe is permanent with no backup |
+| S-11 | Choose what to reset (checkboxes) | 04e opening (approach 3) | Owner asked for "all"; more screens |
+| S-12 | Block reset until "Download a copy first" | 04e opening (approach 4) | Would hold the request until Milestone 7; kept as I-15 instead |
 
 ---
 
-_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md)._
+_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md)._
