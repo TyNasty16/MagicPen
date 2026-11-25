@@ -97,6 +97,8 @@ By hand: 390px layout, tap sizes, offline mode, multi-chip save, edit/delete, v4
 
 Token Steward review: applied — the focused test file runs during the build, with the full suite and build once at the end; all by-hand checks are one browser pass. Not applied, with reasons: (1) "stomach pain" and "bloating/gas" stay — both are listed side effects in the Wegovy label, and stomach pain links to the most important warning sign; (2) the chart stays lazy-loaded — it uses the chart library, which would otherwise add about 120 KB to every app start.
 
+**Owner change after screenshots (2026-11-25):** on the Symptoms screen, "When to get help" is now a pop-up that can be dismissed ("Got it", tap outside, or Escape). It opens automatically the first time the screen is opened each day, and a red "When to get help" button at the top (and the stomach-pain tip's link) reopens it. Wording unchanged. The box inside the log panel stays inline.
+
 ## Review checkpoints
 - Token Steward: before start
 - Code Reviewer: before commit

@@ -1,13 +1,16 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { BackIcon, ChevronIcon } from './icons';
 
-export function Button({ variant = 'primary', className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'quiet' }) {
+export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'quiet' }>(function Button(
+  { variant = 'primary', className = '', ...props },
+  ref,
+) {
   const styles =
     variant === 'primary'
       ? 'bg-accent text-on-accent shadow-soft hover:brightness-95 active:brightness-90'
       : 'bg-transparent text-accent underline-offset-2 hover:underline';
-  return <button className={`min-h-11 rounded-2xl px-5 font-semibold transition disabled:opacity-50 ${styles} ${className}`} {...props} />;
-}
+  return <button ref={ref} className={`min-h-11 rounded-2xl px-5 font-semibold transition disabled:opacity-50 ${styles} ${className}`} {...props} />;
+});
 
 export function Card({ title, children, id }: { title?: string; children: ReactNode; id?: string }) {
   return (

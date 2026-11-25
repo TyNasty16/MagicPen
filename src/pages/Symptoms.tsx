@@ -1,12 +1,12 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useCallback, useState } from 'react';
-import HelpBox from '../components/HelpBox';
+import HelpPopup from '../components/HelpPopup';
 import { PlusIcon } from '../components/icons';
 import PatternChart from '../components/PatternChart';
 import SymptomSheet from '../components/SymptomSheet';
 import { Button, Card, Field, inputClass, ScreenHeader } from '../components/ui';
 import { listInjections, listSymptoms, type Symptom } from '../db/db';
-import { shortDate } from '../lib/dates';
+import { dayKey, shortDate } from '../lib/dates';
 import { clearAddParam } from '../lib/route';
 import { tipFor } from '../lib/sideEffectText';
 import { patternByDay, symptomLabel, SYMPTOM_TYPES } from '../lib/symptoms';
@@ -17,6 +17,12 @@ export default function Symptoms({ backHref, startAdding }: { backHref?: string;
   const [editing, setEditing] = useState<Symptom | 'new' | null>(startAdding ? 'new' : null);
   const [chosen, setChosen] = useState<string>();
   const [showAll, setShowAll] = useState(false);
+  // "When to get help" pops up the first time the screen is opened each day (not over the log panel).
+  const [helpOpen, setHelpOpen] = useState(() => !startAdding && !helpShownToday());
+  const closeHelp = useCallback(() => {
+    markHelpShown();
+    setHelpOpen(false);
+  }, []);
   const close = useCallback(() => {
     clearAddParam();
     setEditing(null);
@@ -36,7 +42,15 @@ export default function Symptoms({ backHref, startAdding }: { backHref?: string;
         <PlusIcon width={20} height={20} /> Log symptoms
       </Button>
 
-      <HelpBox id="page-help" />
+      <button
+        type="button"
+        onClick={() => setHelpOpen(true)}
+        className="flex min-h-11 w-full items-center gap-2 rounded-2xl border border-danger/30 bg-[#fbeeea] px-3.5 text-left text-sm font-semibold text-danger"
+      >
+        <span className="grid size-6 flex-none place-items-center rounded-full bg-danger text-white" aria-hidden>!</span>
+        When to get help
+        <span className="ml-auto font-normal text-muted">Read</span>
+      </button>
 
       <Card>
         <Field label="Show symptom" htmlFor="sym-pick">
@@ -47,7 +61,7 @@ export default function Symptoms({ backHref, startAdding }: { backHref?: string;
         <div className="mt-3 rounded-2xl bg-track/60 p-3 text-sm leading-relaxed">
           <p className="mb-1 font-semibold">Tips: {symptomLabel(type).toLowerCase()}</p>
           <p>{tip.text}</p>
-          {tip.seeHelp && <a href="#/symptoms" onClick={(e) => { e.preventDefault(); document.getElementById('page-help')?.scrollIntoView({ behavior: 'smooth' }); }} className="mt-1 inline-flex min-h-11 items-center font-semibold text-danger">See “When to get help” ↑</a>}
+          {tip.seeHelp && <button type="button" onClick={() => setHelpOpen(true)} className="mt-1 inline-flex min-h-11 items-center font-semibold text-danger">See “When to get help”</button>}
           <p className="mt-1.5 text-[11px] text-muted">Source: {tip.source}</p>
         </div>
         <h3 className="mt-4 mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-muted">Days after injection</h3>
@@ -86,7 +100,25 @@ export default function Symptoms({ backHref, startAdding }: { backHref?: string;
         </Card>
       )}
 
+      {helpOpen && <HelpPopup onClose={closeHelp} />}
       {editing && <SymptomSheet key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? undefined : editing} onDone={close} />}
     </div>
   );
+}
+
+// Per-device convenience only (not health data): remembers the day the pop-up was last shown.
+const HELP_KEY = 'steady.helpShownOn';
+function helpShownToday(): boolean {
+  try {
+    return localStorage.getItem(HELP_KEY) === dayKey(new Date());
+  } catch {
+    return false;
+  }
+}
+function markHelpShown() {
+  try {
+    localStorage.setItem(HELP_KEY, dayKey(new Date()));
+  } catch {
+    /* storage unavailable: the pop-up simply shows again next time */
+  }
 }
