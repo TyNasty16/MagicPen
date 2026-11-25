@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Symptom } from '../db/db';
 import { ALERT_FOOTER, ALERT_TITLE, symptomAlerts, visibleAlerts, type SymptomAlert } from '../lib/symptomAlerts';
 import { useOverlay } from '../lib/useOverlay';
+import { useDrug } from '../lib/useDrug';
 import HelpPopup from './HelpPopup';
 import { Button } from './ui';
 
@@ -43,7 +44,8 @@ export default function AlertCards({
 }) {
   const [hidden, setHidden] = useState(() => readMap(HIDDEN_KEY));
   const [helpOpen, setHelpOpen] = useState(false);
-  const alerts = visibleAlerts(symptomAlerts(symptoms, now), hidden);
+  const drug = useDrug();
+  const alerts = visibleAlerts(symptomAlerts(symptoms, now, drug), hidden);
   const unseen = alerts.some((a) => !(readMap(SEEN_KEY)[a.type] >= a.latest));
   const [popupOpen, setPopupOpen] = useState(mode === 'popup' && unseen);
   useEffect(() => {

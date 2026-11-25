@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type { Activity, Sex, Targets } from '../lib/targets';
 import type { UnitSystem } from '../lib/units';
+import type { DrugId } from '../lib/drugs';
 
 /** The single profile record. All measurements metric. */
 export interface Profile {
@@ -16,6 +17,7 @@ export interface Profile {
   injectionWeekday?: number; // 0 = Sunday
   proteinPerKg?: number;
   overrides?: Partial<Targets>;
+  drug?: DrugId; // medicine new injections default to; missing = Wegovy (workflow 07)
 }
 
 export type Site = 'abdomen-left' | 'abdomen-right' | 'thigh-left' | 'thigh-right' | 'arm-left' | 'arm-right';
@@ -27,6 +29,7 @@ export interface Injection {
   doseMg: number;
   site: Site;
   notes?: string;
+  drug?: DrugId; // missing = Wegovy (everything logged before workflow 07)
 }
 
 /** A weigh-in. `date` is a local calendar date, YYYY-MM-DD. */
@@ -126,6 +129,11 @@ db.version(3).stores({ profile: 'id', injections: '++id, datetime', weights: '++
 db.version(4).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date' });
 db.version(5).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime' });
 db.version(6).stores({
+  profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
+  foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date',
+});
+// v7 (workflow 07): optional `drug` on injections and profile. No index change; old rows read as Wegovy.
+db.version(7).stores({
   profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
   foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date',
 });

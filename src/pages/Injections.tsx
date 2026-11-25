@@ -8,7 +8,9 @@ import { Button, Field, inputClass, ScreenHeader } from '../components/ui';
 import { db, listInjections, saveInjection, type Injection, type Profile, type Site } from '../db/db';
 import { fromLocalInput, shortDate, toLocalInput } from '../lib/dates';
 import { areaOf } from '../lib/injectionGuide';
-import { formatDose, siteLabel, suggestSite, WEGOVY_DOSES_MG } from '../lib/injections';
+import { formatDrugDose, siteLabel, suggestSite } from '../lib/injections';
+import { DRUG_IDS, DRUGS, drugOf, type DrugId } from '../lib/drugs';
+import Segmented from '../components/Segmented';
 import { nextDose } from '../lib/nextDose';
 import { parseNum } from '../lib/units';
 import { clearAddParam } from '../lib/route';
@@ -40,7 +42,7 @@ export default function Injections({ profile, backHref, startAdding }: { profile
           <div className="mt-3.5 grid grid-cols-2 gap-2.5">
             <div className="rounded-2xl bg-black/15 px-3 py-2.5">
               <p className="text-[11px]">Last dose</p>
-              <p className="font-semibold">{formatDose(last.doseMg)}</p>
+              <p className="font-semibold">{formatDrugDose(last)}</p>
               <p className="text-[11px]">{shortDate(new Date(last.datetime))}</p>
             </div>
             <div className="flex items-center gap-2 rounded-2xl bg-black/15 px-2.5 py-2">
@@ -72,7 +74,7 @@ export default function Injections({ profile, backHref, startAdding }: { profile
                     <span className="block font-semibold">{shortDate(new Date(inj.datetime))}</span>
                     <span className="block truncate text-sm text-muted">{siteLabel(inj.site)}{inj.notes ? ` · ${inj.notes}` : ''}</span>
                   </span>
-                  <span className="rounded-full bg-track px-3 py-1 text-sm font-semibold">{formatDose(inj.doseMg)}</span>
+                  <span className="whitespace-nowrap rounded-full bg-track px-3 py-1 text-sm font-semibold">{formatDrugDose(inj)}</span>
                 </button>
               </li>
             ))}
@@ -80,12 +82,12 @@ export default function Injections({ profile, backHref, startAdding }: { profile
         </section>
       )}
 
-      {editing && <InjectionSheet key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? undefined : editing} history={injections} onDone={close} />}
+      {editing && <InjectionSheet key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? undefined : editing} history={injections} defaultDrug={drugOf(profile)} onDone={close} />}
     </div>
   );
 }
 
-function InjectionSheet({ initial, history, onDone }: { initial?: Injection; history: Injection[]; onDone: () => void }) {
+function InjectionSheet({ initial, history, defaultDrug, onDone }: { initial?: Injection; history: Injection[]; defaultDrug: DrugId; onDone: () => void }) {
   // Rotation ignores the entry being edited.
   const others = history.filter((h) => h.id !== initial?.id);
   const suggested = suggestSite(others);
@@ -93,7 +95,10 @@ function InjectionSheet({ initial, history, onDone }: { initial?: Injection; his
   for (const h of others) if (!lastUsed.has(h.site) || h.datetime > lastUsed.get(h.site)!) lastUsed.set(h.site, h.datetime);
 
   const startDose = initial?.doseMg; // never pre-filled for a new entry: the owner always chooses the dose
-  const isPreset = startDose !== undefined && WEGOVY_DOSES_MG.includes(startDose);
+  // New entries use the profile's medicine; an edited entry keeps its own. Changing it here affects this entry only.
+  const [drug, setDrug] = useState<DrugId>(initial ? drugOf(initial) : defaultDrug);
+  const doses = DRUGS[drug].dosesMg;
+  const isPreset = startDose !== undefined && doses.includes(startDose);
   const [when, setWhen] = useState(toLocalInput(initial?.datetime ?? new Date().toISOString()));
   const [dose, setDose] = useState<number | 'other' | undefined>(startDose === undefined ? undefined : isPreset ? startDose : 'other');
   const [otherText, setOtherText] = useState(!isPreset && startDose !== undefined ? String(startDose) : '');
@@ -112,6 +117,7 @@ function InjectionSheet({ initial, history, onDone }: { initial?: Injection; his
       doseMg,
       site,
       notes: notes.trim() || undefined,
+      drug,
     });
     onDone();
   };
@@ -139,9 +145,29 @@ function InjectionSheet({ initial, history, onDone }: { initial?: Injection; his
           <input id="when" type="datetime-local" className={inputClass} max={toLocalInput(new Date().toISOString())} value={when} onChange={(e) => setWhen(e.target.value)} />
         </Field>
         <div>
+          <p className="mb-1 text-sm font-medium">Medicine</p>
+          <Segmented
+            label="Medicine"
+            value={drug}
+            options={DRUG_IDS.map((id) => ({ id, label: DRUGS[id].name }))}
+            onChange={(d) => {
+              setDrug(d);
+              // A dose button the other medicine doesn't have (e.g. 2.4 for Ozempic) moves to "Other" with its number kept;
+              // an "Other" number that is a button for the new medicine goes back to that button.
+              if (typeof dose === 'number' && !DRUGS[d].dosesMg.includes(dose)) {
+                setOtherText(String(dose));
+                setDose('other');
+              } else if (dose === 'other') {
+                const n = parseNum(otherText);
+                if (n !== undefined && DRUGS[d].dosesMg.includes(n)) setDose(n);
+              }
+            }}
+          />
+        </div>
+        <div>
           <p className="mb-1 text-sm font-medium" id="dose-label">Dose taken (mg)</p>
           <div className="flex gap-0.5 rounded-xl border border-line bg-bg p-1" role="group" aria-labelledby="dose-label">
-            {[...WEGOVY_DOSES_MG, 'other' as const].map((d) => (
+            {[...doses, 'other' as const].map((d) => (
               <button
                 key={d}
                 type="button"
@@ -163,7 +189,7 @@ function InjectionSheet({ initial, history, onDone }: { initial?: Injection; his
         </div>
         <div>
           <p className="mb-1 text-sm font-medium">Site</p>
-          <BodyMap value={site} suggested={suggested} lastUsed={lastUsed} onChange={setSite} />
+          <BodyMap value={site} suggested={suggested} lastUsed={lastUsed} onChange={setSite} drug={drug} />
         </div>
         <Field label="Notes (optional)" htmlFor="notes">
           <textarea id="notes" rows={2} className={`${inputClass} py-2`} value={notes} onChange={(e) => setNotes(e.target.value)} />

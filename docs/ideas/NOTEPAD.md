@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-25 (after 05c barcode scanning) · Totals: 💡 26 · ✅ 32 · ⏭️ 23_
+_Last updated: 2026-11-25 (after 07 Ozempic) · Totals: 💡 32 · ✅ 34 · ⏭️ 26_
 
 ---
 
@@ -39,6 +39,12 @@ _Last updated: 2026-11-25 (after 05c barcode scanning) · Totals: 💡 26 · ✅
 | I-28 | Keep the barcode on a saved food (and on "not found" hand entry) so the next scan finds it offline | 05c opening, 05c after-build | Needs a new stored field. Deliberately left out of 05c. |
 | I-29 | Upgrade the dev-only tools flagged by npm audit (Vitest major upgrade, vite-plugin-pwa / Workbox) | 05c after-build | Build tools only, not shipped to the phone. Do as its own small change with the full test run. |
 | I-30 | Re-try the torch toggle, and "scan another" without closing the scanner | 05c after-build | Torch was left out (iPhone support unreliable). Needs a real-phone check first. |
+| I-31 | Optional "Switched medicine" note on the timeline when the Medicine setting changes (no advice attached) | 07 opening | Not built. The chart mark already names a switch. |
+| I-32 | First-run "Which medicine?" question so new users never see the wrong dose chips | 07 opening | Not built; Medicine defaults to Wegovy and is set in Profile. |
+| I-33 | Different chart marker colour or shape for a medicine switch | 07 opening | The plan used a plain label with no colour change. |
+| I-34 | Weight chart: stop a switch label being hidden when it is close to an earlier mark | 07 after-build | Existing overlap rule hides it; the dotted line still shows. |
+| I-35 | Symptom page weekly injection chart should mark a medicine switch | 07 after-build | It marks dose changes only and has no medicine data. |
+| I-36 | Help box could follow a one-off per-entry medicine, not just the Profile medicine | 07 after-build | Optional; only matters if someone mixes medicines. |
 
 ## ✅ Done
 
@@ -76,6 +82,8 @@ _Last updated: 2026-11-25 (after 05c barcode scanning) · Totals: 💡 26 · ✅
 | D-30 | Remember scanned products in My Foods | 05c opening | 05c — "Save to My Foods" pre-ticked |
 | D-31 | Catch bad barcodes before any network call; only the number leaves the phone | 05c opening (watch-out) | 05c — digits only, 8/12/13 length, check digit; OFF text cleaned |
 | D-32 | "Not found" shortcut to enter the food by hand | 05c opening | 05c — built without keeping the barcode (see I-28) |
+| D-33 | Medicine stored per injection, defaulting to the Profile medicine, with a drug catalog file (approach 2 on 4, recommended) | 07 opening | 07 — commit e4afdc2; `drugs.ts`, Dexie v7, old rows read as Wegovy |
+| D-34 | Per-medicine help list, footer and tips (no more Wegovy-only text) | 07 opening (watch-out) | 07 — Ozempic wording from the label; stomach-pain alert uses the profile medicine |
 
 ## ⏭️ Skipped
 
@@ -104,7 +112,10 @@ _Last updated: 2026-11-25 (after 05c barcode scanning) · Totals: 💡 26 · ✅
 | S-21 | Torch toggle | 05c opening | Owner default "left out" — iPhone Safari support unreliable (see I-30) |
 | S-22 | Scan history (last 5) | 05c opening | Owner default: out of scope; My Foods already keeps scanned items |
 | S-23 | Extend the 05b privacy notice instead of a new one | 05c opening (watch-out) | Technical: that notice says "words you typed", wrong for a number and a camera; a separate notice is clearer |
+| S-24 | Brand name with a small "semaglutide" subtitle | 07 opening | Owner default: no subtitle (could be added on request) |
+| S-25 | One medicine per profile, no per-entry drug (approach 1) | 07 opening | Technical: switching would relabel old entries and blur history |
+| S-26 | Generic "semaglutide" mode with free-typed doses (approach 3) | 07 opening | Technical: loses preset chips and drug-specific help; weak for sourced medical wording |
 
 ---
 
-_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md), [`05c-barcode.md`](05c-barcode.md)._
+_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md), [`05c-barcode.md`](05c-barcode.md), [`07-ozempic.md`](07-ozempic.md)._

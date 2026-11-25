@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Site } from '../db/db';
 import { daysBetween } from '../lib/dates';
-import { areaOf, BEFORE_EVERY_INJECTION, GUIDE_SOURCE, SITE_GUIDE } from '../lib/injectionGuide';
+import { areaOf, BEFORE_EVERY_INJECTION, GUIDE_SOURCE, OZEMPIC_GUIDE, OZEMPIC_GUIDE_SOURCE, SITE_GUIDE } from '../lib/injectionGuide';
+import type { DrugId } from '../lib/drugs';
 import { siteLabel } from '../lib/injections';
 import { BODY_PATH, ZONES } from './bodyFigure';
 
@@ -22,7 +23,7 @@ interface Props {
   now?: Date;
 }
 
-export default function BodyMap({ value, suggested, lastUsed, onChange, now = new Date() }: Props) {
+export default function BodyMap({ value, suggested, lastUsed, onChange, now = new Date(), drug = 'wegovy' }: Props & { drug?: DrugId }) {
   const recent = (s: Site) => {
     const t = lastUsed.get(s);
     return t !== undefined && daysBetween(new Date(t), now) < RECENT_DAYS;
@@ -98,14 +99,29 @@ export default function BodyMap({ value, suggested, lastUsed, onChange, now = ne
           </button>
         ))}
       </div>
-      <InjectionGuide site={value} />
+      <InjectionGuide site={value} drug={drug} />
     </div>
   );
 }
 
-function InjectionGuide({ site }: { site: Site }) {
+function InjectionGuide({ site, drug }: { site: Site; drug: DrugId }) {
   const [open, setOpen] = useState(false);
   const guide = SITE_GUIDE[areaOf(site)];
+  // Ozempic: only its Medication Guide's own lines (the Wegovy per-area tips and pen steps are not used).
+  if (drug === 'ozempic') {
+    return (
+      <section className="mt-3 rounded-2xl border border-line bg-white/60 p-3.5" aria-label="How to inject">
+        <h3 className="mb-2 flex items-center gap-2 font-serif text-lg font-semibold">
+          <span className="grid size-6 place-items-center rounded-lg bg-track font-sans text-sm text-accent" aria-hidden>i</span>
+          How to inject
+        </h3>
+        <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed">
+          {OZEMPIC_GUIDE.map((t) => <li key={t}>{t}</li>)}
+        </ul>
+        <p className="mt-2 text-[11px] text-muted">{OZEMPIC_GUIDE_SOURCE}</p>
+      </section>
+    );
+  }
   return (
     <section className="mt-3 rounded-2xl border border-line bg-white/60 p-3.5" aria-label="How to inject here">
       <h3 className="mb-2 flex items-center gap-2 font-serif text-lg font-semibold">

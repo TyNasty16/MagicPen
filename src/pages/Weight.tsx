@@ -8,8 +8,7 @@ import Segmented from '../components/Segmented';
 import Measurements from './Measurements';
 import { deleteWeight, getPhoto, listInjections, listWeights, saveWeighIn, weightIdsWithPhotos, type Profile, type WeightEntry } from '../db/db';
 import { dayKey, fromDayKey, shortDate } from '../lib/dates';
-import { formatDose } from '../lib/injections';
-import { doseChanges, filterRange, rangeStart, RANGES, type Range } from '../lib/range';
+import { doseChanges, doseMarkLabel, filterRange, rangeStart, RANGES, type Range } from '../lib/range';
 import { resizeToJpeg } from '../lib/image';
 import { clearAddParam } from '../lib/route';
 import { displayWeight, weightToKg, weightUnit } from '../lib/units';
@@ -63,7 +62,7 @@ function Weight({ profile, startAdding, focusPhoto, range, setRange }: { profile
   );
   const today = dayKey(new Date());
   const from = rangeStart(range);
-  const doseMarks = doseChanges(injections).map((c) => ({ date: c.date, label: c.first ? `Start ${formatDose(c.doseMg)}` : formatDose(c.doseMg) }));
+  const doseMarks = doseChanges(injections).map((c) => ({ date: c.date, label: doseMarkLabel(c) }));
 
   return (
     <div className="space-y-4">

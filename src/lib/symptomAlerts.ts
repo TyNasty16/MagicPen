@@ -2,7 +2,8 @@
 // Rule 3 durations come from MedlinePlus / Mayo Clinic; the other thresholds are owner-chosen defaults (Workflow 04b).
 import type { Symptom } from '../db/db';
 import { addDays, dayKey, startOfDay } from './dates';
-import { WHEN_TO_GET_HELP } from './sideEffectText';
+import { helpFor } from './sideEffectText';
+import type { DrugId } from './drugs';
 import { symptomLabel } from './symptoms';
 
 export const SEVERE = 5; // rule 1
@@ -24,7 +25,7 @@ export interface SymptomAlert {
   latest: string; // ISO time of the newest entry behind the alert (used for "Hide for now")
 }
 
-export function symptomAlerts(symptoms: Pick<Symptom, 'datetime' | 'type' | 'severity'>[], now = new Date()): SymptomAlert[] {
+export function symptomAlerts(symptoms: Pick<Symptom, 'datetime' | 'type' | 'severity'>[], now = new Date(), drug: DrugId = 'wegovy'): SymptomAlert[] {
   const today = startOfDay(now);
   const todayKey = dayKey(today);
   const recentFrom = dayKey(addDays(today, -1)); // today or yesterday
@@ -43,7 +44,7 @@ export function symptomAlerts(symptoms: Pick<Symptom, 'datetime' | 'type' | 'sev
     const strongPain = type === 'stomach-pain' ? recent.filter((s) => s.severity >= STRONG_STOMACH_PAIN) : [];
     if (strongPain.length) {
       const top = Math.max(...strongPain.map((s) => s.severity));
-      alerts.push({ type, rule: 2, reason: `Stomach pain was logged as ${top}/5`, extra: WHEN_TO_GET_HELP[0], latest: newest(strongPain) });
+      alerts.push({ type, rule: 2, reason: `Stomach pain was logged as ${top}/5`, extra: helpFor(drug)[0], latest: newest(strongPain) });
       continue;
     }
     const severe = recent.filter((s) => s.severity >= SEVERE);
