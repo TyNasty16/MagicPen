@@ -22,7 +22,7 @@ Show a calm in-app card when a logged symptom is very strong or has lasted a lon
 Rules 1 and 4 and every severity threshold are owner-chosen defaults, not from a source. Rule 3 durations come from the sources.
 1. **Severe:** any symptom logged at severity 5 in the last 2 days (today or yesterday). Reason: "<Symptom> was logged as severe (5/5)".
 2. **Strong stomach pain:** stomach pain at severity 4 or more in the last 2 days. Reason: "Stomach pain was logged as 4/5" (or 5/5), plus the help-box line on severe stomach pain, quoted exactly from `src/lib/sideEffectText.ts`.
-3. **Long-lasting, sourced** (run of consecutive days with any entry for that symptom, which must include today or yesterday):
+3. **Long-lasting, sourced** (run of consecutive days with an entry for that symptom at severity 2 or more, which must include today or yesterday):
    - Vomiting on 2 or more days in a row. [MedlinePlus: contact a provider if vomiting lasts longer than 24 hours](https://medlineplus.gov/ency/patientinstructions/000122.htm)
    - Nausea on 3 or more days in a row. [MedlinePlus: nausea lasting more than 48 hours](https://medlineplus.gov/ency/article/003117.htm)
    - Diarrhea on 3 or more days in a row. [Mayo Clinic: adults, more than two days without improvement](https://www.mayoclinic.org/symptoms/diarrhea/basics/when-to-see-doctor/sym-20050926)
