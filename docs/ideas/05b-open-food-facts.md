@@ -27,3 +27,17 @@
 - **Licence:** ODbL attribution required. Needs sourced wording from OFF's terms.
 - **Testing:** mock fetch with saved sample responses; never call the live API in tests or CI. Test offline, 429, empty and partial products.
 - **Cost:** free, no key; stays at $0.
+
+## After-build — 2026-11-25
+
+**What landed:** A "Search online" button under the built-in results, a first-use privacy notice, hidden no-nutrition products with a count, a "check against the label" warning, source credit, and "Save to My Foods" ticked for online picks.
+
+**Follow-ups**
+- **Sanity check on numbers (I-25):** testing found a shake about 3x off. Comparing calories with protein/carbs/fat is plain arithmetic and would flag likely typos before they are logged.
+- **Barcode scan (I-24, 05c):** most accurate for packaged food and avoids bad name matches. Needs its own privacy notice, since the barcode is sent.
+- **Café and restaurant items (I-27):** online search mostly misses them, so a small sourced built-in list would fill the gap offline.
+- **Drinks in ml (was I-26):** already built — drinks scale per 100 ml with no ml-to-g guess (moved to Done as D-25).
+
+**Felt off**
+- About 4 in 10 results are hidden for having no nutrition. That is honest, but a search can end with an empty list, so the wording for that case matters.
+- A plural-matching bug in the built-in search ("muffins") only showed up in browser testing. Worth a few saved test words for future search changes.

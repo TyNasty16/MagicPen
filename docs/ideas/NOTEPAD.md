@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-25 (after 05 nutrition) · Totals: 💡 22 · ✅ 18 · ⏭️ 15_
+_Last updated: 2026-11-25 (after 05b Open Food Facts) · Totals: 💡 24 · ✅ 25 · ⏭️ 18_
 
 ---
 
@@ -30,11 +30,13 @@ _Last updated: 2026-11-25 (after 05 nutrition) · Totals: 💡 22 · ✅ 18 · �
 | I-15 | "Save a copy first" link inside the reset card | 04e opening | Deferred until Milestone 7 export. |
 | I-16 | Short "All data erased" note after the reload | 04e after-build | Owner lands on the disclaimer with no sign the wipe worked. |
 | I-18 | Check other open tabs / installed app after a reset (stale data until refresh) | 04e after-build | Possibly a refresh prompt. |
-| I-19 | Open Food Facts search for packaged and branded foods (step 05b) | 05 opening, 05 after-build | The one planned network exception: show a privacy notice first, send only the search term, never cache replies. |
 | I-20 | Move backup/export (Milestone 7) earlier | 05 opening, 05 after-build | Food log grows daily with no copy anywhere. |
 | I-21 | Custom water amount | 05 after-build | Quick-adds are only 8 oz / 250 ml and 16 oz / 500 ml; custom was deferred. |
 | I-22 | 7-day protein strip on the Food screen | 05 after-build | Small bars per day vs target, so the protein note can be seen. |
-| I-23 | Recent foods list (one tap to log again) | 05 after-build | For foods not saved to My Foods. |
+| I-23 | Recent foods list (one tap to log again) | 05 after-build, 05b opening | For foods not saved to My Foods. 05b also suggested "recent online picks" for offline use; same list would cover both. |
+| I-24 | Barcode scan for one packaged product (05c) | 05b opening (approach 4) | Most accurate for packaged food. Needs camera permission, and the barcode is sent to Open Food Facts, so it needs its own privacy notice. |
+| I-25 | Warn when an online product's calories don't match its protein/carbs/fat | 05b after-build | Volunteer entries can be wrong (one shake was about 3x off). Simple arithmetic check, no medical wording. |
+| I-27 | Add common café and restaurant items to the built-in list | 05b after-build | Online search mostly misses Starbucks-type items. Needs a sourced data list. |
 
 ## ✅ Done
 
@@ -58,6 +60,13 @@ _Last updated: 2026-11-25 (after 05 nutrition) · Totals: 💡 22 · ✅ 18 · �
 | D-16 | Water quick-add buttons in your units | 05 opening | 05 — 8 fl oz / 250 ml and 16 fl oz / 500 ml |
 | D-17 | Split into 05 (offline core) and 05b (Open Food Facts) | 05 opening (approach 2, recommended) | 05 — built offline; 05b still to come |
 | D-18 | Small-portion quick adds | 05 opening | 05 — servings quick-picks of ½ / 1 / 1½ |
+| D-19 | Open Food Facts search for packaged and branded foods (was I-19) | 05 opening, 05 after-build | 05b — commit 99619ac |
+| D-20 | One search box, two sources; online only when "Search online" is tapped (approach 1, recommended) | 05b opening | 05b — built-in list still shows first; 3-second wait between searches |
+| D-21 | Privacy notice on first use, Cancel sends nothing | 05b opening (watch-out) | 05b |
+| D-22 | Online picks saved to My Foods so repeats need no network | 05b opening | 05b — "Save to My Foods" ticked by default for online picks |
+| D-23 | Source credit line (Open Food Facts attribution) | 05b opening | 05b — credit shown under results |
+| D-25 | Keep drinks in ml (no ml-to-g guess) | 05b after-build (was I-26) | Already built in 05b — drinks use Open Food Facts' per-100 ml values (owner: "only if there is no other way"). |
+| D-24 | Incomplete products never shown as 0 | 05b opening (watch-out) | 05b — products without nutrition are hidden, with a line saying how many; "check against the label" warning added |
 
 ## ⏭️ Skipped
 
@@ -78,7 +87,10 @@ _Last updated: 2026-11-25 (after 05 nutrition) · Totals: 💡 22 · ✅ 18 · �
 | S-13 | One big milestone including Open Food Facts | 05 opening (approach 1) | Owner approved the split; OFF stays separate as 05b (I-19) |
 | S-14 | Water and Home tile first, food later | 05 opening (approach 3) | Delays the main value (food and protein) |
 | S-15 | Food only, no water or protein note | 05 opening (approach 4) | Would leave the Home tile half-done; all parts were built |
+| S-16 | Built-in / Online source toggle | 05b opening (approach 2) | Technical: easy to leave on Online; one box with a button is simpler and safer |
+| S-17 | Auto-search online as you type | 05b opening (approach 3) | Technical/privacy: would send partial words and hit rate limits |
+| S-18 | Per-result grey "no protein listed" hint | 05b opening | Technical: products without nutrition are hidden instead, with a count (D-24) |
 
 ---
 
-_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md)._
+_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md)._
