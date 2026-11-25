@@ -30,8 +30,9 @@ export default function SymptomDetail({ type, symptoms, injections, onOpenHelp }
         <Stat value={String(recentCount(symptoms, type))} label="entries · 8 wks" />
         <Stat value={peak ? `Day ${peak.day}` : '—'} label={peak ? 'usual peak' : 'not enough data'} />
         <Stat
-          value={trend === 'milder lately' ? '↓' : trend === 'stronger lately' ? '↑' : trend === 'about the same' ? '→' : '—'}
-          label={trend}
+          value={`${trend === 'milder lately' ? '↓ ' : trend === 'stronger lately' ? '↑ ' : trend === 'about the same' ? '→ ' : ''}${trend}`}
+          label="last 2 injection weeks"
+          small
           tone={trend === 'milder lately' ? 'text-[#4f6b3f]' : trend === 'stronger lately' ? 'text-[#9a4a36]' : ''}
         />
       </div>
@@ -50,7 +51,7 @@ export default function SymptomDetail({ type, symptoms, injections, onOpenHelp }
         ) : (
           <>
             <InjectionWeekChart weeks={weeks} label={label} />
-            <p className="mt-1 text-xs text-muted">Average severity per week · dashed line = dose change</p>
+            <p className="mt-1 text-xs text-muted">Average severity per week · dashed line = dose change · the trend above compares your last 2 injection weeks with the 2 before</p>
           </>
         )}
       </Card>
@@ -89,10 +90,10 @@ export default function SymptomDetail({ type, symptoms, injections, onOpenHelp }
   );
 }
 
-function Stat({ value, label, tone = '' }: { value: string; label: string; tone?: string }) {
+function Stat({ value, label, tone = '', small = false }: { value: string; label: string; tone?: string; small?: boolean }) {
   return (
     <div className="rounded-2xl bg-surface p-3 shadow-soft">
-      <p className={`font-serif text-xl font-semibold ${tone}`}>{value}</p>
+      <p className={`font-serif font-semibold ${small ? 'text-sm leading-snug' : 'text-xl'} ${tone}`}>{value}</p>
       <p className="text-[11px] text-muted">{label}</p>
     </div>
   );

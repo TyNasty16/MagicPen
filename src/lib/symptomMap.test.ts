@@ -13,6 +13,13 @@ describe('windows and daily max', () => {
     expect(m.get('2026-11-25')).toBe(4);
     expect(m.has('2026-11-24')).toBe(false);
   });
+  it('steps 4 and 5 are clearly apart (≥2:1)', () => {
+    const lum = (hex: string) => {
+      const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    };
+    expect((lum(RAMP[4]) + 0.05) / (lum(RAMP[5]) + 0.05)).toBeGreaterThanOrEqual(2);
+  });
   it('text colour switches to white on the two darkest steps', () => expect([0, 3, 4, 5].map(rampText)).toEqual(['#3a2a22', '#3a2a22', '#ffffff', '#ffffff']));
   it('every step has ≥4.5:1 text contrast (WCAG)', () => {
     const lum = (hex: string) => {
@@ -33,30 +40,29 @@ describe('visibleSymptoms (3-day rule)', () => {
   });
 });
 
-describe('trendFor', () => {
+describe('trendFor (these 7 days vs the 7 before)', () => {
   it.each([
-    ['worse', [sym('x', 1, 21), sym('x', 3, 24), sym('x', 3, 25)], 3, 'worse'],
-    ['better', [sym('x', 4, 20), sym('x', 4, 21), sym('x', 1, 25)], 3, 'better'],
-    ['same within ±0.5', [sym('x', 2, 21), sym('x', 2, 24)], 3, 'same'],
-    ['new without earlier entries', [sym('x', 3, 25)], 3, 'new'],
-    ['7-day window compares with the 7 before', [12, 13, 14, 15].map((d) => sym('x', 3, d)).concat(sym('x', 3, 25)), 7, 'better'],
-  ] as const)('%s', (_n, list, n, expected) => expect(trendFor(max([...list], 'x'), n, now)).toBe(expected));
+    ['worse', [sym('x', 1, 13), sym('x', 4, 24), sym('x', 4, 25)], 'worse'],
+    ['better', [12, 13, 14, 15].map((d) => sym('x', 3, d)).concat(sym('x', 3, 25)), 'better'],
+    ['same within ±0.5', [sym('x', 2, 14), sym('x', 2, 24)], 'same'],
+    ['first logged this week', [sym('x', 3, 25)], 'first'],
+    ['no earlier entries (logged before, not in the previous 7 days)', [sym('x', 3, 2), sym('x', 3, 25)], 'no-earlier'],
+    ['14 days back is inside the previous window', [sym('x', 3, 12), sym('x', 3, 25)], 'same'],
+    ['15 days back is outside it', [sym('x', 3, 11), sym('x', 3, 25)], 'no-earlier'],
+  ] as const)('%s', (_n, list, expected) => expect(trendFor(max([...list], 'x'), now)).toBe(expected));
 });
 
-describe('timingPhrase', () => {
+describe('timingPhrase (7 days)', () => {
   const shot = new Set(['2026-11-23']);
   it.each([
-    ['3d daily since shot', [sym('x', 2, 23), sym('x', 3, 24), sym('x', 1, 25)], 3, 'daily since shot'],
-    ['3d today only', [sym('x', 2, 25)], 3, 'today'],
-    ['3d count', [sym('x', 2, 23), sym('x', 2, 25)], 3, '2 of 3 days'],
-    ['7d none', [], 7, 'none this week'],
-    ['7d most days', [19, 20, 21, 22, 23].map((d) => sym('x', 2, d)), 7, 'most days'],
-    ['7d peaks on shot day', [sym('x', 4, 23), sym('x', 1, 25)], 7, 'peaks on shot day'],
-    ['7d peaks day after', [sym('x', 2, 23), sym('x', 4, 24)], 7, 'peaks day after shot'],
-    ['7d late in week', [sym('x', 1, 19), sym('x', 3, 25)], 7, 'late in the week'],
-    ['7d early in week', [sym('x', 3, 19), sym('x', 1, 25)], 7, 'early in the week'],
-    ['7d tie: earliest peak wins', [sym('x', 3, 19), sym('x', 3, 25)], 7, 'early in the week'],
-  ] as const)('%s', (_n, list, n, expected) => expect(timingPhrase(max([...list], 'x'), n, shot, now)).toBe(expected));
+    ['none', [], 'none this week'],
+    ['most days', [19, 20, 21, 22, 23].map((d) => sym('x', 2, d)), 'most days'],
+    ['peaks on shot day', [sym('x', 4, 23), sym('x', 1, 25)], 'peaks on shot day'],
+    ['peaks day after', [sym('x', 2, 23), sym('x', 4, 24)], 'peaks day after shot'],
+    ['late in week', [sym('x', 1, 19), sym('x', 3, 25)], 'late in the week'],
+    ['early in week', [sym('x', 3, 19), sym('x', 1, 25)], 'early in the week'],
+    ['tie: earliest peak wins', [sym('x', 3, 19), sym('x', 3, 25)], 'early in the week'],
+  ] as const)('%s', (_n, list, expected) => expect(timingPhrase(max([...list], 'x'), shot, now)).toBe(expected));
 });
 
 describe('injection weeks', () => {

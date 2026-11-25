@@ -45,19 +45,29 @@ export default function Symptoms({ backHref, startAdding, detail }: { backHref?:
   return (
     <div className="space-y-4">
       <ScreenHeader title="Symptoms" backHref={backHref} />
-      <AlertCards symptoms={symptoms} />
-      <Button className="flex w-full items-center justify-center gap-2" onClick={() => setEditing('new')}>
-        <PlusIcon width={20} height={20} /> Log symptoms
-      </Button>
-      <button
-        type="button"
-        onClick={() => setHelpOpen(true)}
-        className="flex min-h-11 w-full items-center gap-2 rounded-2xl border border-danger/30 bg-[#fbeeea] px-3.5 text-left text-sm font-semibold text-danger"
-      >
-        <span className="grid size-6 flex-none place-items-center rounded-full bg-danger text-white" aria-hidden>!</span>
-        When to get help
-        <span className="ml-auto font-normal text-muted">Read</span>
-      </button>
+      {/* Alert cards above Log symptoms; the red help row only when no card is showing (one help entry point at a time). */}
+      <AlertCards
+        symptoms={symptoms}
+        layout={(cards, hasAlerts) => (
+          <>
+            {cards}
+            <Button className="flex w-full items-center justify-center gap-2" onClick={() => setEditing('new')}>
+              <PlusIcon width={20} height={20} /> Log symptoms
+            </Button>
+            {!hasAlerts && (
+            <button
+              type="button"
+              onClick={() => setHelpOpen(true)}
+              className="flex min-h-11 w-full items-center gap-2 rounded-2xl border border-danger/30 bg-[#fbeeea] px-3.5 text-left text-sm font-semibold text-danger"
+            >
+              <span className="grid size-6 flex-none place-items-center rounded-full bg-danger text-white" aria-hidden>!</span>
+              When to get help
+              <span className="ml-auto font-normal text-muted">Read</span>
+            </button>
+            )}
+          </>
+        )}
+      />
 
       <SymptomMap symptoms={symptoms} injections={injections} />
 

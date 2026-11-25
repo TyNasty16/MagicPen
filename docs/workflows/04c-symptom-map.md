@@ -1,5 +1,5 @@
 # Workflow 04c — Symptom map
-Status: Built — 2026-11-25 (awaiting go-live)
+Status: Built — superseded in part by 04d (3-day view removed)
 Milestone: Improvement to Milestone 4 (owner request)
 
 ## Goal

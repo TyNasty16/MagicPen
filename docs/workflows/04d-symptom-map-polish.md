@@ -1,5 +1,5 @@
 # Workflow 04d — Symptom map polish
-Status: Awaiting approval
+Status: Built — 2026-11-25 (awaiting go-live)
 Milestone: Polish of the Milestone 4 symptom map (owner request), before it goes live
 
 ## Ideas considered
@@ -78,4 +78,4 @@ Cost: nothing extra. Risk: digits may be small on narrow phones; we will check o
 - Proposed defaults: numbers in every box; lighter 4 and darker 5 colours; "First logged this week" and "No earlier entries" wording; red help row hidden while an alert card shows. Reply "defaults OK" or name changes.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK; step 4 kept, step 5 darkened to #5a2318 as shown in the mockup)

@@ -2,11 +2,11 @@
 import type { Injection, Symptom } from '../db/db';
 import { addDays, dayKey, daysBetween, fromDayKey, startOfDay } from './dates';
 
-export type MapWindow = 3 | 7;
-export type Trend = 'better' | 'same' | 'worse' | 'new';
+export const MAP_DAYS = 7;
+export type Trend = 'better' | 'same' | 'worse' | 'first' | 'no-earlier';
 
-/** Colour steps 0 (none) → 5 (severe); text colour chosen so numbers are ≥4.5:1 on every step. */
-export const RAMP = ['#f3ebe3', '#efc4b0', '#e6a98f', '#d6866b', '#b0553d', '#86392a'];
+/** Colour steps 0 (none) → 5 (severe); text colour chosen so numbers are ≥4.5:1 on every step. Step 5 is much darker so 4 and 5 read apart (04d). */
+export const RAMP = ['#f3ebe3', '#efc4b0', '#e6a98f', '#d6866b', '#b0553d', '#5a2318'];
 export const rampText = (step: number) => (step >= 4 ? '#ffffff' : '#3a2a22');
 export const TREND_DEAD_BAND = 0.5;
 const STALE_DAYS = 3; // a symptom needs an entry today or in the 2 days before to get a row
@@ -42,26 +42,25 @@ export function visibleSymptoms(symptoms: Entry[], now = new Date()): { shown: s
   };
 }
 
-/** This window vs the previous window of equal length (average daily max; empty days count 0). */
-export function trendFor(byDay: Map<string, number> | undefined, n: MapWindow, now = new Date()): Trend {
+/**
+ * These 7 days vs the 7 before (average daily max; empty days count 0).
+ * Without entries in the previous 7 days: 'first' if never logged before this week, else 'no-earlier'.
+ */
+export function trendFor(byDay: Map<string, number> | undefined, now = new Date()): Trend {
+  const n = MAP_DAYS;
   const cur = windowDays(n, now);
   const prev = windowDays(n, addDays(startOfDay(now), -n));
   const avg = (days: string[]) => days.reduce((s, d) => s + (byDay?.get(d) ?? 0), 0) / days.length;
-  if (!prev.some((d) => byDay?.has(d))) return 'new';
+  if (!prev.some((d) => byDay?.has(d))) return [...(byDay?.keys() ?? [])].some((d) => d < cur[0]) ? 'no-earlier' : 'first';
   const diff = avg(cur) - avg(prev);
   return diff > TREND_DEAD_BAND ? 'worse' : diff < -TREND_DEAD_BAND ? 'better' : 'same';
 }
 
-/** Short description of when a symptom shows up in the window. */
-export function timingPhrase(byDay: Map<string, number> | undefined, n: MapWindow, injectionDays: Set<string>, now = new Date()): string {
+/** Short description of when a symptom shows up in the last 7 days. */
+export function timingPhrase(byDay: Map<string, number> | undefined, injectionDays: Set<string>, now = new Date()): string {
+  const n = MAP_DAYS;
   const days = windowDays(n, now);
   const active = days.filter((d) => (byDay?.get(d) ?? 0) >= 1);
-  if (n === 3) {
-    const shot = days.findIndex((d) => injectionDays.has(d));
-    if (shot >= 0 && days.slice(shot).every((d) => active.includes(d))) return 'daily since shot';
-    if (active.length === 1 && active[0] === days[2]) return 'today';
-    return `${active.length} of 3 days`;
-  }
   if (active.length === 0) return 'none this week';
   if (active.length >= 5) return 'most days';
   let peak = active[0];

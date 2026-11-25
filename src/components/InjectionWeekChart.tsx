@@ -10,14 +10,18 @@ const DOSE = '#8a7464';
 
 /** Average severity per injection week, with dashed lines where the logged dose changed (facts only). */
 export default function InjectionWeekChart({ weeks, label }: { weeks: InjectionWeek[]; label: string }) {
-  const rows = weeks.map((w, i) => ({ ...w, name: `W${i + 1}`, changed: i > 0 && w.doseMg !== weeks[i - 1].doseMg }));
+  const rows = weeks.map((w, i) => ({
+    ...w,
+    name: fromDayKey(w.start).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+    changed: i > 0 && w.doseMg !== weeks[i - 1].doseMg,
+  }));
   const summary = rows.map((r) => `${r.name} ${r.average ?? 'none'}`).join(', ');
   return (
     <div className="h-44" role="img" aria-label={`${label}, average severity per injection week: ${summary}.`}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={rows} margin={{ top: 22, right: 10, bottom: 0, left: -24 }}>
           <CartesianGrid vertical={false} stroke={GRID} />
-          <XAxis dataKey="name" tick={{ fill: AXIS, fontSize: 11 }} axisLine={{ stroke: GRID }} tickLine={false} />
+          <XAxis dataKey="name" tick={{ fill: AXIS, fontSize: 10 }} axisLine={{ stroke: GRID }} tickLine={false} interval="preserveStartEnd" minTickGap={6} />
           <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} tick={{ fill: AXIS, fontSize: 11 }} axisLine={false} tickLine={false} />
           {rows.filter((r) => r.changed).map((r) => (
             <ReferenceLine key={r.name} x={r.name} stroke={DOSE} strokeDasharray="3 3" strokeWidth={1.5} label={{ value: formatDose(r.doseMg), position: 'top', fill: AXIS, fontSize: 10, fontWeight: 600 }} />
