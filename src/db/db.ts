@@ -44,17 +44,32 @@ export interface Photo {
   createdAt: string;
 }
 
+/** Tape measurements (cm) and body-fat %; any subset per entry. `date` is YYYY-MM-DD. */
+export interface Measurement {
+  id?: number;
+  date: string;
+  waistCm?: number;
+  hipsCm?: number;
+  chestCm?: number;
+  neckCm?: number;
+  upperArmCm?: number;
+  thighCm?: number;
+  bodyFatPct?: number;
+}
+
 export const db = new Dexie('steady') as Dexie & {
   profile: EntityTable<Profile, 'id'>;
   injections: EntityTable<Injection, 'id'>;
   weights: EntityTable<WeightEntry, 'id'>;
   photos: EntityTable<Photo, 'id'>;
+  measurements: EntityTable<Measurement, 'id'>;
 };
 
 // Keep every version declared: Dexie upgrades existing databases in place, so profile data is kept.
 db.version(1).stores({ profile: 'id' });
 db.version(2).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date' });
 db.version(3).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId' });
+db.version(4).stores({ profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date' });
 
 export const getProfile = async (): Promise<Profile | null> => (await db.profile.get('me')) ?? null;
 
@@ -97,3 +112,7 @@ export const saveWeighIn = (entry: WeightEntry, photo: { kind: 'keep' } | { kind
     if (photo.kind === 'new') await db.photos.add({ weightId: id, blob: photo.blob, createdAt: new Date().toISOString() });
     return id;
   });
+
+export const listMeasurements = () => db.measurements.orderBy('date').toArray();
+export const saveMeasurement = (m: Measurement) => db.measurements.put(m);
+export const deleteMeasurement = (id: number) => db.measurements.delete(id);

@@ -36,3 +36,12 @@ export function weightToKg(text: string, u: UnitSystem): number | undefined {
   const n = parseNum(text);
   return n === undefined ? undefined : u === 'imperial' ? lbToKg(n) : n;
 }
+
+/** Length in the owner's display unit (in or cm), rounded to 1 decimal. */
+export const displayLength = (cm: number, u: UnitSystem) => round1(u === 'imperial' ? cmToIn(cm) : cm);
+export const lengthUnit = (u: UnitSystem) => (u === 'imperial' ? 'in' : 'cm');
+/** Parses a typed length in display units to cm. */
+export function lengthToCm(text: string, u: UnitSystem): number | undefined {
+  const n = parseNum(text);
+  return n === undefined ? undefined : u === 'imperial' ? inToCm(n) : n;
+}

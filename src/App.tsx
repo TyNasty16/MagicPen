@@ -15,7 +15,7 @@ const Weight = lazy(() => import('./pages/Weight'));
 const TABS: { route: Route; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
   { route: 'home', label: 'Home', Icon: HomeIcon },
   { route: 'injections', label: 'Doses', Icon: SyringeIcon },
-  { route: 'weight', label: 'Weight', Icon: ScaleIcon },
+  { route: 'weight', label: 'Body', Icon: ScaleIcon },
   { route: 'profile', label: 'Profile', Icon: UserIcon },
 ];
 const ROUTES = ['home', 'injections', 'weight', 'profile', 'settings'] as const;
@@ -72,7 +72,7 @@ export default function App() {
         {route === 'injections' && <Injections key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
         {route === 'weight' && (
           <Suspense fallback={null}>
-            <Weight key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} focusPhoto={params.get('photo') === '1'} />
+            <Weight key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} focusPhoto={params.get('photo') === '1'} view={params.get('view') === 'measurements' ? 'measurements' : undefined} />
           </Suspense>
         )}
         {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={backHref} section={params.get('section') ?? undefined} />}

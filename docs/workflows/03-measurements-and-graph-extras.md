@@ -1,5 +1,5 @@
 # Workflow 03 — Measurements and graph extras
-Status: Awaiting approval
+Status: Built — 2026-11-25
 Milestone: 3 — Weight & measurements + charts (PLAN.md §5), plus graph extras deferred from Milestone 2
 
 ## Goal
@@ -105,4 +105,4 @@ Reply "defaults OK" or change any of these:
 6. Dose lines show mg only; the date appears on tap.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK)
