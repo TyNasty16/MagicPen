@@ -29,7 +29,18 @@ function writeMap(key: string, m: Record<string, string>) {
  * inline: cards in the page (Symptoms). popup: a pop-up over the page that opens for alerts not seen yet,
  * plus a floating pill to reopen it (Home) — the page layout never moves.
  */
-export default function AlertCards({ symptoms, now, mode = 'inline' }: { symptoms: Symptom[]; now?: Date; mode?: 'inline' | 'popup' }) {
+export default function AlertCards({
+  symptoms,
+  now,
+  mode = 'inline',
+  layout,
+}: {
+  symptoms: Symptom[];
+  now?: Date;
+  mode?: 'inline' | 'popup';
+  /** inline only: place the cards within surrounding content; `hasAlerts` lets the page show a fallback (04d). */
+  layout?: (cards: React.ReactNode, hasAlerts: boolean) => React.ReactNode;
+}) {
   const [hidden, setHidden] = useState(() => readMap(HIDDEN_KEY));
   const [helpOpen, setHelpOpen] = useState(false);
   const alerts = visibleAlerts(symptomAlerts(symptoms, now), hidden);
@@ -39,7 +50,7 @@ export default function AlertCards({ symptoms, now, mode = 'inline' }: { symptom
     if (mode === 'popup' && unseen) setPopupOpen(true); // a new qualifying entry arrived while on the page
   }, [mode, unseen]);
 
-  if (alerts.length === 0) return null;
+  if (alerts.length === 0) return layout ? <>{layout(null, false)}</> : null;
 
   const hide = (a: SymptomAlert) => {
     const next = { ...hidden, [a.type]: a.latest };
@@ -54,11 +65,12 @@ export default function AlertCards({ symptoms, now, mode = 'inline' }: { symptom
   const help = helpOpen && <HelpPopup onClose={() => setHelpOpen(false)} />;
 
   if (mode === 'inline') {
+    const block = <div className="space-y-2.5">{cards}</div>;
     return (
-      <div className="space-y-2.5">
-        {cards}
+      <>
+        {layout ? layout(block, true) : block}
         {help}
-      </div>
+      </>
     );
   }
   return (

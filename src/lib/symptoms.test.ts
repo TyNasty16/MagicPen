@@ -5,9 +5,9 @@ import { tipFor, WHEN_TO_GET_HELP } from './sideEffectText';
 const at = (m: number, d: number, h = 9, min = 0) => new Date(2026, m - 1, d, h, min).toISOString();
 
 describe('severity', () => {
-  it('accepts whole numbers 0–5 only', () => {
-    expect([0, 5].every(isValidSeverity)).toBe(true);
-    expect([-1, 6, 2.5, NaN].some(isValidSeverity)).toBe(false);
+  it('accepts whole numbers 1–5 only (0/5 is not logged)', () => {
+    expect([1, 5].every(isValidSeverity)).toBe(true);
+    expect([0, -1, 6, 2.5, NaN].some(isValidSeverity)).toBe(false);
   });
 });
 

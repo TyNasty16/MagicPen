@@ -27,7 +27,7 @@ export default function SymptomSheet({ initial, onDone }: { initial?: Symptom; o
   const save = async () => {
     if (!when) return setError('Choose a date and time.');
     if (new Date(when).getTime() > Date.now() + 60_000) return setError('The date and time can’t be in the future.');
-    if (![...picked.values()].every(isValidSeverity)) return setError('Choose a severity from 0 to 5.');
+    if (![...picked.values()].every(isValidSeverity)) return setError('Choose a severity from 1 to 5.');
     const datetime = initial && when === toLocalInput(initial.datetime) ? initial.datetime : fromLocalInput(when);
     await saveSymptoms([...picked].map(([type, severity]) => ({ ...(initial?.id ? { id: initial.id } : {}), datetime, type, severity, notes: notes.trim() || undefined })));
     onDone();
@@ -76,10 +76,10 @@ export default function SymptomSheet({ initial, onDone }: { initial?: Symptom; o
         {[...picked].map(([type, sev]) => (
           <div key={type}>
             <p className="mb-1 text-sm font-medium" id={`sev-${type}`}>
-              {symptomLabel(type)} <span className="font-normal text-muted">· 0 none – 5 severe</span>
+              {symptomLabel(type)} <span className="font-normal text-muted">· 1 mild – 5 severe</span>
             </p>
             <div className="flex gap-1" role="group" aria-labelledby={`sev-${type}`}>
-              {[0, 1, 2, 3, 4, 5].map((n) => (
+              {[1, 2, 3, 4, 5].map((n) => (
                 <button
                   key={n}
                   type="button"
