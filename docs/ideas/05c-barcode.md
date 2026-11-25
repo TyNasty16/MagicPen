@@ -27,3 +27,12 @@
 - **Accessibility:** a visible close button, focus kept in the sheet, and a spoken or visible status ("Looking for a barcode"). Camera use is hard for some owners, so typed entry must be equally prominent.
 - **Testing without a camera:** put the decoder behind a small function that takes an image; test it with saved barcode sample images, and mock OFF with saved product responses. Never hit the live API or a real camera in CI.
 - **Medical and cost:** no medical text is involved. $0, no key. Remind the owner that OFF data can be wrong, so keep the "check against the label" warning on scanned items too.
+
+## After-build — 2026-11-25
+
+**What landed:** A lazy-loaded full-screen barcode scanner with a typed-number fallback, a separate first-scan privacy notice, input checks before any request, and scanned products saved to My Foods (commit 8cd52d6).
+
+### Follow-ups
+1. **Keep the barcode on a saved food** (and on "not found" hand entry), so the next scan finds it offline. Why: repeat shops get faster and work without a connection. Needs a new stored field.
+2. **Upgrade the dev-only tools flagged by npm audit** (Vitest major upgrade, vite-plugin-pwa / Workbox). Why: clears the warnings; these are build tools and do not ship to the phone, so it can be its own small change with a full test run.
+3. **Revisit torch and "scan another"** once a real iPhone check is possible. Why: poor light is the most common scan failure; torch was left out because iPhone Safari support is unreliable.
