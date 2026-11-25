@@ -9,7 +9,7 @@ import AlertCards from '../components/AlertCards';
 import { dayKey, daysBetween, shortDate } from '../lib/dates';
 import { dayTotals } from '../lib/nutrition';
 import { waterAmount, waterQuickAdds, waterUnit } from '../lib/water';
-import { formatDose } from '../lib/injections';
+import { formatDrugDose } from '../lib/injections';
 import { nextDose } from '../lib/nextDose';
 import { dailyWeights, latestWeightKg } from '../lib/weight';
 import { weighInStatus } from '../lib/weighIn';
@@ -202,7 +202,7 @@ function DoseHero({ last, weekday, now }: { last?: Injection; weekday?: number; 
       <div className="min-w-0">
         <p className="text-sm">Next injection</p>
         <p className="font-serif text-[22px] leading-tight font-semibold">{title}</p>
-        {last && <p className="mt-0.5 text-xs">Last: {formatDose(last.doseMg)} on {shortDate(new Date(last.datetime))}</p>}
+        {last && <p className="mt-0.5 text-xs">Last: {formatDrugDose(last)} on {shortDate(new Date(last.datetime))}</p>}
       </div>
       {next.daysAway !== 0 && <span className="ml-auto whitespace-nowrap rounded-full bg-black/15 px-3 py-1.5 text-sm font-semibold">{next.label}</span>}
     </a>

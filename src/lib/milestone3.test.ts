@@ -74,9 +74,9 @@ describe('doseChanges', () => {
       { datetime: iso(29), doseMg: 1 },
     ];
     expect(doseChanges(inj)).toEqual([
-      { date: '2026-10-01', doseMg: 0.25, first: true },
-      { date: '2026-10-15', doseMg: 0.5, first: false },
-      { date: '2026-10-29', doseMg: 1, first: false },
+      { date: '2026-10-01', doseMg: 0.25, first: true, drug: 'wegovy', drugChanged: false },
+      { date: '2026-10-15', doseMg: 0.5, first: false, drug: 'wegovy', drugChanged: false },
+      { date: '2026-10-29', doseMg: 1, first: false, drug: 'wegovy', drugChanged: false },
     ]);
   });
   it('none for no injections', () => expect(doseChanges([])).toEqual([]));

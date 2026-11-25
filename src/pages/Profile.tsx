@@ -4,6 +4,8 @@ import { Banner, Button, Card, Field, inputClass, ScreenHeader } from '../compon
 import { listWeights, saveProfile, type Profile as ProfileRecord } from '../db/db';
 import { latestWeightKg } from '../lib/weight';
 import { WEEKDAYS } from '../lib/nextDose';
+import { DRUG_IDS, DRUGS, drugOf } from '../lib/drugs';
+import Segmented from '../components/Segmented';
 import { calculatedTargets, effectiveTargets } from '../lib/profileTargets';
 import { PROTEIN_PER_KG_DEFAULT, type Activity, type Sex, type Targets } from '../lib/targets';
 import { cmToFeetInches, flOzToMl, inToCm, kgToLb, lbToKg, mlToFlOz, parseNum, round1, displayWeight, weightUnit, type UnitSystem } from '../lib/units';
@@ -149,6 +151,16 @@ export default function Profile({ profile, backHref, section }: { profile: Profi
             </button>
           ))}
         </div>
+      </Card>
+
+      <Card title="Medicine" id="medicine">
+        <Segmented
+          label="Medicine"
+          value={drugOf(draft)}
+          options={DRUG_IDS.map((id) => ({ id, label: DRUGS[id].name }))}
+          onChange={(drug) => update({ drug })}
+        />
+        <p className="mt-2 text-sm text-muted">New injections use this medicine, and the “When to get help” box and tips follow its label. Past entries keep the medicine they were logged with.</p>
       </Card>
 
       <Card title="About you" id="about">

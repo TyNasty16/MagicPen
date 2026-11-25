@@ -1,7 +1,8 @@
 import type { Injection, Site } from '../db/db';
+import { DRUGS, drugName, drugOf } from './drugs';
 
-/** Wegovy pen strengths (mg). For logging only. */
-export const WEGOVY_DOSES_MG = [0.25, 0.5, 1, 1.7, 2.4];
+/** Wegovy pen strengths (mg). For logging only. Per-medicine lists live in drugs.ts. */
+export const WEGOVY_DOSES_MG = DRUGS.wegovy.dosesMg;
 
 export const SITES: { id: Site; label: string }[] = [
   { id: 'abdomen-left', label: 'Left abdomen' },
@@ -35,3 +36,5 @@ export function suggestSite(history: Pick<Injection, 'site' | 'datetime'>[]): Si
 }
 
 export const formatDose = (mg: number) => `${mg} mg`;
+/** "Ozempic 0.5 mg" — the medicine and dose of a logged injection. */
+export const formatDrugDose = (inj: Pick<Injection, 'doseMg' | 'drug'>) => `${drugName(drugOf(inj))} ${formatDose(inj.doseMg)}`;

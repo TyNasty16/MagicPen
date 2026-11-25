@@ -1,5 +1,5 @@
 # Workflow 07 — Ozempic as a second medicine
-Status: Draft
+Status: Built — 2026-11-25
 Milestone: Pulls part of "Other medications" (PLAN.md v3) forward; owner request 2026-11-25: "Add ozempic as a potential drug"
 
 ## Ideas considered
@@ -93,7 +93,12 @@ By hand (one browser pass, screenshots; fake-indexeddb isn't installed, so the u
   - Changing the Medicine setting never changes past entries; each keeps the medicine it was logged with.
 - Switching drug is never described as a dose change or advice; the app only records what you enter.
 
-## Review checkpoints
+## Build notes (2026-11-25)
+- Built as planned: `src/lib/drugs.ts`; Dexie v7 (same stores; old rows read as Wegovy); per-medicine help list, footer and tips; Ozempic site guide (label lines only; Wegovy per-area tips and pen steps hidden); stomach-pain alert quotes the profile medicine's line 1; Profile "Medicine" card; per-entry switch on the injection form; medicine name on dose rows, the Doses hero and Home ("Ozempic 0.5 mg"); chart marks name a switch.
+- Browser pass: v6 → v7 upgrade kept every table; old entries show as Wegovy; Profile switch saves; the form defaults to Ozempic with 0.25/0.5/1/2; Ozempic help box (vision line present, no 988); no outside requests; no sideways scroll.
+- Seen in the pass: when a switch falls close to an earlier mark on the weight chart, its label is hidden by the existing overlap rule (Milestone 3); the dotted line still shows. Unchanged here; logged as a follow-up.
+- Code review (no bugs): switching medicine back now restores the preset dose button; tidied a stale comment. Not changed, by design: the help box follows the Profile medicine, not a one-off switch on a single entry; Medicine is saved with Profile's Save button like the other fields; the symptom page's weekly injection chart still marks dose changes only (it has no medicine data) — logged as a follow-up.
+
 - Token Steward: before start (applied: missed-dose item removed — the app shows none; open questions set as defaults; UI steps batched before one test run; lean browser pass. Not applied: dropping the drug-change chart mark — without it a Wegovy 2.4 → Ozempic 1 switch would look like a plain dose drop; the upgrade check stays in the browser pass because fake-indexeddb isn't installed)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
@@ -121,4 +126,4 @@ By hand (one browser pass, screenshots; fake-indexeddb isn't installed, so the u
 - Approve the exact text: the Ozempic wording shown in the plan.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (exact text approved; defaults OK)

@@ -42,3 +42,10 @@ export const BEFORE_EVERY_INJECTION = [
 ];
 
 export const GUIDE_SOURCE = 'From the Wegovy label and Instructions for Use. Always follow the leaflet in your pen box.';
+
+/** Ozempic: only the Medication Guide's own lines (owner default; the Wegovy per-area tips are not used). */
+export const OZEMPIC_GUIDE = [
+  'OZEMPIC is injected under the skin (subcutaneously) of your stomach (abdomen), thigh, or upper arm. Do not inject OZEMPIC into a muscle (intramuscularly) or vein (intravenously).',
+  'Change (rotate) your injection site with each injection. Do not use the same site for each injection.',
+];
+export const OZEMPIC_GUIDE_SOURCE = 'From the Ozempic Medication Guide. Always follow the Instructions for Use that came with your pen.';

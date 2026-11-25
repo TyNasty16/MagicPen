@@ -6,11 +6,13 @@ import { Card, ScreenHeader } from '../components/ui';
 import type { Injection, Symptom } from '../db/db';
 import { shortDate } from '../lib/dates';
 import { tipFor } from '../lib/sideEffectText';
+import { useDrug } from '../lib/useDrug';
 import { injectionWeekAverages, recentCount, weeklyTrend } from '../lib/symptomMap';
 import { patternByDay, symptomLabel } from '../lib/symptoms';
 
 /** Drill-down for one symptom (Workflow 04c). */
 export default function SymptomDetail({ type, symptoms, injections, onOpenHelp }: { type: string; symptoms: Symptom[]; injections: Injection[]; onOpenHelp: () => void }) {
+  const drug = useDrug();
   const [editing, setEditing] = useState<Symptom>();
   const [tipOpen, setTipOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -20,7 +22,7 @@ export default function SymptomDetail({ type, symptoms, injections, onOpenHelp }
   const peak = buckets.reduce<(typeof buckets)[number] | undefined>((best, b) => (b.average !== undefined && (!best || b.average > best.average!) ? b : best), undefined);
   const weeks = injectionWeekAverages(symptoms, type, injections);
   const trend = weeklyTrend(weeks);
-  const tip = tipFor(type);
+  const tip = tipFor(type, drug);
   const time = (iso: string) => new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 
   return (

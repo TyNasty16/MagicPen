@@ -1,5 +1,6 @@
 // Graph range filtering and dose-change detection (facts only).
 import type { Injection } from '../db/db';
+import { drugName, drugOf, type DrugId } from './drugs';
 import { addDays, dayKey, fromDayKey, startOfDay } from './dates';
 
 export type Range = '30d' | '90d' | 'all';
@@ -24,16 +25,27 @@ export interface DoseChange {
   date: string; // local day of the injection
   doseMg: number;
   first: boolean;
+  drug: DrugId;
+  drugChanged: boolean; // the medicine differs from the previous injection
 }
 
-/** The first logged dose and every injection whose dose differs from the one before it. */
-export function doseChanges(injections: Pick<Injection, 'datetime' | 'doseMg'>[]): DoseChange[] {
+/** Points where the logged dose or the medicine changed. A medicine switch is its own mark, never read as a dose step. */
+export function doseChanges(injections: Pick<Injection, 'datetime' | 'doseMg' | 'drug'>[]): DoseChange[] {
   const sorted = [...injections].sort((a, b) => a.datetime.localeCompare(b.datetime));
   const out: DoseChange[] = [];
   sorted.forEach((inj, i) => {
-    if (i === 0 || inj.doseMg !== sorted[i - 1].doseMg) out.push({ date: dayKey(new Date(inj.datetime)), doseMg: inj.doseMg, first: i === 0 });
+    const drug = drugOf(inj);
+    const drugChanged = i > 0 && drug !== drugOf(sorted[i - 1]);
+    if (i === 0 || drugChanged || inj.doseMg !== sorted[i - 1].doseMg) out.push({ date: dayKey(new Date(inj.datetime)), doseMg: inj.doseMg, first: i === 0, drug, drugChanged });
   });
   return out;
+}
+
+/** Chart label: "Start 0.25 mg", "0.5 mg"; with a medicine named on the first mark (when not Wegovy) and on a switch. */
+export function doseMarkLabel(c: DoseChange): string {
+  const dose = `${c.doseMg} mg`;
+  const named = c.drugChanged || (c.first && c.drug !== 'wegovy') ? `${drugName(c.drug)} ${dose}` : dose;
+  return c.first ? `Start ${named}` : named;
 }
 
 export interface PlacedMark {
