@@ -13,6 +13,8 @@
   --color-clay: #c8735a;
   --color-hero-from: #9a4a36; /* hero gradient: white text ≥4.5:1 across the whole gradient */
   --color-hero-to: #b25c45;
+  --color-weigh-from: #4a6638; /* weigh-in card: white text ≥4.5:1 across the gradient */
+  --color-weigh-to: #56743f;
   --color-sage: #8fa37a;
   --color-gold: #d8a750;
   --color-warn: #b7791f;
@@ -25,3 +27,7 @@
 
 html, body { background: var(--color-bg); color: var(--color-ink); color-scheme: light; }
 body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+@keyframes rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }

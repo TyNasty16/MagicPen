@@ -72,7 +72,7 @@ export default function App() {
         {route === 'injections' && <Injections key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
         {route === 'weight' && (
           <Suspense fallback={null}>
-            <Weight key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />
+            <Weight key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} focusPhoto={params.get('photo') === '1'} />
           </Suspense>
         )}
         {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={backHref} section={params.get('section') ?? undefined} />}

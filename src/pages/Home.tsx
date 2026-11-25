@@ -8,6 +8,7 @@ import { shortDate } from '../lib/dates';
 import { formatDose } from '../lib/injections';
 import { nextDose } from '../lib/nextDose';
 import { dailyWeights } from '../lib/weight';
+import { weighInStatus } from '../lib/weighIn';
 import { effectiveTargets } from '../lib/profileTargets';
 import { displayWeight, mlToFlOz, weightUnit } from '../lib/units';
 
@@ -55,6 +56,7 @@ export default function Home({ profile }: { profile: Profile }) {
         </a>
       ) : (
         <>
+          <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 
           <Tile title="Today's nutrition" href="#/profile?from=home&section=targets">
@@ -135,6 +137,45 @@ function useNow() {
     };
   }, []);
   return now;
+}
+
+/** Weekly weigh-in prompt: shown until this week's weigh-in is logged (weeks run from the first weigh-in). */
+function WeighInCard({ dayKeys, now }: { dayKeys: string[]; now: Date }) {
+  const s = weighInStatus(dayKeys, now);
+  if (s.state === 'done') return null;
+  const copy = {
+    first: { label: 'Weekly weigh-in', title: 'Start your weekly weigh-ins', body: 'Log your first weigh-in today. Every 7 days after that, this card will remind you.' },
+    due: { label: 'Weigh-in day', title: 'Time for your weekly weigh-in', body: 'Once a week, same morning, same scale — this is how you see your real progress.' },
+    still: {
+      label: 'This week’s weigh-in',
+      title: 'Still time this week',
+      body: `You missed weigh-in day, but there ${s.daysLeft === 1 ? 'is 1 day' : `are ${s.daysLeft} days`} left this week. Keep your streak going.`,
+    },
+  }[s.state];
+  return (
+    <section className="rounded-card bg-gradient-to-br from-weigh-from to-weigh-to p-4.5 text-white shadow-soft" aria-label="Weekly weigh-in">
+      <p className="text-xs font-bold tracking-[0.06em] uppercase">{copy.label}</p>
+      <p className="mt-1 font-serif text-2xl leading-tight font-semibold">{copy.title}</p>
+      <p className="mt-1.5 text-sm leading-snug">{copy.body}</p>
+      {s.weeks.length > 0 && (
+        <div className="mt-3 flex items-center gap-1.5 text-xs">
+          {s.weeks.map((done, i) => {
+            const isCurrent = i === s.weeks.length - 1;
+            return (
+              <span key={i} aria-hidden className={`grid size-6 place-items-center rounded-full text-[11px] font-bold ${done ? 'bg-white text-weigh-from' : 'bg-white/25'}`}>
+                {done ? '✓' : isCurrent ? '?' : ''}
+              </span>
+            );
+          })}
+          <span className="ml-1.5">{s.streak > 0 ? `${s.streak} week${s.streak === 1 ? '' : 's'} in a row` : 'Start a new streak'}</span>
+        </div>
+      )}
+      <div className="mt-3.5 grid grid-cols-2 gap-2">
+        <a href="#/weight?from=home&add=1" className="grid min-h-11 place-items-center rounded-2xl bg-white font-semibold text-weigh-from">Log weigh-in</a>
+        <a href="#/weight?from=home&add=1&photo=1" className="grid min-h-11 place-items-center rounded-2xl bg-black/15 font-semibold">+ Add photo</a>
+      </div>
+    </section>
+  );
 }
 
 function changeText(diffKg: number, units: Profile['units']) {

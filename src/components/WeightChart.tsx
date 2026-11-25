@@ -9,12 +9,21 @@ const AVERAGE = '#2a6fb8';
 const GRID = '#eadfd3';
 const AXIS_TEXT = '#6f5b4c';
 
-interface Row { t: number; weight: number; avg: number }
+interface Row { t: number; date: string; weight: number; avg: number }
 
 const fmtDay = (t: number) => new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
-export default function WeightChart({ daily, average, goalKg, units }: { daily: DailyWeight[]; average: DailyWeight[]; goalKg?: number; units: UnitSystem }) {
-  const rows: Row[] = daily.map((d, i) => ({ t: fromDayKey(d.date).getTime(), weight: displayWeight(d.kg, units), avg: displayWeight(average[i].kg, units) }));
+interface ChartProps {
+  daily: DailyWeight[];
+  average: DailyWeight[];
+  goalKg?: number;
+  units: UnitSystem;
+  photoDays?: Map<string, number>; // day → weigh-in id with a photo
+  onPhoto?: (weightId: number, date: string) => void;
+}
+
+export default function WeightChart({ daily, average, goalKg, units, photoDays, onPhoto }: ChartProps) {
+  const rows: Row[] = daily.map((d, i) => ({ t: fromDayKey(d.date).getTime(), date: d.date, weight: displayWeight(d.kg, units), avg: displayWeight(average[i].kg, units) }));
   const goal = goalKg === undefined ? undefined : displayWeight(goalKg, units);
   const data = rows.flatMap((r) => [r.weight, r.avg]);
   // Draw the goal line only when it is near the data; a distant goal would flatten the trend. The legend always states it.
@@ -40,7 +49,7 @@ export default function WeightChart({ daily, average, goalKg, units }: { daily: 
       </div>
       <div className="h-56" role="img" aria-label={`Weight graph: ${rows.length} days of weigh-ins. Latest ${rows.at(-1)!.weight} ${unit}, 7-day average ${rows.at(-1)!.avg} ${unit}.`}>
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={rows} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
+          <ComposedChart data={rows} margin={{ top: 30, right: 12, bottom: 0, left: -12 }}>
             <CartesianGrid vertical={false} stroke={GRID} />
             <XAxis
               dataKey="t"
@@ -61,7 +70,7 @@ export default function WeightChart({ daily, average, goalKg, units }: { daily: 
               dataKey="weight"
               stroke={WEIGH_IN}
               strokeWidth={1.5}
-              dot={{ r: 4, fill: WEIGH_IN, stroke: '#fffaf5', strokeWidth: 2 }}
+              dot={(p: { cx?: number; cy?: number; payload?: Row }) => <WeighInDot key={p.payload?.date} cx={p.cx} cy={p.cy} date={p.payload?.date} photoDays={photoDays} onPhoto={onPhoto} />}
               activeDot={{ r: 6, fill: WEIGH_IN, stroke: '#fffaf5', strokeWidth: 2 }}
               isAnimationActive={false}
             />
@@ -69,6 +78,31 @@ export default function WeightChart({ daily, average, goalKg, units }: { daily: 
         </ResponsiveContainer>
       </div>
     </figure>
+  );
+}
+
+/** Weigh-in point; on days with a photo, a camera badge above it opens the photo (44px tap area). */
+function WeighInDot({ cx, cy, date, photoDays, onPhoto }: { cx?: number; cy?: number; date?: string; photoDays?: Map<string, number>; onPhoto?: (id: number, date: string) => void }) {
+  if (cx === undefined || cy === undefined) return null;
+  const photoId = date ? photoDays?.get(date) : undefined;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={4} fill={WEIGH_IN} stroke="#fffaf5" strokeWidth={2} />
+      {photoId !== undefined && date && (
+        <g
+          className="cursor-pointer"
+          onClick={() => onPhoto?.(photoId, date)}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onPhoto?.(photoId, date))}
+          role="button"
+          tabIndex={0}
+          aria-label="Open progress photo"
+        >
+          <circle cx={cx} cy={cy - 20} r={22} fill="transparent" />
+          <circle cx={cx} cy={cy - 20} r={10} fill="#fffaf5" stroke={WEIGH_IN} strokeWidth={1.5} />
+          <path transform={`translate(${cx - 6} ${cy - 26}) scale(0.5)`} d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z M12 10a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7" fill="none" stroke={WEIGH_IN} strokeWidth={2.4} />
+        </g>
+      )}
+    </g>
   );
 }
 

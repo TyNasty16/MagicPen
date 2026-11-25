@@ -1,5 +1,5 @@
 # Workflow 02b — Injection design, body map redesign, weigh-in photos
-Status: Awaiting approval
+Status: Built — 2026-11-25
 Milestone: Design + feature update between milestones 2 and 3 (owner request)
 
 ## Goal
@@ -43,7 +43,7 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
 - **Storage choice:** a separate `photos` table (`weightId` index, `blob`, `createdAt`), not a blob field on `weights`. Reason: the chart and list read every weigh-in on each render, and a blob field would load every photo each time. A separate table keeps those reads small, and the v3 upgrade only adds a table.
 
 - **Weekly weigh-in card** (`Home.tsx`, `src/lib/weighIn.ts`):
-  - The weigh-in cycle starts on the first logged weigh-in date and repeats every 7 days (so the weigh-in day is that same weekday).
+  - The weigh-in cycle starts on the first logged weigh-in date and repeats every 7 days (so the weigh-in day is that same weekday). If an earlier-dated weigh-in is added later, the cycle re-anchors to that earlier date.
   - On weigh-in day a green card appears at the top of Home: "Time for your weekly weigh-in", a short line on why it matters, a streak row (last 5 weeks, ✓ per week with a weigh-in) and "N weeks in a row", and two buttons: **Log weigh-in** and **+ Add photo** (opens the weigh-in form with the photo picker ready).
   - It stays until a weigh-in is logged in the current 7-day window. If the day passes without one, it changes to "Still time this week" for the rest of that window.
   - Before any weigh-in exists, the card invites the first weigh-in ("Start your weekly weigh-ins").
@@ -122,4 +122,4 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
 Nothing needs your decision except approving this plan.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (wording OK)
