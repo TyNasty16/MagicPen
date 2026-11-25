@@ -14,6 +14,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/apple-touch-icon.png'],
       // Precache the built-in USDA food list too, so food search works offline.
+      // Precache only: no runtimeCaching, so Open Food Facts replies are never stored (workflow 05b).
       workbox: { globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest,json}'] },
       manifest: {
         name: 'Steady',
