@@ -13,6 +13,7 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
 3. Weigh-ins never need a photo (photos are always optional). Photos attach to a weigh-in.
 4. New: a **weekly weigh-in card** on Home, on a 7-day cycle starting from the first logged weigh-in.
 5. Photos join the backup in Milestone 7.
+6. New: **"How to inject here" guidance** under the body map, taken from the official Wegovy label and pen instructions (owner request).
 
 ## In scope
 - **Body map** (`BodyMap.tsx`) — Option B, redrawn:
@@ -21,6 +22,13 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
   - Each site is colored by recency: **used recently** (within 2 weeks, light terracotta) or **rested** (light sage); the selected site is solid terracotta with a soft glow; the suggested site has a dashed ring.
   - "Right"/"Left" labels beside each figure (on the Back figure the person's left is on the viewer's left), plus a legend and a "Selected: …" line. The accessible button list stays below as compact chips (44px tall).
   - Rotation logic (`suggestSite`) is untouched.
+- **Injection guidance card** (`src/lib/injectionGuide.ts` holds the text; shown under the body map for the selected site). Exact wording below; the owner reviews it before build. No dose advice, and the app does not give pen timing in seconds (it differs by pen type), only "until the yellow bar stops".
+  - **Stomach:** "Use your lower stomach, at least 2 inches (5 cm) from your belly button." · "If it's hard to inject here, standing up may help — or choose a firmer area like the thigh or upper arm." · "You can use the same area each week — just not the exact spot you used last time."
+  - **Thigh:** "Use the front of your thigh." · "You can use the same area each week — just not the exact spot you used last time." · "If the stomach is hard to inject, a firmer area like the thigh can be easier."
+  - **Upper arm:** "Use the back of your upper arm, between shoulder and elbow." · "It can be hard to reach on your own — ask someone to help, or choose another area." · "Use a different spot from your last injection."
+  - **Before every injection** (expandable, 6 steps): 1. "Follow the Instructions for Use leaflet that came with your pen." 2. "Clean the spot with an alcohol swab or soap and water, and let it dry." 3. "Don't inject into skin that is tender, bruised, red, hard, scarred or has stretch marks." 4. "Inject under the skin only — never into a muscle or vein." 5. "Press the pen firmly against your skin and hold it there until the yellow bar has stopped moving. Lifting it early can make the medicine leak." 6. "If anything is unclear, ask your pharmacist or prescriber."
+  - Footer: "From the Wegovy label and Instructions for Use. Always follow the leaflet in your pen box."
+  - Sources: FDA Wegovy prescribing information (accessdata.fda.gov, label 215256), DailyMed Wegovy label, Novo Nordisk Wegovy pen guide and Quick Start Guide (wegovy.com), EMA Wegovy product information. Third-party guides (Healthline, GoodRx) used only to confirm the back-of-arm and front-of-thigh placement.
 - **Doses screen** (`Injections.tsx`):
   - Summary header card: next-injection countdown, last dose, last site, with a mini body-map thumbnail highlighting that site.
   - Dose choice as a polished segmented pill row (same doses as now, plus Other).
@@ -58,6 +66,7 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
 6. `src/pages/Weight.tsx`: photo picker, preview, replace/remove in `WeightForm`; camera icon on list rows with a photo.
 7. `src/components/PhotoViewer.tsx` (new): full-screen view with date, weight, close and remove. Object URLs are released on close.
 8. `src/components/WeightChart.tsx`: camera marker on days with a photo (at least 44px tap area), opens the viewer. `src/components/icons.tsx`: add camera icon.
+8b. `src/lib/injectionGuide.ts` (text above, one entry per site area + shared steps) and an `InjectionGuide` card under the body map with the expandable "Before every injection" list.
 9. `src/lib/weighIn.ts` (new, pure): current 7-day window from the first weigh-in date, whether this window has a weigh-in, days into the window, streak count. `src/pages/Home.tsx`: weekly weigh-in card.
 10. Tests, build, check on a 390px-wide screen, then hand-check offline.
 
@@ -75,6 +84,7 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
 - An existing v2 database (injections, weights, profile) opens as v3 with all data intact.
 - With the network off, a photo can be saved, viewed and removed.
 - No network request is made by any of this (check the network panel).
+- Selecting any site shows the matching guidance card; the wording matches this document exactly; "Before every injection" expands and collapses.
 - First weigh-in on a Sunday → the card appears every Sunday; logging a weigh-in hides it until next Sunday; missing Sunday shows "Still time this week" until Saturday.
 - Streak counts consecutive 7-day windows that contain a weigh-in.
 - Existing 46 tests and `npm run build` pass.

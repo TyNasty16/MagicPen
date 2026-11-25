@@ -7,13 +7,28 @@ h3{font-family:var(--head);font-size:22px;margin:4px 0 12px;font-weight:600}
 .card{background:var(--card);border-radius:22px;padding:14px 10px;box-shadow:var(--shadow)}
 .legend{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--muted);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .sel{margin:10px 4px 0;background:var(--track);border-radius:14px;padding:10px 12px;font-size:14px;display:flex;justify-content:space-between}.sel b{color:var(--accent)}
+.how{margin:12px 4px 0;border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}
+.how h4{margin:0 0 8px;font-family:var(--head);font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}.how h4 i{width:26px;height:26px;border-radius:8px;background:#f3e2da;color:var(--accent);display:grid;place-items:center;font-style:normal;font-size:14px}
+.how ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5}.how li{margin-bottom:4px}
+.how .gen{margin-top:10px;border-top:1px solid var(--line);padding-top:10px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;color:var(--ink)}
+.how .src{margin-top:8px;font-size:11px;color:var(--muted)}
 </style></head><body>
-<div class="panel"><h3>Option B, redrawn</h3><div class="card"><svg id="b" width="100%"></svg>
+<div class="panel"><h3>Thigh selected</h3><div class="card"><svg id="b" width="100%"></svg>
  <div class="legend"><span><i style="background:#e9b9a6"></i>Used recently</span><span><i style="background:#bccfa9"></i>Rested</span><span><i style="border:1.5px dashed #a85540;background:#fff"></i>Suggested</span></div>
- <div class="sel">Selected <b>Left thigh · suggested</b></div></div></div>
-<div class="panel"><h3>Same, back arm selected</h3><div class="card"><svg id="c" width="100%"></svg>
+ <div class="sel">Selected <b>Left thigh · suggested</b></div><div class="how"><h4><i>i</i>How to inject: thigh</h4><ul>
+<li>Use the <b>front of your thigh</b>.</li>
+<li>You can use the same area each week — just not the exact spot you used last time.</li>
+<li>If the stomach is hard to inject, a firmer area like the thigh can be easier.</li></ul>
+<div class="gen"><span>Before every injection (6 steps)</span><span>›</span></div>
+<div class="src">From the Wegovy label and Instructions for Use. Always follow the leaflet in your pen box.</div></div></div></div>
+<div class="panel"><h3>Upper arm selected</h3><div class="card"><svg id="c" width="100%"></svg>
  <div class="legend"><span><i style="background:#e9b9a6"></i>Used recently</span><span><i style="background:#bccfa9"></i>Rested</span><span><i style="border:1.5px dashed #a85540;background:#fff"></i>Suggested</span></div>
- <div class="sel">Selected <b>Right upper arm</b></div></div></div>
+ <div class="sel">Selected <b>Right upper arm</b></div><div class="how"><h4><i>i</i>How to inject: upper arm</h4><ul>
+<li>Use the <b>back of your upper arm</b>, between shoulder and elbow.</li>
+<li>It can be hard to reach on your own — ask someone to help, or choose another area.</li>
+<li>Use a different spot from your last injection.</li></ul>
+<div class="gen"><span>Before every injection (6 steps)</span><span>›</span></div>
+<div class="src">From the Wegovy label and Instructions for Use. Always follow the leaflet in your pen box.</div></div></div></div>
 <script>
 // Right half of the figure (viewer's right), from the neck clockwise; 8-head proportions, arms slightly out (A-pose).
 const R=[[100,49],[108,50],[110,62],[126,68],[143,72],[154,80],[160,95],[162,116],[164,140],[166,164],[168,186],[169,204],[166,214],[159,217],[152,212],[150,196],[147,172],[144,148],[141,124],[138,106],[136,120],[135,144],[131,166],[130,180],[136,202],[141,222],[142,246],[140,272],[136,298],[135,320],[135,340],[132,360],[128,376],[132,384],[126,390],[111,390],[110,378],[109,358],[108,336],[107,312],[106,286],[104,258],[101,240],[100,238]];
