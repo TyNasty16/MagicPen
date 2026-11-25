@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-25 (after 04e) · Totals: 💡 17 · ✅ 13 · ⏭️ 12_
+_Last updated: 2026-11-25 (after 05 nutrition) · Totals: 💡 22 · ✅ 18 · ⏭️ 15_
 
 ---
 
@@ -30,6 +30,11 @@ _Last updated: 2026-11-25 (after 04e) · Totals: 💡 17 · ✅ 13 · ⏭️ 12_
 | I-15 | "Save a copy first" link inside the reset card | 04e opening | Deferred until Milestone 7 export. |
 | I-16 | Short "All data erased" note after the reload | 04e after-build | Owner lands on the disclaimer with no sign the wipe worked. |
 | I-18 | Check other open tabs / installed app after a reset (stale data until refresh) | 04e after-build | Possibly a refresh prompt. |
+| I-19 | Open Food Facts search for packaged and branded foods (step 05b) | 05 opening, 05 after-build | The one planned network exception: show a privacy notice first, send only the search term, never cache replies. |
+| I-20 | Move backup/export (Milestone 7) earlier | 05 opening, 05 after-build | Food log grows daily with no copy anywhere. |
+| I-21 | Custom water amount | 05 after-build | Quick-adds are only 8 oz / 250 ml and 16 oz / 500 ml; custom was deferred. |
+| I-22 | 7-day protein strip on the Food screen | 05 after-build | Small bars per day vs target, so the protein note can be seen. |
+| I-23 | Recent foods list (one tap to log again) | 05 after-build | For foods not saved to My Foods. |
 
 ## ✅ Done
 
@@ -48,6 +53,11 @@ _Last updated: 2026-11-25 (after 04e) · Totals: 💡 17 · ✅ 13 · ⏭️ 12_
 | D-11 | Disclaimer shows again after a reset | 04e opening | 04e — comes with the wipe |
 | D-12 | Say plainly that photos are deleted too, and that there is no backup | 04e opening | 04e — confirm sheet lists what is erased |
 | D-13 | Auto-capitalise (autocorrect off) in the RESET box on phones | 04e after-build | Already built in 04e — the box capitalises and has autocorrect off. |
+| D-14 | Protein-first view | 05 opening | 05 — became two rings: a macro ring (protein outside, grams in the centre) beside a calorie ring |
+| D-15 | "Barely ate today" quick log | 05 opening | 05 — Food screen button, "Marked: barely ate" chip with Undo; counts as a logged day |
+| D-16 | Water quick-add buttons in your units | 05 opening | 05 — 8 fl oz / 250 ml and 16 fl oz / 500 ml |
+| D-17 | Split into 05 (offline core) and 05b (Open Food Facts) | 05 opening (approach 2, recommended) | 05 — built offline; 05b still to come |
+| D-18 | Small-portion quick adds | 05 opening | 05 — servings quick-picks of ½ / 1 / 1½ |
 
 ## ⏭️ Skipped
 
@@ -65,7 +75,10 @@ _Last updated: 2026-11-25 (after 04e) · Totals: 💡 17 · ✅ 13 · ⏭️ 12_
 | S-10 | Simple Yes/Cancel confirm dialog | 04e opening (approach 1) | Too easy to tap through; wipe is permanent with no backup |
 | S-11 | Choose what to reset (checkboxes) | 04e opening (approach 3) | Owner asked for "all"; more screens |
 | S-12 | Block reset until "Download a copy first" | 04e opening (approach 4) | Would hold the request until Milestone 7; kept as I-15 instead |
+| S-13 | One big milestone including Open Food Facts | 05 opening (approach 1) | Owner approved the split; OFF stays separate as 05b (I-19) |
+| S-14 | Water and Home tile first, food later | 05 opening (approach 3) | Delays the main value (food and protein) |
+| S-15 | Food only, no water or protein note | 05 opening (approach 4) | Would leave the Home tile half-done; all parts were built |
 
 ---
 
-_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md)._
+_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md)._

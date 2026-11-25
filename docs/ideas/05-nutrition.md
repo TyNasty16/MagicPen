@@ -26,3 +26,14 @@
 - **No backup exists yet:** a lot of daily entries will build up, so consider backup/export as the next milestone.
 - **Low-protein warning:** wording must be factual only (for example "Protein is under your target for 3 days"). Show no advice and no dose link. If it needs any medical text, it needs sourced wording. The existing disclaimer already says targets are estimates.
 - **Cost:** OFF is free with no key. Stay at $0.
+
+## After-build — 2026-11-25
+
+**What landed:** manual food and water log, My Foods, two rings (macro and calorie), "Barely ate today", a factual protein note, a built-in USDA list (offline search), and targets that follow the latest weigh-in (commit fe15d42).
+
+### Follow-ups
+1. **Open Food Facts search (05b)** for packaged and branded foods. The USDA list covers everyday foods but not brands. It is still the one planned network exception, so it needs the privacy notice and no caching.
+2. **Backup/export sooner.** The food log now grows daily with no copy anywhere. This is the biggest risk to the owner's data.
+3. **Custom water amount.** Quick-adds cover 8 oz / 250 ml and 16 oz / 500 ml only. A custom amount was deferred.
+4. **7-day protein strip** on the Food screen: small bars per day against the target, so the "4 of the last 7 days" note can be seen, not just read.
+5. **Recent foods list:** the last few foods logged, one tap to log again, for foods not saved to My Foods.
