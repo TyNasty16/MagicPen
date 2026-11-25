@@ -21,14 +21,17 @@ _Last updated: 2026-11-25_
 | Settings: reset all data (type RESET) | workflows/04e | #5 |
 | M5 food + water log, My Foods, macro + calorie rings, barely-ate marker, built-in USDA search (offline), targets follow latest weigh-in | workflows/05 | #6 |
 | 05b Open Food Facts online search (on tap, privacy notice, drinks per 100 ml); built-in search matches plurals | workflows/05b | #7 |
+| 05c Barcode scanning (ZXing lazy chunk, security-reviewed, sanitized input/output) | workflows/05c | #8 |
+| 07 Ozempic as a second medicine (Dexie v7, per-entry medicine, label-quoted help/tips/guide) | workflows/07 | #9 |
 
 ## Next (owner to choose)
 - **M7 backup/restore moved up** (food log grows with no copy; backup must include photos). Notepad I-20 — recommended.
 - **M6 workouts + Today dashboard — PAUSED by owner 2026-11-25** ("we can do better"). Draft plan, NHS quotes and the four-NHS-page finding are in workflows/06 and sources/06. Restart with a fresh Ideas pass when the owner is ready.
-- Open ideas: see the notepad (I-01 … I-27), e.g. I-24 barcode, I-25 calorie-mismatch flag, I-27 café items.
+- Open ideas: see the notepad (I-01 … I-36), e.g. I-25 calorie-mismatch flag, I-29 dev-tool security upgrade (Vitest, Workbox), I-34/I-35 medicine-switch chart labels.
+- Before sharing publicly: trademark check on the name "Steady" (PLAN §4).
 
 ## Environment
-- Cloud environment "magicpen" (personal) allows fdc.nal.usda.gov (refresh `public/data/usda-foods.json` via `scripts/build-usda-foods.py`), www.nhs.uk / www.cdc.gov (exercise sources; CDC still refuses automated access), and world/search.openfoodfacts.org (05b testing).
+- Cloud environment "magicpen" (personal) allows fdc.nal.usda.gov (refresh `public/data/usda-foods.json` via `scripts/build-usda-foods.py`), www.nhs.uk / www.cdc.gov (exercise sources; CDC still refuses automated access), world/search.openfoodfacts.org (05b/05c testing), and dailymed.nlm.nih.gov (medicine labels).
 
 ## Owner preferences (how to work)
 - Wants mockups/screenshots before approving anything visual; plain-language summaries; asks to confirm understanding before big process changes.
