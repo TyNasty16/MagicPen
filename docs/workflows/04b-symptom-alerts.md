@@ -87,6 +87,8 @@ Token Steward trims applied: questions folded into one defaults list; rule tests
 
 Build note: the dismissal store and the cards were combined into one component (`src/components/AlertCards.tsx`); rule thresholds are named constants in `src/lib/symptomAlerts.ts`. Typographic apostrophes (’) are used in the footer, as elsewhere in the app.
 
+**Owner change after screenshots (2026-11-25):** on Home the cards are a pop-up over the dashboard instead of sitting in the page. It opens automatically when there is an alert not seen yet; Close or tapping outside dismisses it; while alerts remain, a small floating "N to look at" pill reopens it. "Hide for now" works as before. The Symptoms screen keeps the cards inline.
+
 ## Review checkpoints
 - Token Steward: before start
 - Code Reviewer: before commit

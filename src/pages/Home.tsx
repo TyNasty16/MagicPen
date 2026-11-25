@@ -62,7 +62,7 @@ export default function Home({ profile }: { profile: Profile }) {
         </a>
       ) : (
         <>
-          <AlertCards symptoms={symptoms} now={now} />
+          <AlertCards symptoms={symptoms} now={now} mode="popup" />
           <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 

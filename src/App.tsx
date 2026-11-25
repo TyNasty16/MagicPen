@@ -69,7 +69,7 @@ export default function App() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
-      <main className="px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-28">
+      <main className="px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-40">
         {route === 'home' && <Home profile={profile} />}
         {route === 'injections' && <Injections key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
         {route === 'weight' && (
