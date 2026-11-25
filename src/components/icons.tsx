@@ -18,3 +18,4 @@ export const BackIcon = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path 
 export const ChevronIcon = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path d="M9 18l6-6-6-6" /></svg>;
 export const SyringeIcon = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path d="M18 2l4 4M15 5l4 4M8 12l4 4M5 19l-3 3M17 7L7 17l-3-3L14 4z" /></svg>;
 export const PlusIcon = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><path d="M12 5v14M5 12h14" /></svg>;
+export const ScaleIcon = (p: SVGProps<SVGSVGElement>) => <svg {...base(p)}><rect x="3" y="3" width="18" height="18" rx="4" /><path d="M8.5 9a5 5 0 0 1 7 0M12 9l1.5-2" /></svg>;

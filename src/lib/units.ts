@@ -27,3 +27,12 @@ export function parseNum(text: string): number | undefined {
 }
 
 export const round1 = (n: number) => Math.round(n * 10) / 10;
+
+/** Weight in the owner's display unit, rounded to 1 decimal. */
+export const displayWeight = (kg: number, u: UnitSystem) => round1(u === 'imperial' ? kgToLb(kg) : kg);
+export const weightUnit = (u: UnitSystem) => (u === 'imperial' ? 'lb' : 'kg');
+/** Parses a typed weight in display units to kg. */
+export function weightToKg(text: string, u: UnitSystem): number | undefined {
+  const n = parseNum(text);
+  return n === undefined ? undefined : u === 'imperial' ? lbToKg(n) : n;
+}

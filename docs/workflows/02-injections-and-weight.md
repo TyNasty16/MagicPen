@@ -1,5 +1,5 @@
 # Workflow 02 — Injections, Next-Dose Card and Weight Graph
-Status: Awaiting approval
+Status: Built — 2026-11-25
 Milestone: 2 — Injection log + site rotation + next-dose card (PLAN §5), plus a weight graph (owner addition) with minimal weight logging pulled forward from Milestone 3
 
 ## Goal
@@ -97,4 +97,4 @@ You need to decide:
 Reply "defaults OK" to accept all four.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK)

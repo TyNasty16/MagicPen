@@ -1,18 +1,24 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState, type ComponentType, type SVGProps } from 'react';
-import { HomeIcon, UserIcon } from './components/icons';
+import { lazy, Suspense, useEffect, useState, type ComponentType, type SVGProps } from 'react';
+import { HomeIcon, ScaleIcon, SyringeIcon, UserIcon } from './components/icons';
 import { getProfile, storageAvailable } from './db/db';
 import Disclaimer from './pages/Disclaimer';
 import Home from './pages/Home';
+import Injections from './pages/Injections';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+
+// The chart library is only needed on the Weight screen, so it loads separately.
+const Weight = lazy(() => import('./pages/Weight'));
 
 // Tabs appear only once their milestone ships.
 const TABS: { route: Route; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
   { route: 'home', label: 'Home', Icon: HomeIcon },
+  { route: 'injections', label: 'Doses', Icon: SyringeIcon },
+  { route: 'weight', label: 'Weight', Icon: ScaleIcon },
   { route: 'profile', label: 'Profile', Icon: UserIcon },
 ];
-const ROUTES = ['home', 'profile', 'settings'] as const;
+const ROUTES = ['home', 'injections', 'weight', 'profile', 'settings'] as const;
 type Route = (typeof ROUTES)[number];
 interface Location { route: Route; params: URLSearchParams }
 
@@ -55,14 +61,21 @@ export default function App() {
   if (profile === undefined) return null;
   if (!profile?.disclaimerAcceptedAt) return <Disclaimer />;
 
-  const fromHome = params.get('from') === 'home';
+  const backHref = params.get('from') === 'home' ? '#/home' : undefined;
+  const startAdding = params.get('add') === '1';
   const activeTab = route === 'settings' ? null : route;
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
       <main className="px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-28">
         {route === 'home' && <Home profile={profile} />}
-        {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={fromHome ? '#/home' : undefined} section={params.get('section') ?? undefined} />}
+        {route === 'injections' && <Injections key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
+        {route === 'weight' && (
+          <Suspense fallback={null}>
+            <Weight key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />
+          </Suspense>
+        )}
+        {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={backHref} section={params.get('section') ?? undefined} />}
         {route === 'settings' && <Settings />}
       </main>
       <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">

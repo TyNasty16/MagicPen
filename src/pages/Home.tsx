@@ -1,16 +1,22 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { GearIcon, PlusIcon, SyringeIcon } from '../components/icons';
 import { CalorieRing, MacroBar, Tile } from '../components/ui';
-import type { Profile } from '../db/db';
-import { nextInjectionDay } from '../lib/nextDose';
+import Sparkline from '../components/Sparkline';
+import { listInjections, listWeights, type Injection, type Profile } from '../db/db';
+import { shortDate } from '../lib/dates';
+import { formatDose } from '../lib/injections';
+import { nextDose } from '../lib/nextDose';
+import { dailyWeights } from '../lib/weight';
 import { effectiveTargets } from '../lib/profileTargets';
-import { kgToLb, mlToFlOz } from '../lib/units';
+import { displayWeight, mlToFlOz, weightUnit } from '../lib/units';
 
-const QUICK_ADD = [
+// Items without an href are not built yet and show as "Soon".
+const QUICK_ADD: { label: string; color: string; href?: string }[] = [
+  { label: 'Dose', color: 'bg-clay', href: '#/injections?from=home&add=1' },
+  { label: 'Weight', color: 'bg-sage', href: '#/weight?from=home&add=1' },
   { label: 'Food', color: 'bg-accent' },
-  { label: 'Weight', color: 'bg-sage' },
   { label: 'Symptom', color: 'bg-gold' },
-  { label: 'Dose', color: 'bg-clay' },
 ];
 
 function greeting(now: Date) {
@@ -22,7 +28,12 @@ export default function Home({ profile }: { profile: Profile }) {
   const now = useNow();
   const targets = effectiveTargets(profile);
   const imperial = profile.units === 'imperial';
-  const weight = (kg: number) => Math.round(imperial ? kgToLb(kg) : kg);
+  const injections = useLiveQuery(listInjections);
+  const weights = useLiveQuery(listWeights);
+  if (!injections || !weights) return null;
+  const daily = dailyWeights(weights);
+  const latest = daily.at(-1);
+  const unit = weightUnit(profile.units);
 
   return (
     <div className="space-y-3.5">
@@ -44,7 +55,7 @@ export default function Home({ profile }: { profile: Profile }) {
         </a>
       ) : (
         <>
-          {profile.injectionWeekday !== undefined && <DoseHero weekday={profile.injectionWeekday} now={now} />}
+          <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 
           <Tile title="Today's nutrition" href="#/profile?from=home&section=targets">
             <div className="flex items-center gap-4">
@@ -58,11 +69,22 @@ export default function Home({ profile }: { profile: Profile }) {
           </Tile>
 
           <div className="grid grid-cols-2 gap-3.5">
-            <Tile title="Weight" href="#/profile?from=home&section=about">
-              <p className="font-serif text-2xl font-semibold">
-                {weight(profile.startWeightKg!)} <span aria-label="to">→</span> {weight(profile.goalWeightKg!)}
-              </p>
-              <p className="text-xs text-muted">{imperial ? 'lb' : 'kg'} · start → goal</p>
+            <Tile title="Weight" href="#/weight?from=home">
+              {latest ? (
+                <>
+                  <p className="font-serif text-2xl font-semibold">{displayWeight(latest.kg, profile.units)} <span className="font-sans text-xs text-muted">{unit}</span></p>
+                  {profile.startWeightKg && <p className="text-xs text-muted">{changeText(latest.kg - profile.startWeightKg, profile.units)}</p>}
+                  <Sparkline values={daily.slice(-30).map((d) => d.kg)} />
+                </>
+              ) : (
+                <>
+                  <p className="font-serif text-2xl font-semibold">
+                    {Math.round(displayWeight(profile.startWeightKg!, profile.units))} <span aria-label="to">→</span> {Math.round(displayWeight(profile.goalWeightKg!, profile.units))}
+                  </p>
+                  <p className="text-xs text-muted">{unit} · start → goal</p>
+                  <p className="mt-2 text-xs font-medium text-accent">Log your first weigh-in</p>
+                </>
+              )}
             </Tile>
             <Tile title="Water">
               <p className="font-serif text-2xl font-semibold">
@@ -77,13 +99,21 @@ export default function Home({ profile }: { profile: Profile }) {
           <section aria-label="Quick add">
             <h2 className="mx-0.5 mt-4 mb-2 text-xs font-semibold uppercase tracking-[0.07em] text-muted">Quick add</h2>
             <div className="grid grid-cols-4 gap-2.5">
-              {QUICK_ADD.map((q) => (
-                <div key={q.label} aria-disabled="true" className="rounded-2xl bg-surface/70 px-1 pt-3 pb-2 text-center text-xs shadow-soft">
-                  <div className={`mx-auto mb-1.5 grid size-9 place-items-center rounded-xl text-white opacity-45 ${q.color}`}><PlusIcon width={18} height={18} /></div>
-                  {q.label}
-                  <span className="mt-0.5 block text-[10px] text-muted">Soon</span>
-                </div>
-              ))}
+              {QUICK_ADD.map((q) =>
+                q.href ? (
+                  <a key={q.label} href={q.href} className="rounded-2xl bg-surface px-1 pt-3 pb-2 text-center text-xs font-medium shadow-soft transition active:scale-95">
+                    <div className={`mx-auto mb-1.5 grid size-9 place-items-center rounded-xl text-white ${q.color}`}><PlusIcon width={18} height={18} /></div>
+                    {q.label}
+                    <span className="mt-0.5 block text-[10px] font-normal text-muted">Add</span>
+                  </a>
+                ) : (
+                  <div key={q.label} aria-disabled="true" className="rounded-2xl bg-surface/70 px-1 pt-3 pb-2 text-center text-xs shadow-soft">
+                    <div className={`mx-auto mb-1.5 grid size-9 place-items-center rounded-xl text-white opacity-45 ${q.color}`}><PlusIcon width={18} height={18} /></div>
+                    {q.label}
+                    <span className="mt-0.5 block text-[10px] text-muted">Soon</span>
+                  </div>
+                ),
+              )}
             </div>
           </section>
         </>
@@ -107,16 +137,25 @@ function useNow() {
   return now;
 }
 
-function DoseHero({ weekday, now }: { weekday: number; now: Date }) {
-  const next = nextInjectionDay(weekday, now);
+function changeText(diffKg: number, units: Profile['units']) {
+  const v = displayWeight(Math.abs(diffKg), units);
+  if (v === 0) return 'same as start';
+  return `${diffKg < 0 ? '−' : '+'}${v} ${weightUnit(units)} since start`;
+}
+
+function DoseHero({ last, weekday, now }: { last?: Injection; weekday?: number; now: Date }) {
+  const next = nextDose(last?.datetime, weekday, now);
+  if (!next) return null;
+  const title = next.daysAway === 0 ? 'Today' : next.daysAway < 0 || next.daysAway > 6 ? shortDate(next.date) : next.date.toLocaleDateString(undefined, { weekday: 'long' });
   return (
-    <section className="flex items-center gap-3.5 rounded-card bg-gradient-to-br from-hero-from to-hero-to p-4.5 text-white shadow-soft">
+    <a href="#/injections?from=home" className="flex items-center gap-3.5 rounded-card bg-gradient-to-br from-hero-from to-hero-to p-4.5 text-white shadow-soft transition active:scale-[0.98]">
       <div className="grid size-12 flex-none place-items-center rounded-2xl bg-white/20"><SyringeIcon /></div>
-      <div>
+      <div className="min-w-0">
         <p className="text-sm">Next injection</p>
-        <p className="font-serif text-[22px] font-semibold">{next.daysAway === 0 ? 'Today' : next.dayName}</p>
+        <p className="font-serif text-[22px] leading-tight font-semibold">{title}</p>
+        {last && <p className="mt-0.5 text-xs">Last: {formatDose(last.doseMg)} on {shortDate(new Date(last.datetime))}</p>}
       </div>
-      {next.daysAway > 0 && <span className="ml-auto whitespace-nowrap rounded-full bg-black/15 px-3 py-1.5 text-sm font-semibold">{next.label}</span>}
-    </section>
+      {next.daysAway !== 0 && <span className="ml-auto whitespace-nowrap rounded-full bg-black/15 px-3 py-1.5 text-sm font-semibold">{next.label}</span>}
+    </a>
   );
 }
