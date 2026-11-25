@@ -56,7 +56,7 @@ Owner decisions captured: 2026-11-25
 ### v2 (later)
 - PDF summary for doctor visits (weight, doses, symptoms, measurements).
 - Barcode scanning for food.
-- Progress photos.
+- ~~Progress photos~~ — moved up: weigh-in photos built in Workflow 02b at the owner's request (2026-11-25).
 - Reminders (see §4 caveat).
 
 ### v3 (later)
