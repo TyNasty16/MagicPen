@@ -33,3 +33,16 @@
 - **Service worker / PWA cache:** this holds app files, not health data. Leave it alone, or a reload could break offline use. Do not unregister it.
 - **Privacy and cost:** fully on-device, with no network calls and $0.
 - **Product rules:** nothing here recommends doses. Keep the calm Warm Sand style, with a muted danger color rather than a loud red.
+
+## After-build — 2026-11-25
+
+**What landed:** Settings has a "Reset all data" card. A sheet lists what is erased and says there is no backup. Typing RESET exactly enables "Erase everything". That clears all six tables in one transaction plus 3 localStorage keys, then reloads to the disclaimer (commit 6ca2ff5; screenshots `docs/screenshots/04e-*.png`).
+
+**Follow-ups (optional):**
+1. **Short "All data erased" note after the reload.** The owner lands on the disclaimer with no sign the wipe worked. One calm line would confirm it.
+2. **Phone keyboard for the RESET box.** Turn on auto-capitalise (and turn off autocorrect) so typing the word is easy. The exact-match rule stays.
+3. **Other open copies of the app.** If a second tab or the installed app is open, it may show stale data until refreshed. Worth a quick check, and possibly a refresh prompt.
+
+**Still deferred (Milestone 7 export):** item counts in the sheet and a "Save a copy first" link. Both are already open on the notepad (I-14, I-15).
+
+**Felt off:** nothing found in the screenshots.
