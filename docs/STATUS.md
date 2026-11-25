@@ -24,7 +24,7 @@ _Last updated: 2026-11-25_
 ## Next (owner to choose)
 - **05b — Open Food Facts search** for branded/packaged foods (the one allowed network call; privacy notice first). Notepad I-19.
 - **M7 backup/restore moved up** (food log grows with no copy; backup must include photos). Notepad I-20 — recommended.
-- **M6 workouts + Today dashboard.**
+- **M6 workouts + Today dashboard — PAUSED by owner 2026-11-25** ("we can do better"). Draft plan, NHS quotes and the four-NHS-page finding are in workflows/06 and sources/06. Restart with a fresh Ideas pass when the owner is ready.
 - Open ideas: see the notepad (I-01 … I-23).
 
 ## Environment

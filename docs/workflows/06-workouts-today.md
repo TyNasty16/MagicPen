@@ -1,5 +1,5 @@
 # Workflow 06 — Workouts and the Today dashboard
-Status: Draft
+Status: Paused by owner 2026-11-25 ("I think we can do better") — not approved, nothing built
 Milestone: 6 — Workouts + Today dashboard (PLAN.md §5; scope §2 items 6–7)
 
 ## Ideas considered
@@ -142,7 +142,9 @@ By hand, one browser pass (fake-indexeddb isn't installed, so the database check
 - Open: can the Move screen show the walking guidance only as quoted, with no suggested minutes per day? Default yes.
 - Weekly total starts Monday (default); say "Sunday" to change.
 
-## Review checkpoints
+## Paused (2026-11-25)
+After the plan was sent, the owner asked why only 6 exercises were found. Further NHS pages give about 20: Strength (7), Balance (5, including step-up), Sitting (5), Flexibility (4; neck rotation repeats). Glute bridge, bird-dog and plank still have no source; NHS Inform and the US National Institute on Aging were proposed as places to look. The owner paused the workout part to rethink it. Resume with a fresh Ideas opening pass.
+
 - Token Steward: before start (applied: NHS text checked against the one sources file, merged wording tests, planned days dropped for a weekly count, database checks in the single browser pass. Not applied: dropping the mockup — the owner asked for mockups as well as screenshots on Milestone 5)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
