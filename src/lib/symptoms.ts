@@ -21,7 +21,8 @@ export const SYMPTOM_TYPES: { id: string; label: string }[] = [
 
 export const symptomLabel = (id: string) => SYMPTOM_TYPES.find((t) => t.id === id)?.label ?? id;
 
-export const isValidSeverity = (n: number) => Number.isInteger(n) && n >= 0 && n <= 5;
+/** Severity 1 (mild) – 5 (severe). 0/5 is not logged (owner decision, Workflow 04c). */
+export const isValidSeverity = (n: number) => Number.isInteger(n) && n >= 1 && n <= 5;
 
 /** Local calendar days since the latest injection at or before the symptom (0–6), or null. */
 export function daysSinceLastInjection(symptomIso: string, injectionIsos: string[]): number | null {
@@ -44,7 +45,7 @@ export function patternByDay(symptoms: Pick<Symptom, 'datetime' | 'type' | 'seve
   const isos = injections.map((i) => i.datetime);
   const sums = Array.from({ length: 7 }, () => ({ total: 0, count: 0 }));
   for (const s of symptoms) {
-    if (s.type !== type) continue;
+    if (s.type !== type || s.severity < 1) continue; // ignore any old 0/5 entries
     const d = daysSinceLastInjection(s.datetime, isos);
     if (d === null) continue;
     sums[d].total += s.severity;

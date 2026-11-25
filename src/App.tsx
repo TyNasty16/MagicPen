@@ -79,7 +79,7 @@ export default function App() {
         )}
         {route === 'symptoms' && (
           <Suspense fallback={null}>
-            <Symptoms key={params.toString()} backHref={backHref} startAdding={startAdding} />
+            <Symptoms key={params.toString()} backHref={backHref} startAdding={startAdding} detail={params.get('detail') ?? undefined} />
           </Suspense>
         )}
         {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={backHref} section={params.get('section') ?? undefined} />}

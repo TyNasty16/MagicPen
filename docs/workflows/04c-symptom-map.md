@@ -1,5 +1,5 @@
 # Workflow 04c — Symptom map
-Status: Awaiting approval
+Status: Built — 2026-11-25 (awaiting go-live)
 Milestone: Improvement to Milestone 4 (owner request)
 
 ## Goal
@@ -82,6 +82,10 @@ By hand: 390px layout, tap targets, chart lazy-loading, offline reload, one pass
 
 Token Steward trims applied: tests written with the logic and iterated alone, full suite + build once at the end; page edit and route wiring done in one pass; one browser pass at 390px with screenshots of the 3-day view, 7-day view and drill-down, with tap-size, offline and no-network checks automated in that same pass; colour ramp chosen by running the contrast check once.
 
+**Owner decision (2026-11-25):** a 0/5 symptom is not logged. The log panel offers severity 1–5 only; any existing 0/5 entries are ignored by the map, drill-down, patterns and alerts.
+
+Build notes: drill-down route is `#/symptoms?detail=<type>` (keeps the existing hash router; looks the same to the owner). Colour steps checked for ≥4.5:1 text contrast — dark text on steps 0–3, white on steps 4–5 (step 3 lightened to #d6866b, step 1 to #efc4b0; step 0 has a hairline border). Future-dated entries are ignored everywhere.
+
 ## Review checkpoints
 - Token Steward: before start
 - Code Reviewer: before commit
@@ -94,4 +98,4 @@ You need to decide: approve this plan.
 Also confirm one open question: a symptom logged only at severity 0 still gets a row, reading "none this week." This is the plan's default unless you prefer otherwise.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (0/5 is not logged: severity buttons become 1–5; existing 0/5 entries are ignored by the map)
