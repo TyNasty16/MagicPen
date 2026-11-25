@@ -1,5 +1,5 @@
 # Workflow 04 — Side effects, tips and "When to get help"
-Status: Awaiting approval
+Status: Built — awaiting owner final approval (screenshots sent)
 Milestone: 4 — Side-effect log + tips + red flags (PLAN.md §5; scope §2 item 4)
 
 ## Goal
@@ -40,7 +40,7 @@ Stomach pain: the general line above, plus a link "See When to get help" that sc
 - Stop using Wegovy and call your healthcare provider right away if you have severe pain in your stomach area that will not go away, with or without vomiting.
 - Tell your healthcare provider right away if nausea, vomiting or diarrhea does not go away.
 - Stop using Wegovy and get medical help right away for signs of a serious allergic reaction: swelling of the face, lips, tongue or throat; trouble breathing or swallowing; severe rash or itching; fainting or feeling dizzy; very rapid heartbeat.
-- Gallbladder problems: pain in the upper stomach, fever, yellowing of the skin or eyes, or clay-colored stools. Call your healthcare provider. **[TO VERIFY before build: "fever / yellowing / clay-colored stools" wording against the full Medication Guide. Upper-stomach pain and gallbladder problems/gallstones are confirmed in the label.]**
+- Gallbladder problems: pain in the upper stomach, fever, yellowing of the skin or eyes, or clay-colored stools. Call your healthcare provider. [Verified 2026-11-25: wegovy.com safety page lists "pain in your upper stomach (abdomen), fever, yellowing of the skin or eyes (jaundice), or clay-colored stools"; matches Drugs.com and WebMD.]
 - Tell your healthcare provider about a lump or swelling in your neck, hoarseness, trouble swallowing, or shortness of breath.
 - Pay attention to changes in mood. Call your healthcare provider right away for new or worse depression or thoughts of suicide. In a crisis, call or text 988 (US).
 - If you also take insulin or a sulfonylurea, low blood sugar is possible. Follow your diabetes plan and tell your provider.
@@ -84,7 +84,7 @@ Automatic (Vitest, `src/lib/symptoms.test.ts`):
 By hand: 390px layout, tap sizes, offline mode, multi-chip save, edit/delete, v4 to v5 upgrade, help box visible in both places, source wording check.
 
 ## Risks & open questions
-- Medical wording is quoted verbatim from the listed sources. The gallbladder line is flagged for verification before build.
+- Medical wording is quoted verbatim from the listed sources (gallbladder line verified before build).
 - Proposed defaults — owner can reply "defaults OK":
   - Tab: add a 5th tab "Symptoms" (recommended over a switch inside Doses, since logging is frequent, the screen needs the help box always visible, and Doses already has a lot). Five tabs still fit at 390px.
   - Several symptoms per log: yes, per-chip severity, shared time and note.
@@ -117,4 +117,4 @@ Token Steward review: applied — the focused test file runs during the build, w
 - Approve the medical wording.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner for build — 2026-11-25 (defaults OK; wording approved "for now", final approval after screenshots)

@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { lazy, Suspense, useEffect, useState, type ComponentType, type SVGProps } from 'react';
-import { HomeIcon, ScaleIcon, SyringeIcon, UserIcon } from './components/icons';
+import { HomeIcon, PulseIcon, ScaleIcon, SyringeIcon, UserIcon } from './components/icons';
 import { getProfile, storageAvailable } from './db/db';
 import Disclaimer from './pages/Disclaimer';
 import Home from './pages/Home';
@@ -10,15 +10,17 @@ import Settings from './pages/Settings';
 
 // The chart library is only needed on the Weight screen, so it loads separately.
 const Weight = lazy(() => import('./pages/Weight'));
+const Symptoms = lazy(() => import('./pages/Symptoms'));
 
 // Tabs appear only once their milestone ships.
 const TABS: { route: Route; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
   { route: 'home', label: 'Home', Icon: HomeIcon },
   { route: 'injections', label: 'Doses', Icon: SyringeIcon },
   { route: 'weight', label: 'Body', Icon: ScaleIcon },
+  { route: 'symptoms', label: 'Symptoms', Icon: PulseIcon },
   { route: 'profile', label: 'Profile', Icon: UserIcon },
 ];
-const ROUTES = ['home', 'injections', 'weight', 'profile', 'settings'] as const;
+const ROUTES = ['home', 'injections', 'weight', 'symptoms', 'profile', 'settings'] as const;
 type Route = (typeof ROUTES)[number];
 interface Location { route: Route; params: URLSearchParams }
 
@@ -73,6 +75,11 @@ export default function App() {
         {route === 'weight' && (
           <Suspense fallback={null}>
             <Weight key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} focusPhoto={params.get('photo') === '1'} view={params.get('view') === 'measurements' ? 'measurements' : undefined} />
+          </Suspense>
+        )}
+        {route === 'symptoms' && (
+          <Suspense fallback={null}>
+            <Symptoms key={params.toString()} backHref={backHref} startAdding={startAdding} />
           </Suspense>
         )}
         {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={backHref} section={params.get('section') ?? undefined} />}
