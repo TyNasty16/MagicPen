@@ -29,4 +29,10 @@ Append a section `## After-build ideas — <date>`:
 4. **Anything that felt off** in the result (UX, wording, consistency) — honest, specific.
 Keep it under ~250 words. These are suggestions for the owner to take or leave; nothing is built from them without a new request.
 
+## The notepad (both passes)
+Also keep `docs/ideas/NOTEPAD.md` up to date — the owner reads it to see what was suggested, done and skipped.
+- Add every NEW idea from this pass to "💡 Suggested — still open" with the next free id (I-NN), a one-line idea, the source ("<id> opening" / "<id> after-build") and short notes. If an idea repeats an open one, add the source to that row instead of a new row.
+- On the closing pass, move ideas the change delivered to "✅ Done" (D-NN, say where) and ideas that were considered and not taken to "⏭️ Skipped" (S-NN, give the reason — owner decision, technical, or not a real issue).
+- Update the "Last updated" date and the totals line.
+
 Reply to the main session with just the file path and a 2-line summary.
