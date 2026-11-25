@@ -16,7 +16,7 @@ Owner request: "Clean up the body mapping. I want it to look sleek. Yours looks 
 
 ## In scope
 - **Body map** (`BodyMap.tsx`) — Option B, redrawn:
-  - Two neutral figures, **Front** and **Back**, drawn with natural 8-head proportions: rounded shoulders, arms slightly away from the body with elbows and wrists, defined waist and hips, tapered legs. Thin warm outline, soft sand fill.
+  - Two neutral figures, **Front** and **Back**: sturdy, friendly proportions with rounded shoulders, arms slightly away from the body ending in soft rounded ends at hip height (no wrists or hands — owner request), defined waist and hips, tapered legs. Thin warm outline, soft sand fill.
   - Sites where the Wegovy guides place them: lower abdomen either side of the navel and front-outer thighs on the Front figure; back of the upper arms on the Back figure.
   - Each site is colored by recency: **used recently** (within 2 weeks, light terracotta) or **rested** (light sage); the selected site is solid terracotta with a soft glow; the suggested site has a dashed ring.
   - "Right"/"Left" labels beside each figure (on the Back figure the person's left is on the viewer's left), plus a legend and a "Selected: …" line. The accessible button list stays below as compact chips (44px tall).
