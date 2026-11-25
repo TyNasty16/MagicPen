@@ -78,7 +78,7 @@ By hand, one browser pass at 390px (no fake-indexeddb in the project, so the upg
   - Fiber: optional field; shown as a progress line, not a ring.
   - Delete confirmation: yes for My Foods; entries delete with an undo-free confirm like Symptoms.
 - **Owner added both extras (2026-11-25):**
-  - **Protein first:** on Home and the Food screen the ring shows protein (g of target); calories become the first bar under it, then carbs and fat. `CalorieRing` is generalised to a `Ring` with a unit label.
+  - **Protein first → two rings (owner change after mockup v1):** on Home and the Food screen, a **macro ring** of three nested arcs (protein outside, carbs, fat inside; protein grams in the centre) sits beside a separate **calorie ring**. A legend below lists protein, carbs and fat as value / target g. The MacroBars on these two views are replaced; `CalorieRing` stays for calories and a new `MacroRing` component is added.
   - **"Barely ate today":** a button on the Food screen marks the shown day as a low-intake day (new `dayMarks` table in v6: `++id, date`; cleared by reset). The day shows a calm "Marked: barely ate" chip with Undo. A marked day counts as a logged day for the protein note (with whatever was logged, often 0 g). Facts only, no advice.
 - Backup/export is not yet built and food data will accumulate; consider moving Milestone 7 up.
 - Small samples (3 logged days) can mislead; the note shows both counts.

@@ -11,7 +11,9 @@ h1.t{font-family:Georgia,serif;font-size:26px;margin:0 0 4px}.sub{color:var(--mu
 .card{background:var(--surface);border-radius:22px;padding:16px;box-shadow:0 6px 18px rgb(80 50 30/.08);margin-bottom:12px}
 .lbl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between}
 .ringwrap{display:flex;gap:16px;align-items:center}
-.ring{position:relative;width:116px;height:116px;flex:none}.ring svg{transform:rotate(-90deg)}
+.ring{position:relative;width:116px;height:116px;flex:none}.ring svg{transform:rotate(-90deg)}.r2{width:128px;height:128px}
+.pair{display:flex;justify-content:space-around}.pc{text-align:center}.rl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.legend{display:grid;gap:6px;margin-top:12px;font-size:14px}.legend span{display:flex;align-items:center;gap:8px;color:var(--muted)}.legend em{font-style:normal;margin-left:auto}.legend b{color:var(--ink);font-weight:600}.legend span b+*{}.legend i{width:10px;height:10px;border-radius:9px;display:inline-block}
 .ring .in{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
 .ring b{font-family:"New York",Georgia,serif;font-size:24px;display:block}.ring small{font-size:11px;color:var(--muted)}
 .bars{flex:1;display:grid;gap:10px}.bar .top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}.bar .top span:last-child{color:var(--muted)}
@@ -41,21 +43,15 @@ h1.t{font-family:Georgia,serif;font-size:26px;margin:0 0 4px}.sub{color:var(--mu
 .tag{display:inline-block;background:#fff3cc;color:#6b4a00;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:middle}
 </style></head><body>
 <h1 class="t">Milestone 5 — Food & water (mockup)</h1>
-<p class="sub">Protein first: the ring is protein; calories are the first bar. Yellow tags mark the two extras you asked for. Numbers are sample data.</p>
+<p class="sub">v2 — macro ring (protein outside, then carbs, then fat; protein grams in the centre) and a separate calorie ring. Yellow tags mark the two extras you asked for. Numbers are sample data.</p>
 <div class="row">
 
 <div><p class="cap">1 · Home — nutrition and water tiles</p>
 <div class="phone">
  <div class="serif h">Good evening</div>
  <div class="hero"><div class="lbl"><span>Next dose</span></div><div class="big">Monday · in 5 days</div><div style="font-size:13px;opacity:.9">Last: 1 mg · left thigh</div></div>
- <div class="card"><div class="lbl"><span>Today's nutrition <span class="tag">PROTEIN FIRST</span></span><span>›</span></div>
-  <div class="ringwrap">
-   <div class="ring"><svg width="116" height="116"><circle cx="58" cy="58" r="49" stroke-width="12" fill="none" stroke="#efe5da"/><circle cx="58" cy="58" r="49" stroke-width="12" fill="none" stroke="#a85540" stroke-linecap="round" stroke-dasharray="307.9" stroke-dashoffset="135"/></svg><div class="in"><div><b>63</b><small>of 112 g<br>protein</small></div></div></div>
-   <div class="bars">
-    <div class="bar"><div class="top"><span>Calories</span><span>1,140 / 1,930</span></div><div class="track"><div class="fill" style="width:59%;background:var(--clay)"></div></div></div>
-    <div class="bar"><div class="top"><span>Carbs</span><span>118 / 190 g</span></div><div class="track"><div class="fill" style="width:62%;background:var(--sage)"></div></div></div>
-    <div class="bar"><div class="top"><span>Fat</span><span>38 / 59 g</span></div><div class="track"><div class="fill" style="width:64%;background:var(--gold)"></div></div></div>
-   </div></div></div>
+ <div class="card"><div class="lbl"><span>Today's nutrition <span class="tag">MACROS + CALORIES</span></span><span>›</span></div>
+  <div class="pair"><div class="pc"><div class="ring r2"><svg width="128" height="128"><circle cx="64" cy="64" r="58" stroke-width="9" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="58" stroke-width="9" fill="none" stroke="#a85540" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="159.4"/><circle cx="64" cy="64" r="47" stroke-width="9" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="47" stroke-width="9" fill="none" stroke="#8fa37a" stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="111.9"/><circle cx="64" cy="64" r="36" stroke-width="9" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="36" stroke-width="9" fill="none" stroke="#d8a750" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="80.5"/></svg><div class="in"><div><b style="font-size:20px">63 g</b><small>protein</small></div></div></div><div class="rl">Macros</div></div><div class="pc"><div class="ring r2"><svg width="128" height="128"><circle cx="64" cy="64" r="56" stroke-width="12" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="56" stroke-width="12" fill="none" stroke="#c8735a" stroke-linecap="round" stroke-dasharray="351.9" stroke-dashoffset="144.0"/></svg><div class="in"><div><b style="font-size:20px">1,140</b><small>of 1,930<br>kcal</small></div></div></div><div class="rl">Calories</div></div></div><div class="legend"><span><i style="background:#a85540"></i>Protein<em><b>63</b> / 112 g</em></span><span><i style="background:#8fa37a"></i>Carbs<em><b>118</b> / 190 g</em></span><span><i style="background:#d8a750"></i>Fat<em><b>38</b> / 59 g</em></span></div></div>
  <div class="grid2">
   <div class="card"><div class="lbl"><span>Water</span></div><div class="big">40 <span class="small">/ 101 fl oz</span></div><div class="track" style="margin:10px 0"><div class="fill" style="width:40%;background:#2a6fb8"></div></div><div class="b q" style="height:44px">+ 8 fl oz</div></div>
   <div class="card"><div class="lbl"><span>Weight</span></div><div class="big">212.4 <span class="small">lb</span></div><div class="small">BMI 31.4 · Obesity</div></div>
@@ -68,13 +64,7 @@ h1.t{font-family:Georgia,serif;font-size:26px;margin:0 0 4px}.sub{color:var(--mu
  <div class="serif h"><span class="back">‹</span>Food</div>
  <div class="daynav"><button>‹</button><div>Today · Wed 25 Nov</div><button style="opacity:.35">›</button></div>
  <div class="card">
-  <div class="ringwrap">
-   <div class="ring"><svg width="116" height="116"><circle cx="58" cy="58" r="49" stroke-width="12" fill="none" stroke="#efe5da"/><circle cx="58" cy="58" r="49" stroke-width="12" fill="none" stroke="#a85540" stroke-linecap="round" stroke-dasharray="307.9" stroke-dashoffset="135"/></svg><div class="in"><div><b>63</b><small>of 112 g<br>protein</small></div></div></div>
-   <div class="bars">
-    <div class="bar"><div class="top"><span>Calories</span><span>1,140 / 1,930</span></div><div class="track"><div class="fill" style="width:59%;background:var(--clay)"></div></div></div>
-    <div class="bar"><div class="top"><span>Carbs</span><span>118 / 190 g</span></div><div class="track"><div class="fill" style="width:62%;background:var(--sage)"></div></div></div>
-    <div class="bar"><div class="top"><span>Fat</span><span>38 / 59 g</span></div><div class="track"><div class="fill" style="width:64%;background:var(--gold)"></div></div></div>
-   </div></div>
+  <div class="pair"><div class="pc"><div class="ring r2"><svg width="128" height="128"><circle cx="64" cy="64" r="58" stroke-width="9" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="58" stroke-width="9" fill="none" stroke="#a85540" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="159.4"/><circle cx="64" cy="64" r="47" stroke-width="9" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="47" stroke-width="9" fill="none" stroke="#8fa37a" stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="111.9"/><circle cx="64" cy="64" r="36" stroke-width="9" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="36" stroke-width="9" fill="none" stroke="#d8a750" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="80.5"/></svg><div class="in"><div><b style="font-size:20px">63 g</b><small>protein</small></div></div></div><div class="rl">Macros</div></div><div class="pc"><div class="ring r2"><svg width="128" height="128"><circle cx="64" cy="64" r="56" stroke-width="12" fill="none" stroke="#efe5da"/><circle cx="64" cy="64" r="56" stroke-width="12" fill="none" stroke="#c8735a" stroke-linecap="round" stroke-dasharray="351.9" stroke-dashoffset="144.0"/></svg><div class="in"><div><b style="font-size:20px">1,140</b><small>of 1,930<br>kcal</small></div></div></div><div class="rl">Calories</div></div></div><div class="legend"><span><i style="background:#a85540"></i>Protein<em><b>63</b> / 112 g</em></span><span><i style="background:#8fa37a"></i>Carbs<em><b>118</b> / 190 g</em></span><span><i style="background:#d8a750"></i>Fat<em><b>38</b> / 59 g</em></span></div>
   <div class="note">Fiber 14 / 28 g · Protein below target on 4 of the last 7 days</div>
  </div>
  <div class="btns"><div class="b p">Log food</div><div class="b q">My Foods</div></div>
