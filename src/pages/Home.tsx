@@ -10,7 +10,8 @@ import { nextDose } from '../lib/nextDose';
 import { dailyWeights } from '../lib/weight';
 import { weighInStatus } from '../lib/weighIn';
 import { effectiveTargets } from '../lib/profileTargets';
-import { displayWeight, mlToFlOz, weightUnit } from '../lib/units';
+import { displayWeight, mlToFlOz, round1, weightUnit } from '../lib/units';
+import { currentBmi } from '../lib/body';
 
 // Items without an href are not built yet and show as "Soon".
 const QUICK_ADD: { label: string; color: string; href?: string }[] = [
@@ -35,6 +36,7 @@ export default function Home({ profile }: { profile: Profile }) {
   const daily = dailyWeights(weights);
   const latest = daily.at(-1);
   const unit = weightUnit(profile.units);
+  const bmiNow = currentBmi(profile, weights);
 
   return (
     <div className="space-y-3.5">
@@ -76,6 +78,7 @@ export default function Home({ profile }: { profile: Profile }) {
                 <>
                   <p className="font-serif text-2xl font-semibold">{displayWeight(latest.kg, profile.units)} <span className="font-sans text-xs text-muted">{unit}</span></p>
                   {profile.startWeightKg && <p className="text-xs text-muted">{changeText(latest.kg - profile.startWeightKg, profile.units)}</p>}
+                  {bmiNow !== undefined && <p className="text-xs text-muted">BMI {round1(bmiNow)}</p>}
                   <Sparkline values={daily.slice(-30).map((d) => d.kg)} />
                 </>
               ) : (

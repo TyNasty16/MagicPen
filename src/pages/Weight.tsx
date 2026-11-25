@@ -3,20 +3,48 @@ import { useEffect, useRef, useState } from 'react';
 import { CameraIcon, PlusIcon } from '../components/icons';
 import PhotoViewer from '../components/PhotoViewer';
 import { Button, Card, Field, inputClass, ScreenHeader } from '../components/ui';
-import WeightChart from '../components/WeightChart';
-import { deleteWeight, getPhoto, listWeights, saveWeighIn, weightIdsWithPhotos, type Profile, type WeightEntry } from '../db/db';
+import TrendChart from '../components/TrendChart';
+import Segmented from '../components/Segmented';
+import Measurements from './Measurements';
+import { deleteWeight, getPhoto, listInjections, listWeights, saveWeighIn, weightIdsWithPhotos, type Profile, type WeightEntry } from '../db/db';
 import { dayKey, fromDayKey, shortDate } from '../lib/dates';
+import { formatDose } from '../lib/injections';
+import { doseChanges, filterRange, rangeStart, RANGES, type Range } from '../lib/range';
 import { resizeToJpeg } from '../lib/image';
 import { clearAddParam } from '../lib/route';
 import { displayWeight, weightToKg, weightUnit } from '../lib/units';
 import { dailyWeights, movingAverage7, weightStats } from '../lib/weight';
 
-export default function Weight({ profile, backHref, startAdding, focusPhoto }: { profile: Profile; backHref?: string; startAdding: boolean; focusPhoto: boolean }) {
+type View = 'weight' | 'measurements';
+
+/** The "Body" tab: weight and measurements. */
+export default function Body(props: { profile: Profile; backHref?: string; startAdding: boolean; focusPhoto: boolean; view?: View }) {
+  const [view, setView] = useState<View>(props.view ?? 'weight');
+  const [range, setRange] = useState<Range>('90d'); // kept here so it survives switching views
+  return (
+    <div className="space-y-4">
+      <ScreenHeader title="Body" backHref={props.backHref} />
+      <Segmented
+        label="Body section"
+        value={view}
+        onChange={setView}
+        options={[
+          { id: 'weight', label: 'Weight' },
+          { id: 'measurements', label: 'Measurements' },
+        ]}
+      />
+      {view === 'weight' ? <Weight {...props} range={range} setRange={setRange} /> : <Measurements profile={props.profile} />}
+    </div>
+  );
+}
+
+function Weight({ profile, startAdding, focusPhoto, range, setRange }: { profile: Profile; startAdding: boolean; focusPhoto: boolean; range: Range; setRange: (r: Range) => void }) {
   const entries = useLiveQuery(listWeights);
   const photoIds = useLiveQuery(weightIdsWithPhotos);
+  const injections = useLiveQuery(listInjections);
   const [editing, setEditing] = useState<WeightEntry | 'new' | null>(startAdding ? 'new' : null);
   const [viewing, setViewing] = useState<{ id: number; caption: string }>();
-  if (!entries || !photoIds) return null;
+  if (!entries || !photoIds || !injections) return null;
 
   const u = profile.units;
   const unit = weightUnit(u);
@@ -27,9 +55,18 @@ export default function Weight({ profile, backHref, startAdding, focusPhoto }: {
   for (const e of entries) if (photoIds.has(e.id!) && !photoDays.has(e.date)) photoDays.set(e.date, e.id!);
   const caption = (e: WeightEntry) => `${shortDate(fromDayKey(e.date))} · ${displayWeight(e.weightKg, u)} ${unit}`;
 
+  // Average over all data first, then cut to the range, so the first points in range have a true 7-day average.
+  const avg = movingAverage7(daily);
+  const points = filterRange(
+    daily.map((d, i) => ({ date: d.date, value: displayWeight(d.kg, u), avg: displayWeight(avg[i].kg, u) })),
+    range,
+  );
+  const today = dayKey(new Date());
+  const from = rangeStart(range);
+  const doseMarks = doseChanges(injections).map((c) => ({ date: c.date, label: c.first ? `Start ${formatDose(c.doseMg)}` : formatDose(c.doseMg) }));
+
   return (
     <div className="space-y-4">
-      <ScreenHeader title="Weight" backHref={backHref} />
       {editing ? (
         <WeightForm
           key={editing === 'new' ? 'new' : editing.id}
@@ -53,14 +90,26 @@ export default function Weight({ profile, backHref, startAdding, focusPhoto }: {
             </div>
           )}
           <Card title="Trend">
+            {daily.length > 0 && (
+              <div className="mb-3">
+                <Segmented label="Graph range" value={range} onChange={setRange} options={RANGES} small />
+              </div>
+            )}
             {daily.length === 0 ? (
               <p className="text-sm text-muted">Log your first weigh-in to start your graph.</p>
+            ) : points.length === 0 ? (
+              <p className="py-8 text-center text-sm text-muted">No weigh-ins in the last {range === '30d' ? '30' : '90'} days. Choose “All” to see earlier ones.</p>
             ) : (
-              <WeightChart
-                daily={daily}
-                average={movingAverage7(daily)}
-                goalKg={profile.goalWeightKg}
-                units={u}
+              <TrendChart
+                points={points}
+                seriesLabel="Weigh-ins"
+                pointLabel="Weigh-in"
+                avgLabel="7-day average"
+                unit={unit}
+                goal={profile.goalWeightKg === undefined ? undefined : displayWeight(profile.goalWeightKg, u)}
+                goalNearWithin={u === 'imperial' ? 15 : 7}
+                window={from ? [from, today] : undefined}
+                doseMarks={doseMarks}
                 photoDays={photoDays}
                 onPhoto={(id) => setViewing({ id, caption: caption(byId.get(id)!) })}
               />
