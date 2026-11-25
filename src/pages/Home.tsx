@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react';
 import { GearIcon, PlusIcon, SyringeIcon } from '../components/icons';
 import { CalorieRing, MacroBar, Tile } from '../components/ui';
 import Sparkline from '../components/Sparkline';
-import { listInjections, listWeights, type Injection, type Profile } from '../db/db';
-import { shortDate } from '../lib/dates';
+import { listInjections, listSymptoms, listWeights, type Injection, type Profile } from '../db/db';
+import { symptomLabel } from '../lib/symptoms';
+import AlertCards from '../components/AlertCards';
+import { daysBetween, shortDate } from '../lib/dates';
 import { formatDose } from '../lib/injections';
 import { nextDose } from '../lib/nextDose';
 import { dailyWeights } from '../lib/weight';
@@ -17,8 +19,8 @@ import { currentBmi } from '../lib/body';
 const QUICK_ADD: { label: string; color: string; href?: string }[] = [
   { label: 'Dose', color: 'bg-clay', href: '#/injections?from=home&add=1' },
   { label: 'Weight', color: 'bg-sage', href: '#/weight?from=home&add=1' },
+  { label: 'Symptom', color: 'bg-gold', href: '#/symptoms?from=home&add=1' },
   { label: 'Food', color: 'bg-accent' },
-  { label: 'Symptom', color: 'bg-gold' },
 ];
 
 function greeting(now: Date) {
@@ -32,7 +34,9 @@ export default function Home({ profile }: { profile: Profile }) {
   const imperial = profile.units === 'imperial';
   const injections = useLiveQuery(listInjections);
   const weights = useLiveQuery(listWeights);
-  if (!injections || !weights) return null;
+  const symptoms = useLiveQuery(listSymptoms);
+  if (!injections || !weights || !symptoms) return null;
+  const lastSymptom = symptoms[0];
   const daily = dailyWeights(weights);
   const latest = daily.at(-1);
   const unit = weightUnit(profile.units);
@@ -58,6 +62,7 @@ export default function Home({ profile }: { profile: Profile }) {
         </a>
       ) : (
         <>
+          <AlertCards symptoms={symptoms} now={now} mode="popup" />
           <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 
@@ -120,6 +125,11 @@ export default function Home({ profile }: { profile: Profile }) {
                 ),
               )}
             </div>
+            {lastSymptom && (
+              <a href="#/symptoms?from=home" className="mt-2 flex min-h-11 items-center px-1 text-sm text-muted">
+                Last logged: {symptomLabel(lastSymptom.type).toLowerCase()} {lastSymptom.severity}/5 · {relDays(lastSymptom.datetime, now)}
+              </a>
+            )}
           </section>
         </>
       )}
@@ -179,6 +189,11 @@ function WeighInCard({ dayKeys, now }: { dayKeys: string[]; now: Date }) {
       </div>
     </section>
   );
+}
+
+function relDays(iso: string, now: Date) {
+  const d = daysBetween(new Date(iso), now);
+  return d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} days ago`;
 }
 
 function changeText(diffKg: number, units: Profile['units']) {
