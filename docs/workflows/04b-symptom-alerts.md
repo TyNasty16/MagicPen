@@ -1,5 +1,5 @@
 # Workflow 04b — Symptom "take a closer look" alerts
-Status: Awaiting approval
+Status: Built — awaiting owner screenshot approval
 Milestone: Addition to Milestone 4 (owner request), before Milestone 4 goes live
 
 ## Goal
@@ -85,6 +85,8 @@ By hand: 390px layout, tap sizes, offline, amber style next to the red help box,
 
 Token Steward trims applied: questions folded into one defaults list; rule tests written as table-driven cases in one test file with the wording guard; Home opens the existing pop-up component directly (no new helper module); full suite and build run once at the end.
 
+Build note: the dismissal store and the cards were combined into one component (`src/components/AlertCards.tsx`); rule thresholds are named constants in `src/lib/symptomAlerts.ts`. Typographic apostrophes (’) are used in the footer, as elsewhere in the app.
+
 ## Review checkpoints
 - Token Steward: before start
 - Code Reviewer: before commit
@@ -102,4 +104,4 @@ Token Steward trims applied: questions folded into one defaults list; rule tests
 - Approve the card wording: "Take a closer look" and "This isn't medical advice. If you're unsure, contact your healthcare provider."
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK, wording approved; screenshots before going live)

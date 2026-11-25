@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useCallback, useState } from 'react';
+import AlertCards from '../components/AlertCards';
 import HelpPopup from '../components/HelpPopup';
 import { PlusIcon } from '../components/icons';
 import PatternChart from '../components/PatternChart';
@@ -38,6 +39,7 @@ export default function Symptoms({ backHref, startAdding }: { backHref?: string;
   return (
     <div className="space-y-4">
       <ScreenHeader title="Symptoms" backHref={backHref} />
+      <AlertCards symptoms={symptoms} />
       <Button className="flex w-full items-center justify-center gap-2" onClick={() => setEditing('new')}>
         <PlusIcon width={20} height={20} /> Log symptoms
       </Button>

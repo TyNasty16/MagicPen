@@ -5,6 +5,7 @@ import { CalorieRing, MacroBar, Tile } from '../components/ui';
 import Sparkline from '../components/Sparkline';
 import { listInjections, listSymptoms, listWeights, type Injection, type Profile } from '../db/db';
 import { symptomLabel } from '../lib/symptoms';
+import AlertCards from '../components/AlertCards';
 import { daysBetween, shortDate } from '../lib/dates';
 import { formatDose } from '../lib/injections';
 import { nextDose } from '../lib/nextDose';
@@ -33,8 +34,9 @@ export default function Home({ profile }: { profile: Profile }) {
   const imperial = profile.units === 'imperial';
   const injections = useLiveQuery(listInjections);
   const weights = useLiveQuery(listWeights);
-  const lastSymptom = useLiveQuery(async () => (await listSymptoms())[0] ?? null);
-  if (!injections || !weights || lastSymptom === undefined) return null;
+  const symptoms = useLiveQuery(listSymptoms);
+  if (!injections || !weights || !symptoms) return null;
+  const lastSymptom = symptoms[0];
   const daily = dailyWeights(weights);
   const latest = daily.at(-1);
   const unit = weightUnit(profile.units);
@@ -60,6 +62,7 @@ export default function Home({ profile }: { profile: Profile }) {
         </a>
       ) : (
         <>
+          <AlertCards symptoms={symptoms} now={now} />
           <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 
