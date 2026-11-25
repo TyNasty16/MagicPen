@@ -21,7 +21,7 @@ Let the owner log food and water and see today's totals against their targets on
 - `resetAllData` clears the three new tables.
 
 ## Out of scope
-- Open Food Facts search, its privacy notice and offline message (05b, separate document).
+- Open Food Facts search for branded foods, its privacy notice and offline message (05b, separate document). The built-in USDA list IS in scope (see "Added by owner" below).
 - Barcode scanning, paid food databases, meal plans, recipes.
 - Any advice: no "eat more protein", no dose links, no warning text beyond the factual count.
 - Export/backup (Milestone 7); a Symptoms-style tab for food.
@@ -83,8 +83,23 @@ By hand, one browser pass at 390px (no fake-indexeddb in the project, so the upg
 - Backup/export is not yet built and food data will accumulate; consider moving Milestone 7 up.
 - Small samples (3 logged days) can mislead; the note shows both counts.
 
+## Added by owner: built-in USDA food list (2026-11-25, option B)
+The owner asked how the app knows a food's nutrition, then chose to fold a built-in USDA list into this milestone (no key, no network).
+
+- **Source:** USDA FoodData Central, "Survey Foods (FNDDS)" release 2024-10-31: 5,431 everyday foods as eaten (e.g. "Muffin, chocolate chip"), each with household portions ("1 medium", 130 g). Public domain (CC0); attribution shown anyway. Chosen over "SR Legacy" (2018, 7,793 mostly raw ingredients, no chocolate chip muffin).
+- **Trim:** `scripts/build-usda-foods.py` keeps name, kcal, protein, carbs, fat, fiber per 100 g and up to 4 portions → `public/data/usda-foods.json` (measured: 660 KB, 112 KB compressed). The raw USDA zip is not committed; the script records the release date. The download host (fdc.nal.usda.gov) is allowed only in the new personal "magicpen" cloud environment, for refreshing the file; the app itself never contacts USDA.
+- **Loading:** fetched from the app's own site only when the search box is first used, and precached by the service worker so it works offline. Adds nothing to app start.
+- **Search (in the Log food sheet):** a "Search foods" box above the fields. Matches foods containing all typed words; ranks names starting with the first word, then shorter names; shows up to 20. Nothing typed leaves the phone.
+- **Picking a result:** choose a portion (e.g. "1 medium · 130 g") or type grams. The four fields and fiber fill in for that portion and stay editable; servings (½ / 1 / 1½) multiply as before. The entry is stored like any manual entry, and "Save to My Foods" works the same.
+- **Example:** Muffin, chocolate chip, 1 medium (130 g) → 523 kcal, 7.5 g protein, 72 g carbs, 24.7 g fat, 2.3 g fiber.
+- **Footer line in the sheet:** "Food data: USDA FoodData Central (public domain)."
+- **Steps added:** (a) the script and data file; (b) `src/lib/foodSearch.ts` with `loadFoods()`, `searchFoods(list, query)` and `portionValues(food, grams)`; (c) the search box and portion picker in `FoodSheet.tsx`.
+- **Tests added:** one `portionValues` test (the muffin example, plus 0 g rejected); one table-driven `searchFoods` test (all words, ranking, case/commas, empty query, max 20). The script itself validates its output (name present, numbers ≥ 0, portion grams > 0) and fails if not, so there is no separate test of the file.
+- **Acceptance added:** searching "chocolate chip muffin" offline finds it; choosing "1 medium" fills the values above; no network request goes anywhere but the app's own site.
+- **Still out of scope:** branded and packaged foods (Open Food Facts, 05b), barcode scanning.
+
 ## Review checkpoints
-- Token Steward: before start (applied: dropped `foodId`, 4 screenshots, merged day tests, removed duplicate rules, custom water deferred; upgrade/reset checks moved to the browser pass since fake-indexeddb isn't installed. Not applied: the "move Milestone 7 up" note stays — food data grows with no backup, and the owner should know)
+- Token Steward: before start (USDA section: merged tests, file check moved into the script; not applied: dropping the network allowance — it was already approved and used once to fetch the file; it only matters for future refreshes. Earlier, applied: dropped `foodId`, 4 screenshots, merged day tests, removed duplicate rules, custom water deferred; upgrade/reset checks moved to the browser pass since fake-indexeddb isn't installed. Not applied: the "move Milestone 7 up" note stays — food data grows with no backup, and the owner should know)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
 
