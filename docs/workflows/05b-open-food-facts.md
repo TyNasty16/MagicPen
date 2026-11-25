@@ -1,5 +1,5 @@
 # Workflow 05b — Open Food Facts search (branded and packaged foods)
-Status: Draft
+Status: Built — 2026-11-25
 Milestone: 5 — Nutrition (PLAN.md §2 item 5; §5 order), part b. Follows workflow 05 (built).
 
 ## Ideas considered
@@ -75,7 +75,13 @@ One browser pass at 390px with Playwright route interception serving the fixture
 - Restaurant and coffee-shop items are mostly absent from OFF (tested); the USDA list remains the better source for those.
 - The legacy OFF search returned 503 in testing, so only Search-a-licious is used; if it changes or goes down, search shows the 503 message and nothing else breaks.
 
-## Review checkpoints
+## Build notes (2026-11-25)
+- Built as planned. `fields` also asks for `serving_quantity_unit` (needed for the ml rule).
+- Found in the browser pass and fixed: the built-in search missed plurals ("muffins" found nothing); typed plurals now match the singular ("muffins", "strawberries", "potatoes").
+- Code review fixes: a late online reply is ignored once the words change; "Save to My Foods" follows the latest pick (ticked for online, cleared for built-in); portion labels only count as stating the amount when the whole number and unit match ("1 bar (140 g)" is not 40 g); the notice moves focus to Search and Cancel returns it; errors are announced once; the cooldown timer is cleared when the sheet closes.
+- Not changed: the product's saved name "Name (Brand)" is built when picked rather than in the parser (no effect on behaviour).
+- One live search during the build: 200 in 0.6 s.
+
 - Token Steward: before start (applied: one fixture file, guard folded into the reviewer's check, 3 screenshots with in-script assertions, smoke-check question settled. Not applied: dropping ml servings — protein shakes are listed in ml and are a likely use on Wegovy, so "≈ g" stays as the default)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
@@ -99,4 +105,4 @@ One browser pass at 390px with Playwright route interception serving the fixture
 - Approve the exact text: the privacy notice, the "check against the label" warning, the source credit, and the error messages.
 
 ## Approval
-- [ ] Approved by owner — date: (defaults 1, 2, 3, 5 approved 2026-11-25; 4 changed to the ml rule above; exact text not yet approved)
+- [x] Approved by owner — date: 2026-11-25 (defaults 1, 2, 3, 5; 4 changed to the ml rule; exact text approved)

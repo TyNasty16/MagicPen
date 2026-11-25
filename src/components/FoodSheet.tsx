@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { deleteFoodLog, saveFood, saveFoodLog, type FoodLogEntry, type FoodValues, type Meal } from '../db/db';
-import { loadFoods, portionsOf, portionValues, searchFoods, type UsdaFood } from '../lib/foodSearch';
+import { fromUsda, loadFoods, pickValues, searchFoods, statesAmount, type Pickable, type PickedValues, type UsdaFood } from '../lib/foodSearch';
+import { searchOnline } from '../lib/offClient';
+import { hiddenLine, OFF_CREDIT, OFF_MESSAGES, OFF_NOTICE, OFF_WARNING, offSavedName, type OffProduct } from '../lib/offSearch';
 import { MEALS, validateFood, whole } from '../lib/nutrition';
 import { parseNum } from '../lib/units';
 import BottomSheet from './BottomSheet';
@@ -30,9 +32,10 @@ export default function FoodSheet({ day, initial, onDone }: { day: string; initi
   const [favourite, setFavourite] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // A new pick fills the name; changing grams keeps whatever name is in the box.
-  const fill = (v: FoodValues, newPick: boolean) => {
+  // A new pick fills the name; changing grams keeps whatever name is in the box. Online picks pre-tick My Foods.
+  const fill = (v: PickedValues, newPick: boolean, online: boolean) => {
     if (newPick) setName(v.name);
+    if (newPick) setFavourite(online); // online picks pre-tick My Foods; a later built-in pick clears it
     setServingDesc(v.servingDesc);
     setNums({ kcal: String(Math.round(v.kcal)), proteinG: num(v.proteinG), carbsG: num(v.carbsG), fatG: num(v.fatG), fiberG: num(v.fiberG) });
     setErrors({});
@@ -79,7 +82,7 @@ export default function FoodSheet({ day, initial, onDone }: { day: string; initi
       footer={<Button className="w-full" onClick={save}>Save{preview}</Button>}
     >
       <div className="space-y-4">
-        {!initial && <UsdaSearch onPick={fill} />}
+        {!initial && <FoodSearch onPick={fill} />}
         <Field label="Name" htmlFor="fname" error={errors.name} hint={servingDesc ? `Per serving: ${servingDesc}` : undefined}>
           <input id="fname" className={inputClass} value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" />
         </Field>
@@ -123,15 +126,40 @@ export default function FoodSheet({ day, initial, onDone }: { day: string; initi
   );
 }
 
-/** Search box over the built-in USDA list; picking a food and a portion fills the form. Runs on the device. */
-function UsdaSearch({ onPick }: { onPick: (v: FoodValues, newPick: boolean) => void }) {
+const OFF_ACK_KEY = 'steady.offNoticeAck';
+const OFF_COOLDOWN_MS = 3000;
+const readAck = () => {
+  try {
+    return localStorage.getItem(OFF_ACK_KEY) === '1';
+  } catch {
+    return false; // storage blocked: the notice shows each time
+  }
+};
+
+type Online = { state: 'idle' } | { state: 'notice' } | { state: 'loading' } | { state: 'done'; shown: OffProduct[]; hidden: number } | { state: 'error'; message: string };
+
+/**
+ * Search box: the built-in USDA list (on the phone) first; "Search online" sends the words to Open Food Facts only when tapped.
+ * Picking a food and a portion fills the form.
+ */
+function FoodSearch({ onPick }: { onPick: (v: PickedValues, newPick: boolean, online: boolean) => void }) {
   const [foods, setFoods] = useState<UsdaFood[]>();
   const [failed, setFailed] = useState(false);
   const [query, setQuery] = useState('');
-  const [picked, setPicked] = useState<UsdaFood>();
-  const [portion, setPortion] = useState<[string, number]>();
-  const [grams, setGrams] = useState('');
+  const [picked, setPicked] = useState<{ food: Pickable; online: boolean }>();
+  const [portion, setPortion] = useState<string>();
+  const [amount, setAmount] = useState('');
+  const [online, setOnline] = useState<Online>({ state: 'idle' });
+  const [usedOnline, setUsedOnline] = useState(false);
+  const [coolingDown, setCoolingDown] = useState(false);
   const loading = useRef(false);
+  const request = useRef(0); // ignores a late reply once the words changed or a newer search started
+  const cooldownTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const onlineButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => () => {
+    request.current++;
+    clearTimeout(cooldownTimer.current);
+  }, []);
 
   const start = () => {
     if (foods || loading.current) return;
@@ -140,25 +168,51 @@ function UsdaSearch({ onPick }: { onPick: (v: FoodValues, newPick: boolean) => v
     loadFoods().then(setFoods, () => setFailed(true)).finally(() => (loading.current = false));
   };
 
-  const choose = (f: UsdaFood, p: [string, number], newPick = false) => {
-    setPortion(p);
-    setGrams(String(p[1]));
-    const v = portionValues(f, p[1], p[0]);
-    if (v) onPick(v, newPick);
+  const choose = (p: Pickable, isOnline: boolean, [label, amt]: [string, number], newPick = false) => {
+    setPortion(label);
+    setAmount(String(amt));
+    const v = pickValues(p, amt, label);
+    if (v) onPick(v, newPick, isOnline);
   };
-  const pick = (f: UsdaFood) => {
-    setPicked(f);
-    choose(f, portionsOf(f)[0], true);
+  const pick = (p: Pickable, isOnline: boolean) => {
+    setPicked({ food: p, online: isOnline });
+    choose(p, isOnline, p.portions[0], true);
   };
-  const typeGrams = (text: string) => {
-    setGrams(text);
+  const typeAmount = (text: string) => {
+    setAmount(text);
     setPortion(undefined);
-    const g = parseNum(text);
-    const v = picked && g !== undefined ? portionValues(picked, g) : null;
-    if (v) onPick(v, false);
+    const a = parseNum(text);
+    const v = picked && a !== undefined ? pickValues(picked.food, a) : null;
+    if (v) onPick(v, false, picked!.online);
+  };
+
+  const runOnline = async () => {
+    setOnline({ state: 'loading' });
+    setUsedOnline(true);
+    setCoolingDown(true);
+    clearTimeout(cooldownTimer.current);
+    cooldownTimer.current = setTimeout(() => setCoolingDown(false), OFF_COOLDOWN_MS);
+    const id = ++request.current;
+    const r = await searchOnline(query);
+    if (id !== request.current) return;
+    setOnline(r.ok ? { state: 'done', shown: r.shown, hidden: r.hidden } : { state: 'error', message: OFF_MESSAGES[r.error] });
+  };
+  const askOnline = () => {
+    if (coolingDown || online.state === 'loading' || !query.trim()) return;
+    if (readAck()) void runOnline();
+    else setOnline({ state: 'notice' });
+  };
+  const acceptNotice = () => {
+    try {
+      localStorage.setItem(OFF_ACK_KEY, '1');
+    } catch {
+      /* storage blocked: ask again next time */
+    }
+    void runOnline();
   };
 
   const results = foods && !picked ? searchFoods(foods, query) : [];
+  const unit = picked?.food.unit ?? 'g';
   return (
     <div className="rounded-2xl border border-line bg-bg/60 p-3">
       <label htmlFor="fsearch" className="mb-1 block text-sm font-medium">Search foods</label>
@@ -173,16 +227,18 @@ function UsdaSearch({ onPick }: { onPick: (v: FoodValues, newPick: boolean) => v
         onChange={(e) => {
           setQuery(e.target.value);
           setPicked(undefined);
+          setOnline({ state: 'idle' });
+          request.current++;
           start();
         }}
       />
       {failed && <p role="alert" className="mt-2 text-sm text-danger">The food list couldn’t load. You can still type the values below.</p>}
       {query.trim() && !picked && foods && (
-        <ul className="mt-2 max-h-64 divide-y divide-line overflow-y-auto rounded-xl bg-surface" aria-label="Search results">
+        <ul className="mt-2 max-h-64 divide-y divide-line overflow-y-auto rounded-xl bg-surface" aria-label="Built-in results">
           {results.length === 0 && <li className="p-3 text-sm text-muted">No match. Try fewer words, or type the values below.</li>}
           {results.map((f, i) => (
             <li key={i}>
-              <button type="button" onClick={() => pick(f)} className="flex min-h-11 w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm">
+              <button type="button" onClick={() => pick(fromUsda(f), false)} className="flex min-h-11 w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm">
                 <span>{f[0]}</span>
                 <span className="flex-none text-xs text-muted">{Math.round(f[1])} kcal/100 g</span>
               </button>
@@ -190,23 +246,68 @@ function UsdaSearch({ onPick }: { onPick: (v: FoodValues, newPick: boolean) => v
           ))}
         </ul>
       )}
+
+      {query.trim() && !picked && (
+        <div className="mt-2">
+          {online.state === 'notice' ? (
+            <div role="group" aria-label="Search online?" className="rounded-xl border border-line bg-surface p-3 text-sm">
+              <p>{OFF_NOTICE}</p>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => { setOnline({ state: 'idle' }); setTimeout(() => onlineButton.current?.focus()); }} className="min-h-11 rounded-2xl border border-line font-semibold text-accent">Cancel</button>
+                <button type="button" autoFocus onClick={acceptNotice} className="min-h-11 rounded-2xl bg-accent font-semibold text-on-accent">Search</button>
+              </div>
+            </div>
+          ) : (
+            <button ref={onlineButton} type="button" onClick={askOnline} disabled={coolingDown || online.state === 'loading'} className="min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-sm font-semibold text-accent disabled:opacity-60">
+              {online.state === 'loading' ? 'Searching…' : coolingDown ? 'Wait…' : `Search online for “${query.trim()}”`}
+            </button>
+          )}
+          <div aria-live="polite">
+            {online.state === 'error' && <p className="mt-2 text-sm text-danger">{online.message}</p>}
+            {online.state === 'done' && (
+              <>
+                <ul className="mt-2 max-h-72 divide-y divide-line overflow-y-auto rounded-xl bg-surface" aria-label="Online results">
+                  {online.shown.length === 0 && <li className="p-3 text-sm text-muted">{OFF_MESSAGES.empty}</li>}
+                  {online.shown.map((p, i) => (
+                    <li key={i}>
+                      <button type="button" onClick={() => pick({ ...p, name: offSavedName(p) }, true)} className="flex min-h-11 w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm">
+                        <span className="min-w-0">
+                          {p.name}
+                          {p.brand && <span className="block text-xs text-muted">{p.brand}</span>}
+                        </span>
+                        <span className="flex-none text-xs text-muted">{Math.round(p.per100.kcal)} kcal/100 {p.unit}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                {hiddenLine(online.hidden) && <p className="mt-1 text-xs text-muted">{hiddenLine(online.hidden)}</p>}
+                <p className="mt-1 text-xs text-muted">{OFF_CREDIT}</p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {picked && (
         <div className="mt-3">
-          <p className="mb-1 text-sm font-medium" id="portion-label">Portion · {picked[0]}</p>
+          {picked.online && <p className="mb-2 rounded-xl bg-warn/10 px-3 py-2 text-sm font-medium">{OFF_WARNING}</p>}
+          <p className="mb-1 text-sm font-medium" id="portion-label">Portion · {picked.food.name}</p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby="portion-label">
-            {portionsOf(picked).map((p) => (
-              <button key={p[0]} type="button" aria-pressed={portion?.[0] === p[0]} onClick={() => choose(picked, p)} className={chip(portion?.[0] === p[0])}>
-                {p[0]}{p[0] !== '100 g' && <span className="font-normal opacity-80"> · {p[1]} g</span>}
+            {picked.food.portions.map((p) => (
+              <button key={p[0]} type="button" aria-pressed={portion === p[0]} onClick={() => choose(picked.food, picked.online, p)} className={chip(portion === p[0])}>
+                {p[0]}
+                {p[0] !== `100 ${unit}` && !statesAmount(p[0], p[1], unit) && <span className="font-normal opacity-80"> · {p[1]} {unit}</span>}
               </button>
             ))}
           </div>
           <div className="mt-2 flex items-center gap-2">
-            <input aria-label="Grams" className={`${inputClass} w-28!`} inputMode="decimal" value={grams} onChange={(e) => typeGrams(e.target.value)} />
-            <span className="text-sm text-muted">grams</span>
+            <input aria-label={unit === 'ml' ? 'Millilitres' : 'Grams'} className={`${inputClass} w-28!`} inputMode="decimal" value={amount} onChange={(e) => typeAmount(e.target.value)} />
+            <span className="text-sm text-muted">{unit === 'ml' ? 'ml' : 'grams'}</span>
           </div>
+          {picked.online && <p className="mt-2 text-xs text-muted">{OFF_CREDIT}</p>}
         </div>
       )}
-      <p className="mt-2 text-xs text-muted">Food data: USDA FoodData Central (public domain). Searches stay on this phone.</p>
+      <p className="mt-2 text-xs text-muted">Food data: USDA FoodData Central (public domain). {usedOnline ? 'Built-in list searches stay on this phone.' : 'Searches stay on this phone.'}</p>
     </div>
   );
 }

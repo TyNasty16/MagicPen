@@ -79,6 +79,9 @@ describe('USDA search and portions', () => {
     ['MUFFIN, Chocolate', ['Muffin, chocolate chip']],
     ['oatmeal', ['Oatmeal, NFS', 'Oatmeal, made with milk, sweetened', 'Pie, oatmeal']],
     ['ban', ['Banana, raw']],
+    ['muffins', ['Muffin, chocolate chip']],
+    ['bananas', ['Banana, raw']],
+    ['oatmeals', ['Oatmeal, NFS', 'Oatmeal, made with milk, sweetened', 'Pie, oatmeal']],
     ['pizza', []],
     ['   ', []],
   ])('"%s"', (q, names) => expect(searchFoods(list, q).map((f) => f[0])).toEqual(names));

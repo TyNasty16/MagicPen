@@ -1,0 +1,14 @@
+{
+  "hits": [
+    { "code": "1", "product_name": "Chocolate chip muffins", "brands": ["two-bite"], "serving_size": "1 muffin (99 g)", "serving_quantity": 99, "serving_quantity_unit": "g",
+      "nutriments": { "energy-kcal_100g": 402, "proteins_100g": 4.1, "carbohydrates_100g": 51.6, "fat_100g": 19.7, "fiber_100g": 1.64 } },
+    { "code": "2", "product_name": "Protein shake", "brands": ["fairlife"], "serving_size": "340 ml", "serving_quantity": 340, "serving_quantity_unit": "ml",
+      "nutriments": { "energy-kcal_100g": 44.1, "proteins_100g": 8.82, "carbohydrates_100g": 0.882, "fat_100g": 0.735 } },
+    { "code": "3", "product_name": "Chocolate Chip Muffins", "brands": ["xx:trader-joe-s"], "serving_size": "1 muffin (99 g)", "serving_quantity": 99, "nutriments": {} },
+    { "code": "4", "product_name": "No protein listed", "nutriments": { "energy-kcal_100g": 120 } },
+    { "code": "5", "product_name": "  ", "nutriments": { "energy-kcal_100g": 50, "proteins_100g": 1 } },
+    { "code": "6", "product_name": "Sparkling water", "brands": "xx:Brand A, Brand B", "serving_size": "1 can 330 ml", "serving_quantity": "330",
+      "nutriments": { "energy-kcal_100g": 0, "proteins_100g": 0 } },
+    { "code": "7", "product_name": "Crackers", "nutriments": { "energy-kcal_100g": "430", "proteins_100g": "9" } }
+  ]
+}
