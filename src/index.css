@@ -19,6 +19,7 @@
   --color-gold: #d8a750;
   --color-warn: #b7791f;
   --color-danger: #b42318;
+  --color-reset: #8a3324; /* muted red-brown for the reset section; white text 8.1:1 */
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-serif: "New York", ui-serif, Georgia, serif;
   --radius-card: 22px;

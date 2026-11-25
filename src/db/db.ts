@@ -132,3 +132,15 @@ export const listSymptoms = () => db.symptoms.orderBy('datetime').reverse().toAr
 /** Saves several symptoms logged together in one transaction. */
 export const saveSymptoms = (entries: Symptom[]) => db.transaction('rw', db.symptoms, () => db.symptoms.bulkPut(entries));
 export const deleteSymptom = (id: number) => db.symptoms.delete(id);
+
+const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen'];
+
+/** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
+export async function resetAllData(): Promise<void> {
+  await db.transaction('rw', [db.profile, db.injections, db.weights, db.photos, db.measurements, db.symptoms], () =>
+    Promise.all([db.profile.clear(), db.injections.clear(), db.weights.clear(), db.photos.clear(), db.measurements.clear(), db.symptoms.clear()]),
+  );
+  for (const k of UI_KEYS) {
+    try { localStorage.removeItem(k); } catch { /* storage blocked: nothing saved there */ }
+  }
+}

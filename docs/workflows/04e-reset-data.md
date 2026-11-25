@@ -1,5 +1,5 @@
 # Workflow 04e — Reset all data
-Status: Draft
+Status: Built — 2026-11-25
 Milestone: Small add-on to the Settings screen (owner request); no new milestone in PLAN.md §5
 
 ## Ideas considered
@@ -24,7 +24,7 @@ Add a "Reset all data" button in Settings that wipes everything the owner has en
 
 ## Steps
 1. `src/db/db.ts`: add `resetAllData()`. One `db.transaction('rw', all six tables, ...)` clearing each table; only after it succeeds, remove the three `steady.*` localStorage keys. On failure it throws and nothing is reloaded.
-2. `src/pages/Settings.tsx`: add the "Reset all data" section and the confirm sheet (warning text, text input, disabled-until-`RESET` delete button, Cancel). On success call `location.reload()`; on error show a short message and stay on the page. Input match is exact and case-sensitive.
+2. `src/pages/Settings.tsx`: add the "Reset all data" section and the confirm sheet (warning text, text input, disabled-until-`RESET` delete button, Cancel). On success reload at the app root (`location.replace`, drops the `#/settings` hash so the restart lands on Home); on error show a short message and stay on the page. Input match is exact and case-sensitive.
 3. Builder reads only the end of `Settings.tsx` and the table declarations in `db.ts`.
 4. After code-reviewer fixes: run `npm test` and `npm run build` once, then one browser pass at 390px against the checklist below.
 
@@ -77,4 +77,4 @@ Other notes:
 - No automated test; it is checked by hand instead.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK)
