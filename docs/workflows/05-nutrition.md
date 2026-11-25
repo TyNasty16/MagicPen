@@ -1,5 +1,5 @@
 # Workflow 05 — Nutrition: food log, My Foods, water
-Status: Draft
+Status: Approved
 Milestone: 5 — Nutrition (PLAN.md §2 item 5; §5 order). Open Food Facts search is split out as 05b.
 
 ## Ideas considered
@@ -77,7 +77,9 @@ By hand, one browser pass at 390px (no fake-indexeddb in the project, so the upg
   - Protein note: needs at least 3 logged days in the last 7; factual sentence only.
   - Fiber: optional field; shown as a progress line, not a ring.
   - Delete confirmation: yes for My Foods; entries delete with an undo-free confirm like Symptoms.
-- Protein-first display (idea from the ideas file) and a "barely ate today" marker are not in the plan; not added. Reply "add" for either.
+- **Owner added both extras (2026-11-25):**
+  - **Protein first:** on Home and the Food screen the ring shows protein (g of target); calories become the first bar under it, then carbs and fat. `CalorieRing` is generalised to a `Ring` with a unit label.
+  - **"Barely ate today":** a button on the Food screen marks the shown day as a low-intake day (new `dayMarks` table in v6: `++id, date`; cleared by reset). The day shows a calm "Marked: barely ate" chip with Undo. A marked day counts as a logged day for the protein note (with whatever was logged, often 0 g). Facts only, no advice.
 - Backup/export is not yet built and food data will accumulate; consider moving Milestone 7 up.
 - Small samples (3 logged days) can mislead; the note shows both counts.
 
@@ -105,4 +107,4 @@ By hand, one browser pass at 390px (no fake-indexeddb in the project, so the upg
 - Optional extras (reply "add" for either): a protein-first display, and a "barely ate today" marker.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK; both extras added; mockup before build and screenshots after)
