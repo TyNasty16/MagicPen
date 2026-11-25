@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-25 (after 05b Open Food Facts) · Totals: 💡 24 · ✅ 25 · ⏭️ 18_
+_Last updated: 2026-11-25 (after 05c barcode scanning) · Totals: 💡 26 · ✅ 32 · ⏭️ 23_
 
 ---
 
@@ -34,9 +34,11 @@ _Last updated: 2026-11-25 (after 05b Open Food Facts) · Totals: 💡 24 · ✅ 
 | I-21 | Custom water amount | 05 after-build | Quick-adds are only 8 oz / 250 ml and 16 oz / 500 ml; custom was deferred. |
 | I-22 | 7-day protein strip on the Food screen | 05 after-build | Small bars per day vs target, so the protein note can be seen. |
 | I-23 | Recent foods list (one tap to log again) | 05 after-build, 05b opening | For foods not saved to My Foods. 05b also suggested "recent online picks" for offline use; same list would cover both. |
-| I-24 | Barcode scan for one packaged product (05c) | 05b opening (approach 4) | Most accurate for packaged food. Needs camera permission, and the barcode is sent to Open Food Facts, so it needs its own privacy notice. |
 | I-25 | Warn when an online product's calories don't match its protein/carbs/fat | 05b after-build | Volunteer entries can be wrong (one shake was about 3x off). Simple arithmetic check, no medical wording. |
 | I-27 | Add common café and restaurant items to the built-in list | 05b after-build | Online search mostly misses Starbucks-type items. Needs a sourced data list. |
+| I-28 | Keep the barcode on a saved food (and on "not found" hand entry) so the next scan finds it offline | 05c opening, 05c after-build | Needs a new stored field. Deliberately left out of 05c. |
+| I-29 | Upgrade the dev-only tools flagged by npm audit (Vitest major upgrade, vite-plugin-pwa / Workbox) | 05c after-build | Build tools only, not shipped to the phone. Do as its own small change with the full test run. |
+| I-30 | Re-try the torch toggle, and "scan another" without closing the scanner | 05c after-build | Torch was left out (iPhone support unreliable). Needs a real-phone check first. |
 
 ## ✅ Done
 
@@ -67,6 +69,13 @@ _Last updated: 2026-11-25 (after 05b Open Food Facts) · Totals: 💡 24 · ✅ 
 | D-23 | Source credit line (Open Food Facts attribution) | 05b opening | 05b — credit shown under results |
 | D-25 | Keep drinks in ml (no ml-to-g guess) | 05b after-build (was I-26) | Already built in 05b — drinks use Open Food Facts' per-100 ml values (owner: "only if there is no other way"). |
 | D-24 | Incomplete products never shown as 0 | 05b opening (watch-out) | 05b — products without nutrition are hidden, with a line saying how many; "check against the label" warning added |
+| D-26 | Barcode scan for one packaged product (was I-24) | 05b opening (approach 4) | 05c — commit 8cd52d6 |
+| D-27 | Full-screen continuous scanner, loaded only when opened (approach 1, recommended) | 05c opening | 05c — zxing chunk about 126 KB, not precached |
+| D-28 | Type-the-number fallback, equally prominent (approach 4) | 05c opening | 05c |
+| D-29 | Separate first-scan privacy notice (camera stays on the phone, only the number is sent) | 05c opening (watch-out) | 05c — own acknowledgement; 05b notice unchanged |
+| D-30 | Remember scanned products in My Foods | 05c opening | 05c — "Save to My Foods" pre-ticked |
+| D-31 | Catch bad barcodes before any network call; only the number leaves the phone | 05c opening (watch-out) | 05c — digits only, 8/12/13 length, check digit; OFF text cleaned |
+| D-32 | "Not found" shortcut to enter the food by hand | 05c opening | 05c — built without keeping the barcode (see I-28) |
 
 ## ⏭️ Skipped
 
@@ -90,7 +99,12 @@ _Last updated: 2026-11-25 (after 05b Open Food Facts) · Totals: 💡 24 · ✅ 
 | S-16 | Built-in / Online source toggle | 05b opening (approach 2) | Technical: easy to leave on Online; one box with a button is simpler and safer |
 | S-17 | Auto-search online as you type | 05b opening (approach 3) | Technical/privacy: would send partial words and hit rate limits |
 | S-18 | Per-result grey "no protein listed" hint | 05b opening | Technical: products without nutrition are hidden instead, with a count (D-24) |
+| S-19 | Tap-to-capture still-photo scanner | 05c opening (approach 2) | Technical: continuous scan plus typed number already covers it |
+| S-20 | Small inline scanner inside the food sheet | 05c opening (approach 3) | Technical: cramped, keyboard clashes with the camera |
+| S-21 | Torch toggle | 05c opening | Owner default "left out" — iPhone Safari support unreliable (see I-30) |
+| S-22 | Scan history (last 5) | 05c opening | Owner default: out of scope; My Foods already keeps scanned items |
+| S-23 | Extend the 05b privacy notice instead of a new one | 05c opening (watch-out) | Technical: that notice says "words you typed", wrong for a number and a camera; a separate notice is clearer |
 
 ---
 
-_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md)._
+_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md), [`05c-barcode.md`](05c-barcode.md)._

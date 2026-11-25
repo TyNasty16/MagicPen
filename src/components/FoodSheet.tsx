@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { deleteFoodLog, saveFood, saveFoodLog, type FoodLogEntry, type FoodValues, type Meal } from '../db/db';
 import { fromUsda, loadFoods, pickValues, searchFoods, statesAmount, type Pickable, type PickedValues, type UsdaFood } from '../lib/foodSearch';
-import { searchOnline } from '../lib/offClient';
+import { lookupBarcode, searchOnline } from '../lib/offClient';
+import { BARCODE_TEXT, type ShortFormat } from '../lib/barcode';
+import BarcodeScanner from './BarcodeScanner';
 import { hiddenLine, OFF_CREDIT, OFF_MESSAGES, OFF_NOTICE, OFF_WARNING, offSavedName, type OffProduct } from '../lib/offSearch';
 import { MEALS, validateFood, whole } from '../lib/nutrition';
 import { parseNum } from '../lib/units';
@@ -127,14 +129,24 @@ export default function FoodSheet({ day, initial, onDone }: { day: string; initi
 }
 
 const OFF_ACK_KEY = 'steady.offNoticeAck';
+const SCAN_ACK_KEY = 'steady.barcodeNoticeAck';
 const OFF_COOLDOWN_MS = 3000;
-const readAck = () => {
+const readAck = (key: string) => {
   try {
-    return localStorage.getItem(OFF_ACK_KEY) === '1';
+    return localStorage.getItem(key) === '1';
   } catch {
     return false; // storage blocked: the notice shows each time
   }
 };
+const saveAck = (key: string) => {
+  try {
+    localStorage.setItem(key, '1');
+  } catch {
+    /* storage blocked: ask again next time */
+  }
+};
+
+type Scan = { state: 'idle' } | { state: 'notice' } | { state: 'open' } | { state: 'looking' } | { state: 'message'; text: string };
 
 type Online = { state: 'idle' } | { state: 'notice' } | { state: 'loading' } | { state: 'done'; shown: OffProduct[]; hidden: number } | { state: 'error'; message: string };
 
@@ -152,12 +164,15 @@ function FoodSearch({ onPick }: { onPick: (v: PickedValues, newPick: boolean, on
   const [online, setOnline] = useState<Online>({ state: 'idle' });
   const [usedOnline, setUsedOnline] = useState(false);
   const [coolingDown, setCoolingDown] = useState(false);
+  const [scan, setScan] = useState<Scan>({ state: 'idle' });
   const loading = useRef(false);
   const request = useRef(0); // ignores a late reply once the words changed or a newer search started
+  const scanRequest = useRef(0); // the same for barcode lookups (typing in the search box doesn't cancel one)
   const cooldownTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const onlineButton = useRef<HTMLButtonElement>(null);
   useEffect(() => () => {
     request.current++;
+    scanRequest.current++;
     clearTimeout(cooldownTimer.current);
   }, []);
 
@@ -199,16 +214,36 @@ function FoodSearch({ onPick }: { onPick: (v: PickedValues, newPick: boolean, on
   };
   const askOnline = () => {
     if (coolingDown || online.state === 'loading' || !query.trim()) return;
-    if (readAck()) void runOnline();
+    if (readAck(OFF_ACK_KEY)) void runOnline();
     else setOnline({ state: 'notice' });
   };
   const acceptNotice = () => {
-    try {
-      localStorage.setItem(OFF_ACK_KEY, '1');
-    } catch {
-      /* storage blocked: ask again next time */
-    }
+    saveAck(OFF_ACK_KEY);
     void runOnline();
+  };
+
+  const startScan = () => !coolingDown && setScan(readAck(SCAN_ACK_KEY) ? { state: 'open' } : { state: 'notice' });
+  const acceptScanNotice = () => {
+    saveAck(SCAN_ACK_KEY);
+    setScan({ state: 'open' });
+  };
+  // `code` has passed cleanBarcode (in the scanner); only this number is sent.
+  const onCode = async (code: string, format?: ShortFormat) => {
+    setScan({ state: 'looking' });
+    setOnline({ state: 'idle' });
+    setUsedOnline(true);
+    setCoolingDown(true); // same 3 s gap between Open Food Facts requests as online search
+    clearTimeout(cooldownTimer.current);
+    cooldownTimer.current = setTimeout(() => setCoolingDown(false), OFF_COOLDOWN_MS);
+    const id = ++scanRequest.current;
+    const r = await lookupBarcode(code, format);
+    if (id !== scanRequest.current) return;
+    if (!r.ok) return setScan({ state: 'message', text: OFF_MESSAGES[r.error] });
+    if (r.kind === 'notfound') return setScan({ state: 'message', text: BARCODE_TEXT.notFound });
+    if (r.kind === 'nonutrition') return setScan({ state: 'message', text: BARCODE_TEXT.noNutrition });
+    setScan({ state: 'idle' });
+    setQuery('');
+    pick({ ...r.product, name: offSavedName(r.product) }, true);
   };
 
   const results = foods && !picked ? searchFoods(foods, query) : [];
@@ -232,6 +267,25 @@ function FoodSearch({ onPick }: { onPick: (v: PickedValues, newPick: boolean, on
           start();
         }}
       />
+      {!picked && (
+        <div className="mt-2">
+          {scan.state === 'notice' ? (
+            <div role="group" aria-label="Scan a barcode?" className="rounded-xl border border-line bg-surface p-3 text-sm">
+              <p>{BARCODE_TEXT.notice}</p>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => setScan({ state: 'idle' })} className="min-h-11 rounded-2xl border border-line font-semibold text-accent">Cancel</button>
+                <button type="button" autoFocus onClick={acceptScanNotice} className="min-h-11 rounded-2xl bg-accent font-semibold text-on-accent">Scan</button>
+              </div>
+            </div>
+          ) : (
+            <button type="button" onClick={startScan} disabled={scan.state === 'looking' || coolingDown} className="min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-sm font-semibold text-accent disabled:opacity-60">
+              {scan.state === 'looking' ? 'Looking up…' : coolingDown ? 'Wait…' : 'Scan barcode'}
+            </button>
+          )}
+          <div aria-live="polite">{scan.state === 'message' && <p className="mt-2 text-sm text-danger">{scan.text}</p>}</div>
+        </div>
+      )}
+      {scan.state === 'open' && <BarcodeScanner onCode={(c, f) => void onCode(c, f)} onClose={() => setScan({ state: 'idle' })} />}
       {failed && <p role="alert" className="mt-2 text-sm text-danger">The food list couldn’t load. You can still type the values below.</p>}
       {query.trim() && !picked && foods && (
         <ul className="mt-2 max-h-64 divide-y divide-line overflow-y-auto rounded-xl bg-surface" aria-label="Built-in results">
