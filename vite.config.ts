@@ -15,7 +15,8 @@ export default defineConfig({
       includeAssets: ['icons/apple-touch-icon.png'],
       // Precache the built-in USDA food list too, so food search works offline.
       // Precache only: no runtimeCaching, so Open Food Facts replies are never stored (workflow 05b).
-      workbox: { globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest,json}'] },
+      // The barcode reader (zxing chunk) is not precached: it loads on first scan, which needs a connection anyway (05c).
+      workbox: { globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest,json}'], globIgnores: ['**/zxing-*.js'] },
       manifest: {
         name: 'Steady',
         short_name: 'Steady',
@@ -33,5 +34,11 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      // Keep the barcode reader in its own lazy chunk (named so the service worker can skip it).
+      output: { manualChunks: (id) => (id.includes('node_modules/@zxing/') ? 'zxing' : undefined) },
+    },
+  },
   test: { environment: 'node' },
 });

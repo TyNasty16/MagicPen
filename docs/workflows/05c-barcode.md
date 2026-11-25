@@ -1,5 +1,5 @@
 # Workflow 05c — Barcode scanning (Open Food Facts lookup)
-Status: Draft
+Status: Built — 2026-11-25
 Milestone: 5 — Nutrition (PLAN.md §2 item 5; §5 order), part c. Follows workflow 05b (built).
 
 ## Ideas considered
@@ -118,4 +118,4 @@ Build adds: `cleanBarcode` (digits only, 8/12/13, check digit, length cap) befor
 - Approve the exact wording of the messages, listed under "Exact text" above.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 ("Ok go" after the security review, taken as defaults OK + exact text approved)

@@ -1,0 +1,10 @@
+{
+  "found": { "code": "81161775", "status": 1, "product": { "code": "81161775", "product_name": "Protein shake", "brands": "fairlife", "serving_size": "340 ml", "serving_quantity": 340, "serving_quantity_unit": "ml",
+    "nutriments": { "energy-kcal_100g": 44.1, "proteins_100g": 8.82, "carbohydrates_100g": 0.882, "fat_100g": 0.735 } } },
+  "notFound": { "code": "5000112637923", "status": 0, "status_verbose": "product not found" },
+  "noKcal": { "code": "5000112637922", "status": 1, "product": { "product_name": "Biscuits", "nutriments": { "proteins_100g": 6 } } },
+  "noProtein": { "code": "5000112637922", "status": 1, "product": { "product_name": "Biscuits", "nutriments": { "energy-kcal_100g": 480 } } },
+  "zeroKcal": { "code": "5000112637922", "status": 1, "product": { "product_name": "Diet cola", "nutriments": { "energy-kcal_100g": 0, "proteins_100g": 0 } } },
+  "otherCode": { "code": "96385074", "status": 1, "product": { "product_name": "Something else", "nutriments": { "energy-kcal_100g": 10, "proteins_100g": 1 } } },
+  "hostileName": { "code": "5000112637922", "status": 1, "product": { "product_name": "Protein‮ekahs <script>alert(1)</script>\n\n  shake", "brands": ["xx:Acme​"], "nutriments": { "energy-kcal_100g": 100, "proteins_100g": 10 } } }
+}

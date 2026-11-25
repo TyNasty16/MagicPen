@@ -203,7 +203,7 @@ export const deleteWater = (id: number) => db.water.delete(id);
 export const listDayMarksSince = (fromDay: string) => db.dayMarks.where('date').aboveOrEqual(fromDay).toArray();
 export const setLowIntake = (date: string, on: boolean) => (on ? db.dayMarks.put({ date, kind: 'low-intake' }) : db.dayMarks.delete(date));
 
-const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck'];
+const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck', 'steady.barcodeNoticeAck'];
 
 /** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
 export async function resetAllData(): Promise<void> {
