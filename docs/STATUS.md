@@ -18,11 +18,17 @@ _Last updated: 2026-11-25_
 | M4 symptoms, tips, When to get help | workflows/04 | #3 |
 | Symptom alerts ("Take a closer look") | workflows/04b | #3 |
 | Symptom map + drill-down; polish (7-day only, numbers, darker 5/5, one help entry, 1–5 severity) | workflows/04c, 04d | #4 |
+| Settings: reset all data (type RESET) | workflows/04e | #5 |
+| M5 food + water log, My Foods, macro + calorie rings, barely-ate marker, built-in USDA search (offline), targets follow latest weigh-in | workflows/05 | #6 |
 
-## Next
-- **Milestone 5 — food logging** (calories/macros vs targets, My Foods, Open Food Facts search; PLAN §2 item 5). Starts with the Ideas agent's opening pass.
-- Then M6 workouts + Today dashboard, M7 backup/restore + calendar reminder (backup must include photos).
-- Open ideas: see the notepad (I-01 … I-13).
+## Next (owner to choose)
+- **05b — Open Food Facts search** for branded/packaged foods (the one allowed network call; privacy notice first). Notepad I-19.
+- **M7 backup/restore moved up** (food log grows with no copy; backup must include photos). Notepad I-20 — recommended.
+- **M6 workouts + Today dashboard.**
+- Open ideas: see the notepad (I-01 … I-23).
+
+## Environment
+- Cloud environment "magicpen" (personal) allows fdc.nal.usda.gov, only for refreshing `public/data/usda-foods.json` with `scripts/build-usda-foods.py`.
 
 ## Owner preferences (how to work)
 - Wants mockups/screenshots before approving anything visual; plain-language summaries; asks to confirm understanding before big process changes.
