@@ -5,7 +5,7 @@ const { chromium } = createRequire(import.meta.url)('playwright');
 import { mkdirSync } from 'node:fs';
 
 const svg = (pad) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
-  <rect width="100" height="100" fill="#2f6f73"/>
+  <rect width="100" height="100" fill="#a85540"/>
   <g transform="translate(${pad} ${pad}) scale(${(100 - 2 * pad) / 100})">
     <path d="M18 56 C 32 56, 34 40, 50 40 S 68 56, 82 56" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
     <circle cx="50" cy="68" r="5" fill="#fff"/>

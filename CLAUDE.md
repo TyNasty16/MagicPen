@@ -21,4 +21,4 @@ Agent definitions are in `.claude/agents/`.
 - The app LOGS doses. It never recommends doses or dose increases.
 - Health data stays on the device (IndexedDB). No analytics, no third-party calls except the Open Food Facts food search.
 - Style: clinical and calm.
-- Keep cost at $0/month (GitHub Pages hosting).
+- Keep cost at $0/month. Hosting: GitHub Pages (repo made public for this, owner decision 2026-11-25) at https://tynasty16.github.io/MagicPen/ — deployed automatically by `.github/workflows/deploy-pages.yml` on every push to `main`.
