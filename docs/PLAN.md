@@ -1,6 +1,6 @@
 # GLP-1 Tracker — Product & Technical Plan (v1)
 
-Status: **Draft — awaiting owner approval**
+Status: **Approved by owner 2026-11-25** (working name: Steady)
 Owner decisions captured: 2026-11-25
 
 ## 1. Decisions from the owner
@@ -10,7 +10,7 @@ Owner decisions captured: 2026-11-25
 | 1 | Audience | Personal use only for now; may expand later |
 | 2 | Platform | Installable web app (PWA) first, App Store app later |
 | 3 | Data | Stored on the device only; cloud sync maybe later |
-| 4 | Medication | Wegovy injections only (see note below) |
+| 4 | Medication | Weekly Wegovy injections only |
 | 5 | Dosing | Log what was taken. No escalation planning — doses are the prescriber's call |
 | 6 | Side effects | Logging plus mitigation tips |
 | 7 | Workouts | As basic as possible, no gym (bodyweight + walking) |
@@ -18,7 +18,7 @@ Owner decisions captured: 2026-11-25
 | 9 | Integrations | None for v1; PDF summary export later |
 | 10 | Budget / style | As cheap as possible; clinical and calm look; no name yet |
 
-> **Note on #4:** Wegovy injections are taken **weekly**, not monthly. The plan assumes weekly dosing. To be confirmed by the owner.
+> **Note on #4:** Owner confirmed weekly Wegovy injections. Style confirmed: clinical and calm.
 
 ## 2. Scope
 
