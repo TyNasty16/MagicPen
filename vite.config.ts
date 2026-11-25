@@ -13,6 +13,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/apple-touch-icon.png'],
+      // Precache the built-in USDA food list too, so food search works offline.
+      workbox: { globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest,json}'] },
       manifest: {
         name: 'Steady',
         short_name: 'Steady',

@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState, type ComponentType, type SVGProps 
 import { HomeIcon, PulseIcon, ScaleIcon, SyringeIcon, UserIcon } from './components/icons';
 import { getProfile, storageAvailable } from './db/db';
 import Disclaimer from './pages/Disclaimer';
+import Food from './pages/Food';
 import Home from './pages/Home';
 import Injections from './pages/Injections';
 import Profile from './pages/Profile';
@@ -20,7 +21,7 @@ const TABS: { route: Route; label: string; Icon: ComponentType<SVGProps<SVGSVGEl
   { route: 'symptoms', label: 'Symptoms', Icon: PulseIcon },
   { route: 'profile', label: 'Profile', Icon: UserIcon },
 ];
-const ROUTES = ['home', 'injections', 'weight', 'symptoms', 'profile', 'settings'] as const;
+const ROUTES = ['home', 'injections', 'weight', 'symptoms', 'profile', 'settings', 'food'] as const;
 type Route = (typeof ROUTES)[number];
 interface Location { route: Route; params: URLSearchParams }
 
@@ -65,7 +66,8 @@ export default function App() {
 
   const backHref = params.get('from') === 'home' ? '#/home' : undefined;
   const startAdding = params.get('add') === '1';
-  const activeTab = route === 'settings' ? null : route;
+  // Food opens from Home's nutrition tile, so Home stays highlighted there.
+  const activeTab = route === 'settings' ? null : route === 'food' ? 'home' : route;
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
@@ -84,6 +86,7 @@ export default function App() {
         )}
         {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={backHref} section={params.get('section') ?? undefined} />}
         {route === 'settings' && <Settings />}
+        {route === 'food' && <Food key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
       </main>
       <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
         <ul className="mx-auto flex max-w-md">

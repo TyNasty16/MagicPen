@@ -42,3 +42,6 @@ export function weightStats(daily: DailyWeight[], startKg: number | undefined, g
     toGoalKg: goalKg ? Math.max(0, currentKg - goalKg) : undefined,
   };
 }
+
+/** The most recent day's weight (averaged if several that day), or undefined with no weigh-ins. */
+export const latestWeightKg = (entries: Pick<WeightEntry, 'date' | 'weightKg'>[]) => dailyWeights(entries).at(-1)?.kg;

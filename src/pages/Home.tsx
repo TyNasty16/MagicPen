@@ -1,26 +1,29 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState } from 'react';
 import { GearIcon, PlusIcon, SyringeIcon } from '../components/icons';
-import { CalorieRing, MacroBar, Tile } from '../components/ui';
+import { Tile } from '../components/ui';
+import NutritionRings from '../components/NutritionRings';
 import Sparkline from '../components/Sparkline';
-import { listInjections, listSymptoms, listWeights, type Injection, type Profile } from '../db/db';
+import { addWater, listFoodLogSince, listInjections, listSymptoms, listWaterSince, listWeights, type Injection, type Profile } from '../db/db';
 import { symptomLabel } from '../lib/symptoms';
 import AlertCards from '../components/AlertCards';
-import { daysBetween, shortDate } from '../lib/dates';
+import { dayKey, daysBetween, shortDate } from '../lib/dates';
+import { dayTotals } from '../lib/nutrition';
+import { waterAmount, waterQuickAdds, waterUnit } from '../lib/water';
 import { formatDose } from '../lib/injections';
 import { nextDose } from '../lib/nextDose';
-import { dailyWeights } from '../lib/weight';
+import { dailyWeights, latestWeightKg } from '../lib/weight';
 import { weighInStatus } from '../lib/weighIn';
 import { effectiveTargets } from '../lib/profileTargets';
-import { displayWeight, mlToFlOz, round1, weightUnit } from '../lib/units';
+import { displayWeight, round1, weightUnit } from '../lib/units';
 import { currentBmi } from '../lib/body';
+import { useNow } from '../lib/useNow';
 
-// Items without an href are not built yet and show as "Soon".
+// Items without an href are not built yet and show as "Soon" (all are built as of Milestone 5).
 const QUICK_ADD: { label: string; color: string; href?: string }[] = [
   { label: 'Dose', color: 'bg-clay', href: '#/injections?from=home&add=1' },
   { label: 'Weight', color: 'bg-sage', href: '#/weight?from=home&add=1' },
   { label: 'Symptom', color: 'bg-gold', href: '#/symptoms?from=home&add=1' },
-  { label: 'Food', color: 'bg-accent' },
+  { label: 'Food', color: 'bg-accent', href: '#/food?from=home&add=1' },
 ];
 
 function greeting(now: Date) {
@@ -30,12 +33,17 @@ function greeting(now: Date) {
 
 export default function Home({ profile }: { profile: Profile }) {
   const now = useNow();
-  const targets = effectiveTargets(profile);
-  const imperial = profile.units === 'imperial';
+  const today = dayKey(now);
   const injections = useLiveQuery(listInjections);
   const weights = useLiveQuery(listWeights);
   const symptoms = useLiveQuery(listSymptoms);
-  if (!injections || !weights || !symptoms) return null;
+  const food = useLiveQuery(() => listFoodLogSince(today), [today]);
+  const water = useLiveQuery(() => listWaterSince(today), [today]);
+  if (!injections || !weights || !symptoms || !food || !water) return null;
+  const targets = effectiveTargets(profile, latestWeightKg(weights));
+  const totals = dayTotals(food.filter((e) => e.date === today));
+  const waterMl = water.filter((w) => w.date === today).reduce((s, w) => s + w.ml, 0);
+  const quickWater = waterQuickAdds(profile.units)[0];
   const lastSymptom = symptoms[0];
   const daily = dailyWeights(weights);
   const latest = daily.at(-1);
@@ -66,15 +74,8 @@ export default function Home({ profile }: { profile: Profile }) {
           <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 
-          <Tile title="Today's nutrition" href="#/profile?from=home&section=targets">
-            <div className="flex items-center gap-4">
-              <CalorieRing eaten={0} target={targets.calories} />
-              <div className="flex-1 space-y-2.5">
-                <MacroBar label="Protein" value={0} target={targets.proteinG} color="bg-accent" />
-                <MacroBar label="Carbs" value={0} target={targets.carbsG} color="bg-sage" />
-                <MacroBar label="Fat" value={0} target={targets.fatG} color="bg-gold" />
-              </div>
-            </div>
+          <Tile title="Today's nutrition" href="#/food?from=home">
+            <NutritionRings totals={totals} targets={targets} />
           </Tile>
 
           <div className="grid grid-cols-2 gap-3.5">
@@ -97,12 +98,16 @@ export default function Home({ profile }: { profile: Profile }) {
               )}
             </Tile>
             <Tile title="Water">
-              <p className="font-serif text-2xl font-semibold">
-                {imperial ? Math.round(mlToFlOz(targets.waterMl)) : (targets.waterMl / 1000).toFixed(1)}{' '}
-                <span className="font-sans text-xs text-muted">{imperial ? 'fl oz' : 'L'}</span>
+              <p className="font-serif text-2xl font-semibold" aria-live="polite">
+                {waterAmount(waterMl, profile.units)}{' '}
+                <span className="font-sans text-xs text-muted">/ {waterAmount(targets.waterMl, profile.units)} {waterUnit(profile.units)}</span>
               </p>
-              <p className="text-xs text-muted">daily target</p>
-              <span className="mt-2 inline-block rounded-full bg-track px-2.5 py-1 text-[11px] text-muted">Logging soon</span>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-track" aria-hidden>
+                <div className="h-full rounded-full bg-[#2a6fb8]" style={{ width: `${Math.min(100, (waterMl / targets.waterMl) * 100)}%` }} />
+              </div>
+              <button type="button" aria-label={`Add ${quickWater.label.slice(2)} water`} onClick={() => addWater(today, quickWater.ml)} className="mt-2.5 min-h-11 w-full rounded-2xl border border-line font-semibold text-accent">
+                {quickWater.label}
+              </button>
             </Tile>
           </div>
 
@@ -135,21 +140,6 @@ export default function Home({ profile }: { profile: Profile }) {
       )}
     </div>
   );
-}
-
-/** Current time, refreshed when the app comes back to the foreground (e.g. the next morning). */
-function useNow() {
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const refresh = () => document.visibilityState === 'visible' && setNow(new Date());
-    document.addEventListener('visibilitychange', refresh);
-    window.addEventListener('focus', refresh);
-    return () => {
-      document.removeEventListener('visibilitychange', refresh);
-      window.removeEventListener('focus', refresh);
-    };
-  }, []);
-  return now;
 }
 
 /** Weekly weigh-in prompt: shown until this week's weigh-in is logged (weeks run from the first weigh-in). */

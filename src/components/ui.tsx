@@ -40,43 +40,6 @@ export function Tile({ title, href, children, className = '' }: { title: string;
   );
 }
 
-export function CalorieRing({ eaten, target }: { eaten: number; target: number }) {
-  const r = 49;
-  const c = 2 * Math.PI * r;
-  const frac = target > 0 ? Math.min(eaten / target, 1) : 0;
-  return (
-    <div className="relative size-[116px] flex-none">
-      <svg width="116" height="116" className="-rotate-90" aria-hidden>
-        <circle cx="58" cy="58" r={r} strokeWidth="12" fill="none" className="stroke-track" />
-        {frac > 0 && (
-          <circle cx="58" cy="58" r={r} strokeWidth="12" fill="none" strokeLinecap="round" className="stroke-accent" strokeDasharray={c} strokeDashoffset={c * (1 - frac)} />
-        )}
-      </svg>
-      <div className="absolute inset-0 grid place-items-center text-center">
-        <div>
-          <div className="font-serif text-2xl font-semibold">{eaten.toLocaleString()}</div>
-          <div className="text-[11px] text-muted">of {target.toLocaleString()} kcal</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function MacroBar({ label, value, target, color }: { label: string; value: number; target: number; color: string }) {
-  const pct = target > 0 ? Math.min((value / target) * 100, 100) : 0;
-  return (
-    <div>
-      <div className="mb-1 flex justify-between text-sm">
-        <span>{label}</span>
-        <span className="text-muted">{value} / {target} g</span>
-      </div>
-      <div className="h-2 overflow-hidden rounded-full bg-track">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
 /** Serif page title; with `backHref`, shows a back button that returns there. */
 export function ScreenHeader({ title, backHref }: { title: string; backHref?: string }) {
   return (
