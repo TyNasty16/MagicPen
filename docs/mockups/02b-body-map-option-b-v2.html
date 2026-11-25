@@ -1,0 +1,61 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+:root{--bg:#f7f1ea;--card:#fffaf5;--ink:#3a2a22;--muted:#6f5b4c;--accent:#a85540;--line:#eadfd3;--track:#efe5da;--head:Georgia,"New York",serif;--shadow:0 6px 18px rgba(80,50,30,.08)}
+*{box-sizing:border-box}body{margin:0;background:#ebe3d9;font-family:system-ui,-apple-system,sans-serif;color:var(--ink);padding:24px;display:flex;gap:24px}
+.panel{width:390px;background:var(--bg);border-radius:30px;padding:18px 16px;box-shadow:0 16px 40px rgba(60,40,20,.14)}
+h3{font-family:var(--head);font-size:22px;margin:4px 0 12px;font-weight:600}
+.card{background:var(--card);border-radius:22px;padding:14px 10px;box-shadow:var(--shadow)}
+.legend{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--muted);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.sel{margin:10px 4px 0;background:var(--track);border-radius:14px;padding:10px 12px;font-size:14px;display:flex;justify-content:space-between}.sel b{color:var(--accent)}
+.how{margin:12px 4px 0;border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}
+.how h4{margin:0 0 8px;font-family:var(--head);font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}.how h4 i{width:26px;height:26px;border-radius:8px;background:#f3e2da;color:var(--accent);display:grid;place-items:center;font-style:normal;font-size:14px}
+.how ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5}.how li{margin-bottom:4px}
+.how .gen{margin-top:10px;border-top:1px solid var(--line);padding-top:10px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;color:var(--ink)}
+.how .src{margin-top:8px;font-size:11px;color:var(--muted)}
+</style></head><body>
+<div class="panel"><h3>Thigh selected</h3><div class="card"><svg id="b" width="100%"></svg>
+ <div class="legend"><span><i style="background:#e9b9a6"></i>Used recently</span><span><i style="background:#bccfa9"></i>Rested</span><span><i style="border:1.5px dashed #a85540;background:#fff"></i>Suggested</span></div>
+ <div class="sel">Selected <b>Left thigh · suggested</b></div><div class="how"><h4><i>i</i>How to inject: thigh</h4><ul>
+<li>Use the <b>front of your thigh</b>.</li>
+<li>You can use the same area each week — just not the exact spot you used last time.</li>
+<li>If the stomach is hard to inject, a firmer area like the thigh can be easier.</li></ul>
+<div class="gen"><span>Before every injection (6 steps)</span><span>›</span></div>
+<div class="src">From the Wegovy label and Instructions for Use. Always follow the leaflet in your pen box.</div></div></div></div>
+<div class="panel"><h3>Upper arm selected</h3><div class="card"><svg id="c" width="100%"></svg>
+ <div class="legend"><span><i style="background:#e9b9a6"></i>Used recently</span><span><i style="background:#bccfa9"></i>Rested</span><span><i style="border:1.5px dashed #a85540;background:#fff"></i>Suggested</span></div>
+ <div class="sel">Selected <b>Right upper arm</b></div><div class="how"><h4><i>i</i>How to inject: upper arm</h4><ul>
+<li>Use the <b>back of your upper arm</b>, between shoulder and elbow.</li>
+<li>It can be hard to reach on your own — ask someone to help, or choose another area.</li>
+<li>Use a different spot from your last injection.</li></ul>
+<div class="gen"><span>Before every injection (6 steps)</span><span>›</span></div>
+<div class="src">From the Wegovy label and Instructions for Use. Always follow the leaflet in your pen box.</div></div></div></div>
+<script>
+// Right half of the figure (viewer's right), from the neck clockwise; 8-head proportions, arms slightly out (A-pose).
+const R=[[100,49],[108,50],[110,62],[126,68],[143,72],[154,80],[160,95],[162,116],[164,140],[166,164],[168,186],[169,204],[166,214],[159,217],[152,212],[150,196],[147,172],[144,148],[141,124],[138,106],[136,120],[135,144],[131,166],[130,180],[136,202],[141,222],[142,246],[140,272],[136,298],[135,320],[135,340],[132,360],[128,376],[132,384],[126,390],[111,390],[110,378],[109,358],[108,336],[107,312],[106,286],[104,258],[101,240],[100,238]];
+const OUT=[...R,...R.slice(1,-1).reverse().map(([x,y])=>[200-x,y])];
+function smooth(p){const n=p.length;let d=`M${p[0][0]},${p[0][1]}`;for(let i=0;i<n;i++){const a=p[(i-1+n)%n],b=p[i],c=p[(i+1)%n],e=p[(i+2)%n];d+=` C${(b[0]+(c[0]-a[0])/6).toFixed(1)},${(b[1]+(c[1]-a[1])/6).toFixed(1)} ${(c[0]-(e[0]-b[0])/6).toFixed(1)},${(c[1]-(e[1]-b[1])/6).toFixed(1)} ${c[0]},${c[1]}`}return d+'Z'}
+const COL={recent:['#e9b9a6','#cf8f78'],ready:['#bccfa9','#8fa87a']};
+const STROKE='#b89c84', FILL='#f6ede3';
+function zone(z){const [cx,cy,rx,ry,rot=0]=z.g;const t=`transform="rotate(${rot} ${cx} ${cy})"`;let h='';
+ if(z.state==='on') h+=`<ellipse ${t} cx="${cx}" cy="${cy}" rx="${rx+5}" ry="${ry+5}" fill="#a85540" opacity=".2"/><ellipse ${t} cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#a85540"/>`;
+ else h+=`<ellipse ${t} cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${COL[z.state][0]}" fill-opacity=".8" stroke="${COL[z.state][1]}" stroke-width="1.2"/>`;
+ if(z.sug) h+=`<ellipse ${t} cx="${cx}" cy="${cy}" rx="${rx+8}" ry="${ry+8}" fill="none" stroke="#a85540" stroke-width="1.6" stroke-dasharray="4 3"/>`;
+ return h}
+function figure(x0,back,zones){
+ let h=`<g transform="translate(${x0} 0)">`;
+ h+=`<path d="${smooth(OUT)}" fill="${FILL}" stroke="${STROKE}" stroke-width="1.4" stroke-linejoin="round"/>`;
+ h+=`<ellipse cx="100" cy="27" rx="18" ry="22" fill="${FILL}" stroke="${STROKE}" stroke-width="1.4"/>`;
+ if(!back){h+=`<circle cx="100" cy="176" r="1.8" fill="${STROKE}"/>`;}
+ else{h+=`<path d="M100 74 V200" stroke="#dccab8" stroke-width="1.2"/><path d="M84 92 q-8 18 2 34 M116 92 q8 18 -2 34" fill="none" stroke="#e3d3c3" stroke-width="1.2"/><path d="M100 214 V240" stroke="#dccab8" stroke-width="1.2"/>`;}
+ return h+zones.map(zone).join('')+'</g>'}
+const T='font-size="11" font-weight="700" letter-spacing="1.2" fill="#6f5b4c"', t2='font-size="10" font-weight="600" fill="#8a7464"';
+function draw(id,states){
+ const s=document.getElementById(id);s.setAttribute('viewBox','10 0 400 416');
+ s.innerHTML=figure(0,false,[{g:[88,196,8.5,12],state:states.br},{g:[112,196,8.5,12],state:states.bl},{g:[76,268,11,22,3],state:states.tr},{g:[124,268,11,22,-3],state:states.tl,sug:states.sug==='tl'}])
+ +figure(210,true,[{g:[48,130,7,17,5],state:states.al},{g:[152,130,7,17,-5],state:states.ar}])
+ +`<text x="100" y="410" text-anchor="middle" ${T}>FRONT</text><text x="310" y="410" text-anchor="middle" ${T}>BACK</text>`
+ +`<text x="22" y="250" text-anchor="middle" ${t2}>Right</text><text x="178" y="250" text-anchor="middle" ${t2}>Left</text><text x="232" y="250" text-anchor="middle" ${t2}>Left</text><text x="388" y="250" text-anchor="middle" ${t2}>Right</text>`;
+ s.setAttribute('height','386')}
+draw('b',{br:'recent',bl:'recent',tr:'ready',tl:'on',sug:'tl',al:'ready',ar:'ready'});
+draw('c',{br:'recent',bl:'recent',tr:'ready',tl:'ready',sug:'tl',al:'ready',ar:'on'});
+</script></body></html>

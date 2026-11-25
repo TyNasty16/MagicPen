@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Warm Sand — light only. Small text uses the darker muted/accent for ≥4.5:1 contrast. */
+@theme {
+  --color-bg: #f7f1ea;
+  --color-surface: #fffaf5;
+  --color-ink: #3a2a22;
+  --color-muted: #6f5b4c;
+  --color-line: #eadfd3;
+  --color-track: #efe5da;
+  --color-accent: #a85540;
+  --color-on-accent: #ffffff;
+  --color-clay: #c8735a;
+  --color-hero-from: #9a4a36; /* hero gradient: white text ≥4.5:1 across the whole gradient */
+  --color-hero-to: #b25c45;
+  --color-weigh-from: #4a6638; /* weigh-in card: white text ≥4.5:1 across the gradient */
+  --color-weigh-to: #56743f;
+  --color-sage: #8fa37a;
+  --color-gold: #d8a750;
+  --color-warn: #b7791f;
+  --color-danger: #b42318;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "New York", ui-serif, Georgia, serif;
+  --radius-card: 22px;
+  --shadow-soft: 0 6px 18px rgb(80 50 30 / 0.08);
+}
+
+html, body { background: var(--color-bg); color: var(--color-ink); color-scheme: light; }
+body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+@keyframes rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
