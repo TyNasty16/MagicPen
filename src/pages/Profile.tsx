@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Banner, Button, Card, Field, inputClass } from '../components/ui';
+import { useEffect, useState } from 'react';
+import { Banner, Button, Card, Field, inputClass, ScreenHeader } from '../components/ui';
 import { saveProfile, type Profile as ProfileRecord } from '../db/db';
+import { WEEKDAYS } from '../lib/nextDose';
 import { calculatedTargets, effectiveTargets } from '../lib/profileTargets';
 import { PROTEIN_PER_KG_DEFAULT, type Activity, type Sex, type Targets } from '../lib/targets';
 import { cmToFeetInches, flOzToMl, inToCm, kgToLb, lbToKg, mlToFlOz, parseNum, round1, type UnitSystem } from '../lib/units';
 
-const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const ACTIVITIES: { value: Activity; label: string }[] = [
   { value: 'sedentary', label: 'Sedentary — mostly sitting' },
   { value: 'light', label: 'Light — walks, light exercise 1–3 days/week' },
@@ -74,7 +74,11 @@ function validate(d: Draft): Record<string, string> {
   return e;
 }
 
-export default function Profile({ profile }: { profile: ProfileRecord }) {
+export default function Profile({ profile, backHref, section }: { profile: ProfileRecord; backHref?: string; section?: string }) {
+  useEffect(() => {
+    if (section) document.getElementById(section)?.scrollIntoView();
+  }, [section]);
+
   const [draft, setDraft] = useState<Draft>(() => {
     const { id: _id, disclaimerAcceptedAt: _d, ...rest } = profile;
     return { ...rest, overrides: profile.overrides ?? {} };
@@ -127,7 +131,7 @@ export default function Profile({ profile }: { profile: ProfileRecord }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Profile</h1>
+      <ScreenHeader title="Profile" backHref={backHref} />
 
       <Card title="Units">
         <div className="grid grid-cols-2 gap-2" role="group" aria-label="Units">
@@ -136,7 +140,7 @@ export default function Profile({ profile }: { profile: ProfileRecord }) {
               key={u}
               aria-pressed={draft.units === u}
               onClick={() => setUnits(u)}
-              className={`min-h-11 rounded-lg border ${draft.units === u ? 'border-accent bg-accent text-on-accent' : 'border-line'}`}
+              className={`min-h-11 rounded-xl border font-medium transition ${draft.units === u ? 'border-accent bg-accent text-on-accent' : 'border-line bg-bg'}`}
             >
               {u === 'imperial' ? 'lb / in' : 'kg / cm'}
             </button>
@@ -144,7 +148,7 @@ export default function Profile({ profile }: { profile: ProfileRecord }) {
         </div>
       </Card>
 
-      <Card title="About you">
+      <Card title="About you" id="about">
         <div className="space-y-4">
           <Field label="Height" htmlFor="height" error={errors.height}>
             {imperial ? (
@@ -206,7 +210,7 @@ export default function Profile({ profile }: { profile: ProfileRecord }) {
         </div>
       </Card>
 
-      <Card title="Daily targets">
+      <Card title="Daily targets" id="targets">
         {calc && effective ? (
           <div className="space-y-3">
             <p className="text-sm text-muted">Estimates. Leave a box blank to use the estimate, or type your own number.</p>

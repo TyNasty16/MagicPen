@@ -1,36 +1,44 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType, type SVGProps } from 'react';
+import { HomeIcon, UserIcon } from './components/icons';
 import { getProfile, storageAvailable } from './db/db';
 import Disclaimer from './pages/Disclaimer';
+import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
-import Today from './pages/Today';
 
-const TABS = [
-  { route: 'today', label: 'Today' },
-  { route: 'profile', label: 'Profile' },
-  { route: 'settings', label: 'Settings' },
-] as const;
-type Route = (typeof TABS)[number]['route'];
+// Tabs appear only once their milestone ships.
+const TABS: { route: Route; label: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
+  { route: 'home', label: 'Home', Icon: HomeIcon },
+  { route: 'profile', label: 'Profile', Icon: UserIcon },
+];
+const ROUTES = ['home', 'profile', 'settings'] as const;
+type Route = (typeof ROUTES)[number];
+interface Location { route: Route; params: URLSearchParams }
 
-// Hash routing works on any static host (GitHub Pages) without server config.
-function useRoute(): Route {
-  const read = (): Route => {
-    const r = window.location.hash.replace(/^#\/?/, '');
-    return TABS.some((t) => t.route === r) ? (r as Route) : 'today';
-  };
-  const [route, setRoute] = useState(read);
+// Hash routing (#/profile?from=home&section=targets) works on any static host without server config.
+function readLocation(): Location {
+  const [path, query = ''] = window.location.hash.replace(/^#\/?/, '').split('?');
+  const route = (ROUTES as readonly string[]).includes(path) ? (path as Route) : 'home';
+  return { route, params: new URLSearchParams(query) };
+}
+
+function useLocation(): Location {
+  const [loc, setLoc] = useState(readLocation);
   useEffect(() => {
-    const onChange = () => setRoute(read());
+    const onChange = () => {
+      setLoc(readLocation());
+      window.scrollTo(0, 0);
+    };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, []);
-  return route;
+  return loc;
 }
 
 export default function App() {
   const profile = useLiveQuery(getProfile); // undefined while loading, null when none
-  const route = useRoute();
+  const { route, params } = useLocation();
   const [storageOk, setStorageOk] = useState(true);
   useEffect(() => {
     storageAvailable().then(setStorageOk);
@@ -39,7 +47,7 @@ export default function App() {
   if (!storageOk) {
     return (
       <main className="mx-auto max-w-md px-4 py-10">
-        <h1 className="mb-2 text-xl font-semibold">Storage unavailable</h1>
+        <h1 className="mb-2 font-serif text-2xl font-semibold">Storage unavailable</h1>
         <p>Steady keeps your data on this device, but this browser is not allowing it (private browsing can cause this). Open Steady in a normal browser window or from your home screen.</p>
       </main>
     );
@@ -47,23 +55,27 @@ export default function App() {
   if (profile === undefined) return null;
   if (!profile?.disclaimerAcceptedAt) return <Disclaimer />;
 
+  const fromHome = params.get('from') === 'home';
+  const activeTab = route === 'settings' ? null : route;
+
   return (
     <div className="mx-auto min-h-dvh max-w-md">
       <main className="px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-28">
-        {route === 'today' && <Today profile={profile} />}
-        {route === 'profile' && <Profile profile={profile} />}
+        {route === 'home' && <Home profile={profile} />}
+        {route === 'profile' && <Profile key={params.toString()} profile={profile} backHref={fromHome ? '#/home' : undefined} section={params.get('section') ?? undefined} />}
         {route === 'settings' && <Settings />}
       </main>
-      <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
         <ul className="mx-auto flex max-w-md">
-          {TABS.map((t) => (
-            <li key={t.route} className="flex-1">
+          {TABS.map(({ route: r, label, Icon }) => (
+            <li key={r} className="flex-1">
               <a
-                href={`#/${t.route}`}
-                aria-current={route === t.route ? 'page' : undefined}
-                className={`flex min-h-14 items-center justify-center text-sm font-medium ${route === t.route ? 'text-accent' : 'text-muted'}`}
+                href={`#/${r}`}
+                aria-current={activeTab === r ? 'page' : undefined}
+                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] ${activeTab === r ? 'font-semibold text-accent' : 'text-muted'}`}
               >
-                {t.label}
+                <Icon />
+                {label}
               </a>
             </li>
           ))}

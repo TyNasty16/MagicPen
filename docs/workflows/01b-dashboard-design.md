@@ -1,5 +1,5 @@
 # Workflow 01b — Dashboard & Warm Sand Design Refresh
-Status: Awaiting approval
+Status: Built — 2026-11-25
 Milestone: Design refresh between milestones 1 and 2
 
 ## Goal
@@ -84,4 +84,4 @@ A screenshot of the new Home screen comes with this document.
 - Phone-supplied fonts (free, works offline).
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-25 (defaults OK)
