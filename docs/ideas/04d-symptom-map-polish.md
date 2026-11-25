@@ -50,3 +50,23 @@ Current ramp: 4 is #b0553d, 5 is #86392a. Both are dark rust with white text, so
 - **"Same" vs "milder lately" mismatch.** The map row's trend and the drill-down trend use different windows. Dropping 3-day removes one source of confusion. A caption such as "compared with your last 2 injection weeks" is still worth adding.
 - **Duplicate "When to get help".** Keep a single entry point. The wording is already sourced, so do not edit the text, only remove the duplicate.
 - **Privacy and cost.** No effect; everything stays local.
+
+## After-build ideas — 2026-11-25
+
+**What landed:** 7-day-only map with numbers in every cell, a darker step 5, a single help entry point, clearer "First logged this week" / "No earlier entries" wording, and a drill-down with a trend word, caption and dated week labels.
+
+**Quick wins**
+- Tapping a legend step could highlight matching cells.
+- The "not logged in over 3 days" note still says 3 days under a 7-day map. Consider "this week" wording.
+- Label the drill-down chart axis "Avg severity" so the 2.9 bar values are self-explanatory.
+
+**Follow-ups**
+- Tooltip or long-press on a cell ("Nausea, Mon 23: 4 of 5"). It helps small cells and screen readers.
+- Profile toggle for numbers on or off. Some people may prefer the pure colour view.
+- Export a symptom summary for appointments (the owner's own data, no advice). It makes the map useful at a clinic visit.
+
+**Anything that felt off**
+- Steps 3 and 4 in the legend are still close in colour. The numbers carry the difference, so this is fine, but colour alone does not separate them.
+- The map row says "Same" while the drill-down says "milder lately" for Nausea. The caption explains the windows, but the two words disagree. Use one shared vocabulary, or show the window on the map row too.
+- The map's footnote is long and dense (shot icon, numbers, trend window, tap hint). Consider splitting it or trimming it.
+- The alert card is large and sits above the primary button. It is fine while it lasts, but it pushes the map down.
