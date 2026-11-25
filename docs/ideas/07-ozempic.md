@@ -42,3 +42,14 @@
 - **Reset button:** it clears `db.tables`, so it picks up any new table. Confirm the drug setting resets too.
 - **Scope:** compounded semaglutide stays out. No new third-party calls and no cost.
 - **Docs:** `PLAN.md` lists "Other medications" under v3, so note this pulls part of it forward.
+
+## After-build — 2026-11-25
+
+**What landed:** Ozempic as a second medicine (approach 2 on 4's catalog, commit e4afdc2): Profile "Medicine" setting, per-entry switch, per-drug help and tips, and a plain-label chart mark for a switch.
+
+**Follow-ups**
+1. **Weight-chart label can vanish.** When a switch sits close to an earlier mark, the overlap rule hides its label (the dotted line stays). Fix: stack or offset the labels so the switch is always named.
+2. **Symptom page injection chart doesn't mark a switch.** It shows dose changes only and has no medicine data, so a switch looks like nothing happened. Fix: pass the medicine in and add the same plain label.
+3. **Help box follows the Profile medicine, not a one-off entry.** Logging a single Wegovy shot while Profile says Ozempic still shows Ozempic help. Optional; only matters for people who mix medicines.
+
+**Still open from the opening pass:** the "Switched medicine" timeline note, the first-run "Which medicine?" question, and a different marker colour. The plan used a plain label for the marker. The brand-name-with-subtitle idea was declined (owner default).
