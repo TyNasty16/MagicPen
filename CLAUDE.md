@@ -13,6 +13,7 @@ Every milestone or significant change follows these steps. Do not skip any witho
 5. Build.
 6. **code-reviewer** reviews the diff before commit; fix what it finds.
 7. Commit and push; **plain-explainer** writes the short completion summary for the owner.
+8. Ask the owner whether to put the app online (GitHub Pages) yet — owner asked to be checked after every milestone.
 
 Agent definitions are in `.claude/agents/`.
 
