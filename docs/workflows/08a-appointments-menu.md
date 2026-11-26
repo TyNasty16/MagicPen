@@ -69,6 +69,7 @@ By hand (one browser pass, screenshots): v7 to v8 upgrade with real data; menu; 
 - Browser pass: v7 → v8 upgrade kept data; menu items 48 px, Escape and tapping outside close it; add / edit / delete; list newest first with a "Questions open" marker; name cleaned ("Alex Sample"); reset emptied appointments and the profile; no outside requests; no sideways scroll.
 - Code review fixes: rows show the "Questions open" marker as planned (the note preview was removed); the menu is a plain disclosure (no menu-role announcement) and closes when focus tabs out; the date error clears when a date is picked.
 - Owner change after the build (2026-11-26): the menu button shows a standard three-line menu icon instead of the gear.
+- Bug fixed after going live (2026-11-26, owner report): on iPhone, tapping a menu item did nothing — Safari drops focus without a new target, and the menu treated that as "focus left" and closed before the tap landed. The menu now closes only when focus arrives somewhere outside it (plus Escape and outside taps). Reproduced with iPhone emulation before the fix; passes after.
 - Not changed: the delete message uses the app's usual curly apostrophe (can’t), as in all other messages; the Settings link has no "back to Home" (Settings has no back button today).
 
 - Token Steward: before start
