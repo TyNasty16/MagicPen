@@ -36,3 +36,16 @@
 - **Period changes:** if the end date moves to a different appointment, show which appointment is being edited. Don't swap the text silently.
 - **Wording:** "Questions for this visit" is already approved, so reuse it unchanged.
 - **Privacy and cost:** on-device only, nothing new, $0.
+
+## After-build — 2026-11-26
+
+**What landed:** A "Your questions for this visit" box on the report (Since last appointment only) that saves into the latest appointment, or into a phone-only draft that fills your next appointment.
+
+**Follow-ups (take or leave)**
+1. **Clear or archive questions after the visit** (I-51). Old questions linger in that appointment and would print again unless edited by hand. Pairs with tick-off (I-44).
+2. **"Questions waiting" cue in Appointments** (I-52). A saved draft is invisible until you add an appointment, so it could be forgotten. One quiet line would show it exists.
+3. **Add an appointment from the report screen** (I-53). With no appointment, the draft only moves when you add one in Appointments. A small "Add the visit" link would close that loop.
+
+**Felt off / worth a look**
+- The box disappears with custom dates (your decision), but the questions still print. The screen could say so in one line, so it doesn't look like they vanished.
+- Auto-save has no visible state while typing; "Saved" only shows afterwards. Fine, but a first-time user may wonder.
