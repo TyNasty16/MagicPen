@@ -21,22 +21,22 @@ export default function GearMenu() {
         button.current?.focus();
       }
     };
+    // Keyboard: focus arriving somewhere outside (e.g. tabbing on) closes the menu. Watching where focus *arrives*
+    // matters on iPhone: tapping an item drops focus with nowhere new to go, and that must not close the menu
+    // before the tap's click lands (bug fixed 2026-11-26).
+    const onFocusIn = (e: FocusEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
     document.addEventListener('pointerdown', onDown);
     document.addEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocusIn);
     root.current?.querySelector('a')?.focus();
     return () => {
       document.removeEventListener('pointerdown', onDown);
       document.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocusIn);
     };
   }, [open]);
   return (
-    <div
-      ref={root}
-      className="relative"
-      onBlur={(e) => {
-        if (open && !root.current?.contains(e.relatedTarget as Node | null)) setOpen(false); // tabbing out closes it
-      }}
-    >
+    <div ref={root} className="relative">
       <button ref={button} type="button" aria-label="Menu" aria-controls="home-menu" aria-expanded={open} onClick={() => setOpen(!open)} className="grid size-11 place-items-center rounded-2xl bg-surface text-muted shadow-soft">
         <MenuIcon width={22} height={22} />
       </button>
