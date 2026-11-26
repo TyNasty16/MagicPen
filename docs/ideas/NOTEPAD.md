@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-26 (08b closing pass) · Totals: 💡 44 · ✅ 46 · ⏭️ 32_
+_Last updated: 2026-11-26 (09 closing pass) · Totals: 💡 47 · ✅ 49 · ⏭️ 35_
 
 ---
 
@@ -50,13 +50,16 @@ _Last updated: 2026-11-26 (08b closing pass) · Totals: 💡 44 · ✅ 46 · ⏭
 | I-41 | Connection to Apple Fitness (workouts, activity rings) | Owner, 2026-11-26 | Your idea. Apple Fitness has no separate connection for apps; its workouts and activity reach apps through Apple Health, so this comes with I-40 and the App Store version. |
 | I-42 | Medication curve (estimated medicine level over the week, from your logged doses) plus a plain "how GLP-1 works" explainer, including the ups and downs | Owner, 2026-11-26 | Your idea. The labels give the facts to draw it: peak "1 to 3 days post dose", half-life "approximately 1 week", steady state "4 to 5 weeks", "present in the circulation for about 5 weeks after the last dose" (Ozempic label, DailyMed). Must be shown as an estimate for understanding, never dose advice; explainer wording from cited sources, owner-approved. Pairs well with I-38 (Insights) and the symptom-by-day chart. |
 | I-43 | Home reminder card the day before the next appointment, with a "Make report for this visit" button | 08 opening, 08a after-build | Unblocked: 08b (the report) is built. Facts only, no advice. |
-| I-44 | Carry open questions into the report and tick them off after the visit | 08a after-build | "Questions open" marker built in 08a; 08b prints open questions as your own words. Still open: ticking them off after the visit. |
+| I-44 | Carry open questions into the report and tick them off after the visit | 08a after-build, 09 opening | "Questions open" marker built in 08a; 08b prints open questions as your own words; 09 lets you type them on the report. Still open: ticking them off after the visit. |
 | I-45 | Back-to-Home link on Settings | 08a after-build | Settings has no back button today; the new menu makes this more noticeable. |
 | I-46 | Several photos per weigh-in (e.g. front, side, back) | Owner, 2026-11-26 | Your idea. Today each weigh-in holds one photo (Milestone 2b). Needs the photos table to allow more than one per weigh-in, a small gallery in the viewer, and more phone storage — photos are the biggest data; the planned backup (Milestone 7) must include them. Could pair with the report's optional photos section. |
 | I-47 | Warn in the report preview when a name or note has characters that print as "?" | 08b after-build | Our own PDF writer covers basic Latin plus common accented letters only. Name the affected field before sharing. |
 | I-48 | "What changed since last visit" one-line summary at the top of the report | 08 opening, 08b after-build | Facts only (weight change, doses logged); no interpretation. |
 | I-49 | Remember the section switches and period choice between reports | 08 opening, 08b after-build | Switches reset when the period changes today. Stored on the phone. |
 | I-50 | Compact one-page report option for quick visits | 08 opening, 08b after-build | Header, questions, doses, weight, side effects only. |
+| I-51 | "Clear questions" after the visit, so old ones don't print again | 09 opening, 09 after-build | Not built. Pairs with tick-off (I-44). |
+| I-52 | Quiet "Questions waiting" line in Appointments when a phone-only draft exists | 09 after-build | The draft is invisible until an appointment is added. |
+| I-53 | "Add the visit" link on the report screen when there is no appointment | 09 after-build | Closes the loop for the draft without leaving the report. |
 
 ## ✅ Done
 
@@ -108,6 +111,9 @@ _Last updated: 2026-11-26 (08b closing pass) · Totals: 💡 44 · ✅ 46 · ⏭
 | D-44 | Period choice (since last appointment or custom) and section switches with amber "Limited data" tags | 08 opening (watch-out: limited-data rules) | 08b — defaults as in the brief |
 | D-45 | Photos, food items and water sections, plus past appointment notes (off by default) | 08b plan ("build them") | 08b |
 | D-46 | Privacy note before sharing: the PDF is outside the app once shared | 08 opening (watch-out) | 08b |
+| D-47 | Type questions on the report, saved into the latest appointment (approach 1, recommended) | 09 opening | 09 — "Your questions for this visit", auto-saves; cleaned and capped at 2,000 characters |
+| D-48 | Phone-only draft when there is no appointment; it fills the next appointment dated today or earlier | 09 opening (approach 1 fallback) | 09 — `questionsDraft` on the profile, cleared once used |
+| D-49 | Line saying where the questions are saved | 09 opening | 09 — "Saved to your appointment on …" and "Saved" (read out to screen readers) |
 
 ## ⏭️ Skipped
 
@@ -145,6 +151,9 @@ _Last updated: 2026-11-26 (08b closing pass) · Totals: 💡 44 · ✅ 46 · ⏭
 | S-30 | pdf-lib and pdfmake | 08 opening | Technical: pdf-lib unmaintained since 2022; pdfmake too heavy |
 | S-31 | Browser "Print to PDF" only | 08 opening | Technical: no direct file share on iPhone; own writer covers it |
 | S-32 | White page with Warm Sand accents instead of a full Warm Sand page | 08 opening | Owner decision: same look as the app (dark brown text kept for legibility) |
+| S-33 | Separate "next visit" question list with a move step (approach 2) | 09 opening | Technical: the phone-only draft covers it with less to go wrong |
+| S-34 | Report-only questions, not saved (approach 3) | 09 opening | Not a real option: text would be lost after the PDF or a reload |
+| S-35 | Edit older visits' questions from the report with custom dates | 09 plan question | Owner decision: "No" — the box shows only for "Since last appointment" |
 
 ---
 

@@ -169,7 +169,8 @@ export function buildReport(d: ReportData, p: Period, made: Date): Report {
 
   // Questions: from the latest appointment on or before the end of the period, in the owner's own words.
   const appt = lastAppointmentOnOrBefore(p.end, d.appointments);
-  const qs = (appt?.questions ?? '').split('\n').map((q) => q.trim()).filter(Boolean);
+  // With no appointment yet, the questions typed on the report screen (the profile's draft) are used.
+  const qs = ((appt ? appt.questions : d.profile.questionsDraft) ?? '').split('\n').map((q) => q.trim()).filter(Boolean);
   section('questions', qs.length ? qs.map((q) => ({ kind: 'text', text: `• ${q}` })) : [{ kind: 'text', text: 'No questions saved.', muted: true }], { empty: !qs.length });
 
   // Medicine and doses

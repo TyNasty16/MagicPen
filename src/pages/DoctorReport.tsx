@@ -1,8 +1,9 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Segmented from '../components/Segmented';
 import { Button, Card, inputClass, ScreenHeader } from '../components/ui';
-import { db, getPhoto, getProfile, listAppointments, listInjections, listMeasurements, listSymptoms, listWeights, weightIdsWithPhotos } from '../db/db';
+import { db, getPhoto, getProfile, listAppointments, listInjections, listMeasurements, listSymptoms, listWeights, saveReportQuestions, weightIdsWithPhotos } from '../db/db';
+import { cleanText, lastAppointmentOnOrBefore, TEXT_MAX } from '../lib/appointments';
 import { buildReport, defaultIncluded, defaultPeriod, FOOTER, PRIVACY_NOTE, reportDate, reportFileName, SECTIONS, SHARE_FALLBACK, validPeriod, type Block, type Period, type ReportData, type SectionId } from '../lib/report';
 import { shareReport } from '../lib/shareReport';
 
@@ -28,7 +29,62 @@ function ReportBuilder({ data, backHref }: { data: ReportData; backHref?: string
   const [custom, setCustom] = useState<Period>(since);
   const period = mode === 'since' ? since : custom;
   const valid = validPeriod(period);
-  const report = useMemo(() => (valid ? buildReport(data, period, today) : null), [data, period.start, period.end, valid, today]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Questions typed here (workflow 09; only for "Since last appointment"): saved into the appointment the report uses,
+  // or — with no appointment yet — kept on the phone as a draft.
+  const target = mode === 'since' ? lastAppointmentOnOrBefore(since.end, data.appointments) : undefined;
+  const storedQuestions = target ? target.questions ?? '' : data.profile.questionsDraft ?? '';
+  const [qText, setQText] = useState(storedQuestions);
+  const [qStatus, setQStatus] = useState<'saved' | 'error'>();
+  const saved = useRef(cleanText(storedQuestions));
+  const pending = useRef({ id: target?.id, text: qText });
+  pending.current = { id: target?.id, text: qText };
+  // A different appointment (e.g. one was added while this screen is open): save any unsaved typing to the old one
+  // first, then load the new one's questions.
+  const prevTarget = useRef(target?.id);
+  useEffect(() => {
+    const oldId = prevTarget.current;
+    prevTarget.current = target?.id;
+    if (oldId === target?.id) return;
+    const unsaved = cleanText(qText);
+    if (unsaved !== saved.current) void saveReportQuestions(oldId, unsaved).catch(() => setQStatus('error'));
+    setQText(storedQuestions);
+    saved.current = cleanText(storedQuestions);
+    setQStatus(undefined);
+  }, [target?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  /** One save path for every trigger: a pause in typing, Make PDF, leaving the screen, switching to custom dates. */
+  const flush = async () => {
+    if (mode !== 'since') return;
+    const { id, text } = pending.current;
+    const clean = cleanText(text);
+    if (clean === saved.current) return;
+    const before = saved.current;
+    saved.current = clean; // marked first, so a second trigger right after (e.g. blur then Make PDF) doesn't save twice
+    try {
+      await saveReportQuestions(id, clean);
+      setQStatus('saved');
+    } catch {
+      saved.current = before;
+      setQStatus('error');
+    }
+  };
+  const flushRef = useRef(flush);
+  flushRef.current = flush;
+  useEffect(() => {
+    const t = setTimeout(() => void flushRef.current(), 1000);
+    return () => clearTimeout(t);
+  }, [qText]);
+  useEffect(() => () => void flushRef.current(), []); // leaving the screen
+
+  // The preview and PDF use what's in the box right away (not only after it saves).
+  const live = useMemo<ReportData>(() => {
+    if (mode !== 'since') return data;
+    const q = cleanText(qText);
+    return target
+      ? { ...data, appointments: data.appointments.map((a) => (a.id === target.id ? { ...a, questions: q } : a)) }
+      : { ...data, profile: { ...data.profile, questionsDraft: q } };
+  }, [data, mode, qText, target?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const report = useMemo(() => (valid ? buildReport(live, period, today) : null), [live, period.start, period.end, valid, today]); // eslint-disable-line react-hooks/exhaustive-deps
   // The owner's switch choices sit on top of the defaults; they reset only when the period changes (not when new data arrives).
   const [overrides, setOverrides] = useState<Partial<Record<SectionId, boolean>>>({});
   useEffect(() => setOverrides({}), [period.start, period.end]);
@@ -51,6 +107,7 @@ function ReportBuilder({ data, backHref }: { data: ReportData; backHref?: string
 
   const make = async () => {
     if (!report || !included) return;
+    await flush();
     setBusy(true);
     setMessage(undefined);
     try {
@@ -77,7 +134,7 @@ function ReportBuilder({ data, backHref }: { data: ReportData; backHref?: string
     <div className="space-y-4">
       <ScreenHeader title="Doctor report" backHref={backHref} />
       <Card title="Period">
-        <Segmented label="Period" value={mode} onChange={setMode} options={[{ id: 'since', label: 'Since last appointment' }, { id: 'custom', label: 'Custom dates' }]} small />
+        <Segmented label="Period" value={mode} onChange={(m) => { void flush(); setMode(m); }} options={[{ id: 'since', label: 'Since last appointment' }, { id: 'custom', label: 'Custom dates' }]} small />
         {mode === 'since' ? (
           <p className="mt-2 text-sm text-muted">{reportDate(since.start)} to {reportDate(since.end)}</p>
         ) : (
@@ -112,7 +169,26 @@ function ReportBuilder({ data, backHref }: { data: ReportData; backHref?: string
                         {s.blocks.some((b) => b.kind === 'text' && b.text === s.limitedLine) ? 'Limited data' : `Limited data: ${s.limitedLine}`}
                       </p>
                     )}
-                    {extra && !on && s.empty ? null : on && <div className="mt-2 space-y-1 text-sm">{s.blocks.map((b, i) => <PreviewBlock key={i} b={b} />)}</div>}
+                    {s.id === 'questions' && mode === 'since' ? (
+                      <div className="mt-2">
+                        <label htmlFor="report-questions" className="mb-1 block text-sm font-medium">Your questions for this visit</label>
+                        <textarea
+                          id="report-questions"
+                          rows={4}
+                          maxLength={TEXT_MAX}
+                          className={`${inputClass} py-2`}
+                          placeholder="One question per line"
+                          value={qText}
+                          aria-describedby="report-questions-source"
+                          onChange={(e) => { setQText(e.target.value); setQStatus(undefined); }}
+                          onBlur={() => void flush()}
+                        />
+                        <p className="mt-1 text-xs text-muted">
+                          <span id="report-questions-source">{target ? `Saved to your appointment on ${reportDate(target.date)}.` : 'Saved on this phone. It will be added when you add your next appointment.'}</span>
+                          <span role="status" className="ml-1 font-semibold text-ink">{qStatus === 'saved' ? 'Saved' : ''}</span>
+                        </p>
+                      </div>
+                    ) : extra && !on && s.empty ? null : on && <div className="mt-2 space-y-1 text-sm">{s.blocks.map((b, i) => <PreviewBlock key={i} b={b} />)}</div>}
                   </div>
                 );
               })}
@@ -120,6 +196,7 @@ function ReportBuilder({ data, backHref }: { data: ReportData; backHref?: string
             </div>
           </section>
 
+          {qStatus === 'error' && <p role="alert" className="px-1 text-sm text-danger">Couldn’t save. Please try again.</p>}
           <p className="px-1 text-sm text-muted">{PRIVACY_NOTE}</p>
           {ready ? (
             <Button className="w-full" onClick={() => void share(ready)}>Share PDF</Button>
