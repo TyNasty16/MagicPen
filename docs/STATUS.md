@@ -23,17 +23,20 @@ _Last updated: 2026-11-25_
 | 05b Open Food Facts online search (on tap, privacy notice, drinks per 100 ml); built-in search matches plurals | workflows/05b | #7 |
 | 05c Barcode scanning (ZXing lazy chunk, security-reviewed, sanitized input/output) | workflows/05c | #8 |
 | 07 Ozempic as a second medicine (Dexie v7, per-entry medicine, label-quoted help/tips/guide) | workflows/07 | #9 |
+| 08a Appointments + Home ☰ menu + optional name (Dexie v8) | workflows/08a | #10 |
+| 08b Doctor report PDF (own PDF writer, preview, switches, limited-data flags, Share menu) | workflows/08b | #10 |
 
 ## Next (owner to choose)
 - **M7 backup/restore moved up** (food log grows with no copy; backup must include photos). Notepad I-20 — recommended.
 - **M6 workouts + Today dashboard — PAUSED by owner 2026-11-25** ("we can do better"). Draft plan, NHS quotes and the four-NHS-page finding are in workflows/06 and sources/06. Restart with a fresh Ideas pass when the owner is ready.
-- Open ideas: see the notepad (I-01 … I-36), e.g. I-25 calorie-mismatch flag, I-29 dev-tool security upgrade (Vitest, Workbox), I-34/I-35 medicine-switch chart labels.
+- Open ideas: see the notepad (up to I-50; owner ideas I-38 to I-42 and I-46), e.g. I-25 calorie-mismatch flag, I-29 dev-tool security upgrade (Vitest, Workbox), I-34/I-35 medicine-switch chart labels.
 - Before sharing publicly: trademark check on the name "Steady" (PLAN §4).
 
 ## Environment
 - Cloud environment "magicpen" (personal) allows fdc.nal.usda.gov (refresh `public/data/usda-foods.json` via `scripts/build-usda-foods.py`), www.nhs.uk / www.cdc.gov (exercise sources; CDC still refuses automated access), world/search.openfoodfacts.org (05b/05c testing), and dailymed.nlm.nih.gov (medicine labels).
 
 ## Owner preferences (how to work)
+- For bigger ideas the owner likes to be questioned first, one question at a time with a suggested answer ("grill me"); the agreed brief then goes to the Ideas agent (see docs/ideas/08-doctor-report-brief.md).
 - Wants mockups/screenshots before approving anything visual; plain-language summaries; asks to confirm understanding before big process changes.
 - Medical wording only from cited official sources, shown to the owner for approval; never dose advice.
 - Keep cost $0/month; keep token use reasonable (Token Steward trims applied).
