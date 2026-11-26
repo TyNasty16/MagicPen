@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 42 · ✅ 38 · ⏭️ 26_
+_Last updated: 2026-11-26 (08b closing pass) · Totals: 💡 44 · ✅ 46 · ⏭️ 32_
 
 ---
 
@@ -20,7 +20,6 @@ _Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 42 · ✅ 38 · ⏭
 | I-05 | Option in Profile to turn the numbers in the squares on or off | 04d opening + after-build | For people who prefer the pure colour view. |
 | I-06 | Reword "not logged in over 3 days" so it reads naturally under a 7-day map (the 3-day rule itself stays — owner's rule) | 04d opening + after-build | Wording only. |
 | I-07 | Label the drill-down day chart "Avg severity" | 04d after-build | |
-| I-08 | Symptom summary to take to appointments (your own data, no advice) | 04d after-build | Bigger idea; overlaps the planned PDF export (PLAN v2). |
 | I-09 | Use one shared trend wording on the map and the drill-down (map says "Same" while drill-down says "milder lately") | 04d after-build | 04d added a caption; the words can still disagree. |
 | I-10 | Trim the dense footnote under the map | 04d after-build | |
 | I-11 | Large alert card pushes the map down — consider a slimmer card on the Symptoms screen | 04d after-build | Home already uses a pop-up. |
@@ -45,16 +44,19 @@ _Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 42 · ✅ 38 · ⏭
 | I-34 | Weight chart: stop a switch label being hidden when it is close to an earlier mark | 07 after-build | Existing overlap rule hides it; the dotted line still shows. |
 | I-35 | Symptom page weekly injection chart should mark a medicine switch | 07 after-build | It marks dose changes only and has no medicine data. |
 | I-36 | Help box could follow a one-off per-entry medicine, not just the Profile medicine | 07 after-build | Optional; only matters if someone mixes medicines. |
-| I-37 | Exportable PDF summary for medical professionals (weight, doses, symptoms, measurements, food) | Owner, 2026-11-26 | Your idea. Matches PLAN v2 "PDF summary for doctor visits" and covers I-08. Made on the phone, your own data only, no advice. 08a built (appointments + menu); 08b report next. |
 | I-38 | Insights section or tab that outlines your GLP-1 journey | Owner, 2026-11-26 | Your idea. Facts from your own logs (e.g. weeks on each dose, weight change, symptom trends); wording must stay factual, no advice. |
 | I-39 | AI assistant that searches the web for GLP-1 questions | Owner, 2026-11-26 | Your idea. Needs care: an AI service and web search cost money and need a key (breaks the $0 rule unless free options exist); questions would leave the phone; answers would need sources and could read as medical advice. Worth its own Ideas pass. |
 | I-40 | Connection to Apple Health (e.g. weight, steps, workouts in; weigh-ins and food out) | Owner, 2026-11-26 | Your idea. A web app can't reach Apple Health — it needs the App Store version (PLAN v3, Capacitor). Data would stay on the phone; Apple's own permission screen controls each item. |
 | I-41 | Connection to Apple Fitness (workouts, activity rings) | Owner, 2026-11-26 | Your idea. Apple Fitness has no separate connection for apps; its workouts and activity reach apps through Apple Health, so this comes with I-40 and the App Store version. |
 | I-42 | Medication curve (estimated medicine level over the week, from your logged doses) plus a plain "how GLP-1 works" explainer, including the ups and downs | Owner, 2026-11-26 | Your idea. The labels give the facts to draw it: peak "1 to 3 days post dose", half-life "approximately 1 week", steady state "4 to 5 weeks", "present in the circulation for about 5 weeks after the last dose" (Ozempic label, DailyMed). Must be shown as an estimate for understanding, never dose advice; explainer wording from cited sources, owner-approved. Pairs well with I-38 (Insights) and the symptom-by-day chart. |
-| I-43 | Home reminder card the day before the next appointment, with a "Make report for this visit" button | 08 opening, 08a after-build | Needs 08b (the report). Facts only, no advice. |
-| I-44 | Carry open questions into the report and tick them off after the visit | 08a after-build | "Questions open" marker already built in 08a; printed as your own words. |
+| I-43 | Home reminder card the day before the next appointment, with a "Make report for this visit" button | 08 opening, 08a after-build | Unblocked: 08b (the report) is built. Facts only, no advice. |
+| I-44 | Carry open questions into the report and tick them off after the visit | 08a after-build | "Questions open" marker built in 08a; 08b prints open questions as your own words. Still open: ticking them off after the visit. |
 | I-45 | Back-to-Home link on Settings | 08a after-build | Settings has no back button today; the new menu makes this more noticeable. |
 | I-46 | Several photos per weigh-in (e.g. front, side, back) | Owner, 2026-11-26 | Your idea. Today each weigh-in holds one photo (Milestone 2b). Needs the photos table to allow more than one per weigh-in, a small gallery in the viewer, and more phone storage — photos are the biggest data; the planned backup (Milestone 7) must include them. Could pair with the report's optional photos section. |
+| I-47 | Warn in the report preview when a name or note has characters that print as "?" | 08b after-build | Our own PDF writer covers basic Latin plus common accented letters only. Name the affected field before sharing. |
+| I-48 | "What changed since last visit" one-line summary at the top of the report | 08 opening, 08b after-build | Facts only (weight change, doses logged); no interpretation. |
+| I-49 | Remember the section switches and period choice between reports | 08 opening, 08b after-build | Switches reset when the period changes today. Stored on the phone. |
+| I-50 | Compact one-page report option for quick visits | 08 opening, 08b after-build | Header, questions, doses, weight, side effects only. |
 
 ## ✅ Done
 
@@ -98,6 +100,14 @@ _Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 42 · ✅ 38 · ⏭
 | D-36 | Appointments list and form (date, who/what for, notes, questions; "Questions open" marker; confirm before delete) | 08 opening | 08a |
 | D-37 | Home gear becomes a menu: Doctor report, Appointments, Settings | 08 opening | 08a — plain disclosure, 48 px items, Escape / tap outside closes |
 | D-38 | Optional name in Profile, kept on the phone and cleared by reset (appointments cleared too) | 08 opening (watch-out) | 08a |
+| D-39 | Exportable PDF summary for medical professionals (was I-37) | Owner, 2026-11-26 | 08b — Doctor report: preview, PDF, share; own entries only, no advice |
+| D-40 | Symptom summary to take to appointments (was I-08) | 04d after-build | 08b — covered by the doctor report |
+| D-41 | One pure report builder feeding both preview and PDF, with the exact approved wording | 08 opening (approach 1 reasoning) | 08b — `src/lib/report.ts`, advice-word guard test |
+| D-42 | PDF made by our own small writer, no library (hand-written PDF option) | 08 opening (PDF options) | 08b — owner chose A; 4 KB lazy chunk, no network code, audit 0 |
+| D-43 | Share through the iPhone Share menu, with a download fallback | 08 opening | 08b — "Share PDF" button if the first tap is not accepted |
+| D-44 | Period choice (since last appointment or custom) and section switches with amber "Limited data" tags | 08 opening (watch-out: limited-data rules) | 08b — defaults as in the brief |
+| D-45 | Photos, food items and water sections, plus past appointment notes (off by default) | 08b plan ("build them") | 08b |
+| D-46 | Privacy note before sharing: the PDF is outside the app once shared | 08 opening (watch-out) | 08b |
 
 ## ⏭️ Skipped
 
@@ -129,6 +139,12 @@ _Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 42 · ✅ 38 · ⏭
 | S-24 | Brand name with a small "semaglutide" subtitle | 07 opening | Owner default: no subtitle (could be added on request) |
 | S-25 | One medicine per profile, no per-entry drug (approach 1) | 07 opening | Technical: switching would relabel old entries and blur history |
 | S-26 | Generic "semaglutide" mode with free-typed doses (approach 3) | 07 opening | Technical: loses preset chips and drug-specific help; weak for sourced medical wording |
+| S-27 | One build for Appointments and report together (approach 2) | 08 opening | Owner approved the two-step split; large diff, hard to review |
+| S-28 | Three steps with a separate report-on-screen step (approach 3) | 08 opening | Owner decision: two steps; one shared builder keeps preview and PDF in step |
+| S-29 | jsPDF library (option B) | 08 opening, 08b plan | Owner chose A; 249 KB gzip and bundled network/HTML code we could not remove |
+| S-30 | pdf-lib and pdfmake | 08 opening | Technical: pdf-lib unmaintained since 2022; pdfmake too heavy |
+| S-31 | Browser "Print to PDF" only | 08 opening | Technical: no direct file share on iPhone; own writer covers it |
+| S-32 | White page with Warm Sand accents instead of a full Warm Sand page | 08 opening | Owner decision: same look as the app (dark brown text kept for legibility) |
 
 ---
 

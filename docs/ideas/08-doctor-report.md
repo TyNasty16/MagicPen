@@ -55,3 +55,19 @@ Use `navigator.canShare({ files })` then `navigator.share({ files: [pdf] })` (iO
 1. **Reminder card on Home the day before the next appointment**, with a "Make report for this visit" button once 08b exists. Helps because the owner no longer has to remember the report.
 2. **Carry open questions into the report (08b)** and let the owner tick them off after the visit. The "Questions open" marker already exists, so the report can print them as the owner's own words.
 3. **Back to Home from Settings.** Settings has no back button today, so the new menu link leads somewhere with no clear way back. Small, but the menu makes it more noticeable.
+
+## After-build (08b) — 2026-11-26
+
+**What landed:** The Doctor report: period choice, section switches with amber "Limited data" tags, an on-screen preview, and a PDF made by our own small writer (no library, 4 KB lazy chunk), shared through the iPhone Share menu with a download fallback. Photos, food items and water were included too ("build them").
+
+### Follow-ups
+1. **Warn in the preview when text will print as "?"** (I-47). Names and notes outside basic Latin print as "?" in the PDF. A small notice before sharing, naming which field is affected, avoids a surprise in front of the doctor.
+2. **"What changed since last visit" line at the top** (I-48). One factual sentence (weight change, doses logged) saves the doctor scanning three pages. Facts only, no interpretation.
+3. **Remember the switches and period choice** (I-49). Switches now reset when the period changes; most owners will want the same set each visit.
+4. **Compact one-page option** (I-50). For short visits: header, questions, doses, weight and side effects only.
+
+Also now unblocked: I-43 (Home reminder card the day before a visit, with "Make report for this visit") and the tick-off half of I-44; the report already prints open questions.
+
+### Anything that felt off
+- The real iPhone Share sheet could only be tested on desktop; the owner should try it once on the phone (a "Share PDF" button appears if the first tap is not accepted).
+- The wording list grew past the approved text ("Last logged dose", "Change since start", table headings). All are plain labels, but the owner approved a shorter list, so it is worth a glance.
