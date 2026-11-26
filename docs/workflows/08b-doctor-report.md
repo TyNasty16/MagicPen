@@ -56,7 +56,7 @@ Share fallback: "Sharing isn't available here. The PDF was downloaded instead."
 - **Option A (recommended; owner to choose A or B): own small PDF writer** in `src/lib/pdf/`. No dependency, no network or HTML code, est. 5 to 15 KB, nothing to audit beyond our own code. Uses PDF standard fonts: Helvetica for body, Times for headings. Cost: we write and test layout (wrapping, page breaks, chart); standard fonts cover basic Latin only.
 - **Option B: jsPDF 4.2.1.** Less code to write, but 249 KB gzip (lazy-loaded), and its bundle contains `XMLHttpRequest`, `fetch` and `innerHTML` code that we would not call but could not remove in testing. Security checks as for ZXing (audit, provenance, bundle scan, output sanitising) would be repeated and documented.
 - pdf-lib is not offered: unmaintained since May 2022.
-Reply "A" or "B". Without a reply I will use A.
+Reply "A" or "B".
 
 ## Steps
 1. `src/lib/report.ts` (new, pure): `reportPeriod`, `weekBlocks`, `weekCoverage`, `loggedDayAverages`, `doseGaps`, `symptomSummary`, and `buildReport(data, options)`, returning a plain object with each section, its lines, and its `limited` flag. Reuses `doseChanges`, `symptomAlerts`, `dayTotals`, `proteinLowDays`, `weightStats`, `effectiveTargets`, `formatDrugDose`. No PDF or UI code.
