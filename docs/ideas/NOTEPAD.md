@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 37 · ✅ 34 · ⏭️ 26_
+_Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 38 · ✅ 34 · ⏭️ 26_
 
 ---
 
@@ -50,6 +50,7 @@ _Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 37 · ✅ 34 · �
 | I-39 | AI assistant that searches the web for GLP-1 questions | Owner, 2026-11-26 | Your idea. Needs care: an AI service and web search cost money and need a key (breaks the $0 rule unless free options exist); questions would leave the phone; answers would need sources and could read as medical advice. Worth its own Ideas pass. |
 | I-40 | Connection to Apple Health (e.g. weight, steps, workouts in; weigh-ins and food out) | Owner, 2026-11-26 | Your idea. A web app can't reach Apple Health — it needs the App Store version (PLAN v3, Capacitor). Data would stay on the phone; Apple's own permission screen controls each item. |
 | I-41 | Connection to Apple Fitness (workouts, activity rings) | Owner, 2026-11-26 | Your idea. Apple Fitness has no separate connection for apps; its workouts and activity reach apps through Apple Health, so this comes with I-40 and the App Store version. |
+| I-42 | Medication curve (estimated medicine level over the week, from your logged doses) plus a plain "how GLP-1 works" explainer, including the ups and downs | Owner, 2026-11-26 | Your idea. The labels give the facts to draw it: peak "1 to 3 days post dose", half-life "approximately 1 week", steady state "4 to 5 weeks", "present in the circulation for about 5 weeks after the last dose" (Ozempic label, DailyMed). Must be shown as an estimate for understanding, never dose advice; explainer wording from cited sources, owner-approved. Pairs well with I-38 (Insights) and the symptom-by-day chart. |
 
 ## ✅ Done
 
