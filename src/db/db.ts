@@ -19,6 +19,7 @@ export interface Profile {
   overrides?: Partial<Targets>;
   drug?: DrugId; // medicine new injections default to; missing = Wegovy (workflow 07)
   name?: string; // optional, printed on doctor reports; stays on this phone (workflow 08a)
+  questionsDraft?: string; // questions typed on the report before any appointment exists; moves into the next new appointment (workflow 09)
 }
 
 export type Site = 'abdomen-left' | 'abdomen-right' | 'thigh-left' | 'thigh-right' | 'arm-left' | 'arm-right';
@@ -228,6 +229,22 @@ export const listDayMarksSince = (fromDay: string) => db.dayMarks.where('date').
 export const setLowIntake = (date: string, on: boolean) => (on ? db.dayMarks.put({ date, kind: 'low-intake' }) : db.dayMarks.delete(date));
 
 export const listAppointments = () => db.appointments.toArray();
+
+/**
+ * Saves questions typed on the report screen (workflow 09): into the given appointment, or — with no appointment —
+ * as the profile's draft. `text` must already be cleaned; undefined clears it.
+ */
+export async function saveReportQuestions(appointmentId: number | undefined, text: string | undefined): Promise<void> {
+  if (appointmentId !== undefined) await db.appointments.update(appointmentId, { questions: text });
+  else await saveProfile({ questionsDraft: text });
+}
+
+/** Saves a new appointment and, in the same step, moves any report draft questions out of the profile (workflow 09). */
+export const addAppointmentTakingDraft = (a: Appointment) =>
+  db.transaction('rw', db.appointments, db.profile, async () => {
+    await db.appointments.put(a);
+    await saveProfile({ questionsDraft: undefined });
+  });
 export const saveAppointment = (a: Appointment) => db.appointments.put(a);
 export const deleteAppointment = (id: number) => db.appointments.delete(id);
 

@@ -71,6 +71,15 @@ describe('buildReport', () => {
     expect(buildReport(base(), { start: day(5), end: day(0) }, today).title).toBe('Report');
     expect(texts(buildReport(base(), { start: day(5), end: day(0) }, today), 'questions')).toEqual(['No questions saved.']);
   });
+  it('questions typed before any appointment (the draft) print; once an appointment exists, its questions are used', () => {
+    const d = base();
+    d.profile.questionsDraft = 'Ask about sleep';
+    expect(texts(buildReport(d, { start: day(5), end: day(0) }, today), 'questions')).toEqual(['• Ask about sleep']);
+    d.appointments = [{ date: day(3), questions: 'Ask about nausea' }];
+    expect(texts(buildReport(d, { start: day(3), end: day(0) }, today), 'questions')).toEqual(['• Ask about nausea']);
+    d.appointments = [{ date: day(3) }];
+    expect(texts(buildReport(d, { start: day(3), end: day(0) }, today), 'questions')).toEqual(['No questions saved.']);
+  });
   it('food: averages from logged days only, limited under half; barely-ate days counted separately', () => {
     const d = base();
     d.foodLog = [0, 2, 4, 6, 8, 10, 12, 14, 16].map((n) => food(n, n === 0 ? 60 : 90)); // 9 of 28 days

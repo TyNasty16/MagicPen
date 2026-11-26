@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import BottomSheet from '../components/BottomSheet';
 import { PlusIcon } from '../components/icons';
 import { Button, Field, inputClass, ScreenHeader } from '../components/ui';
-import { deleteAppointment, listAppointments, saveAppointment, type Appointment } from '../db/db';
+import { addAppointmentTakingDraft, deleteAppointment, getProfile, listAppointments, saveAppointment, type Appointment } from '../db/db';
 import { cleanText, sortAppointments, TEXT_MAX, WHO_MAX } from '../lib/appointments';
 import { dayKey, fromDayKey, shortDate } from '../lib/dates';
 import { clearAddParam } from '../lib/route';
@@ -49,16 +49,23 @@ function AppointmentSheet({ initial, onDone }: { initial?: Appointment; onDone: 
   const [notes, setNotes] = useState(initial?.notes ?? '');
   const [questions, setQuestions] = useState(initial?.questions ?? '');
   const [error, setError] = useState<string>();
+  // A new appointment starts with any questions typed on the report before an appointment existed (workflow 09).
+  const [tookDraft, setTookDraft] = useState(false);
+  useEffect(() => {
+    if (initial) return;
+    void getProfile().then((p) => {
+      if (p?.questionsDraft) {
+        setQuestions((q) => (q.trim() ? `${q}\n${p.questionsDraft}` : p.questionsDraft!)); // keep anything already typed
+        setTookDraft(true);
+      }
+    });
+  }, [initial]);
 
   const save = async () => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return setError('Choose a date.');
-    await saveAppointment({
-      ...(initial?.id ? { id: initial.id } : {}),
-      date,
-      who: cleanText(who, WHO_MAX, false),
-      notes: cleanText(notes),
-      questions: cleanText(questions),
-    });
+    const entry = { ...(initial?.id ? { id: initial.id } : {}), date, who: cleanText(who, WHO_MAX, false), notes: cleanText(notes), questions: cleanText(questions) };
+    // The report only reads visits up to today, so the phone copy moves into this visit only when it's today or earlier.
+    await (tookDraft && date <= dayKey(new Date()) ? addAppointmentTakingDraft(entry) : saveAppointment(entry));
     onDone();
   };
   const remove = async () => {

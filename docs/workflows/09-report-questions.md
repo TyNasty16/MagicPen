@@ -1,5 +1,5 @@
 # Workflow 09 — Add questions on the report screen
-Status: Draft
+Status: Built — 2026-11-26
 Milestone: Follow-up to the doctor report (08a/08b, PLAN.md §2 "PDF summary for doctor visits"); owner request 2026-11-26.
 
 ## Ideas considered
@@ -58,7 +58,11 @@ By hand (one browser pass, Playwright `devices['iPhone 13']` with `tap()`): two 
 - Reply "approve the exact text" or give changes to the wording above.
 - Editing here changes the appointment's questions everywhere, including old visits when a custom period is chosen. Fine, or ask first? (yes / no)
 
-## Review checkpoints
+## Build notes (2026-11-26)
+- Built as planned: "Your questions for this visit" box on the report (only for "Since last appointment"); saves automatically about 1 s after typing stops, on leaving the box, before Make PDF, on leaving the screen and when switching to custom dates — all through one `flush()`. With no appointment, the text is kept as `questionsDraft` on the phone and prints; a new appointment dated today or earlier takes it (the draft is then cleared). The preview and PDF use the box's text straight away.
+- iPhone-emulation pass (tap): draft saved and printed in the PDF; new appointment prefilled and draft cleared; the report then edits that appointment ("Saved to your appointment on …", "Saved"); custom dates hide the box but still show the questions; no outside requests.
+- Code review fixes: a future-dated first appointment no longer swallows the draft (it moves only into a visit dated today or earlier); typing isn't lost if the appointment list changes while the screen is open (saved to the old visit first); text typed into a new appointment before the draft loads is kept and joined; no double save on Make PDF; "Saved" is announced to screen readers and the box is linked to its source line; a save error stays visible after switching to custom dates.
+
 - Token Steward: before start (applied: one flush() helper; "Saving…" state dropped; two screenshots; cleanText not re-tested. Not applied: dropping the failure message — a silent failed save could lose the owner's questions)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
@@ -82,4 +86,4 @@ By hand (one browser pass, Playwright `devices['iPhone 13']` with `tap()`): two 
 - Do you approve the exact wording, or do you want changes?
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-26 (defaults OK; exact text approved; answer "No": the box appears only for "Since last appointment", never with custom dates)
