@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-25 (after 07 Ozempic) · Totals: 💡 32 · ✅ 34 · ⏭️ 26_
+_Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 35 · ✅ 34 · ⏭️ 26_
 
 ---
 
@@ -45,6 +45,9 @@ _Last updated: 2026-11-25 (after 07 Ozempic) · Totals: 💡 32 · ✅ 34 · ⏭
 | I-34 | Weight chart: stop a switch label being hidden when it is close to an earlier mark | 07 after-build | Existing overlap rule hides it; the dotted line still shows. |
 | I-35 | Symptom page weekly injection chart should mark a medicine switch | 07 after-build | It marks dose changes only and has no medicine data. |
 | I-36 | Help box could follow a one-off per-entry medicine, not just the Profile medicine | 07 after-build | Optional; only matters if someone mixes medicines. |
+| I-37 | Exportable PDF summary for medical professionals (weight, doses, symptoms, measurements, food) | Owner, 2026-11-26 | Your idea. Matches PLAN v2 "PDF summary for doctor visits" and covers I-08. Made on the phone, your own data only, no advice. |
+| I-38 | Insights section or tab that outlines your GLP-1 journey | Owner, 2026-11-26 | Your idea. Facts from your own logs (e.g. weeks on each dose, weight change, symptom trends); wording must stay factual, no advice. |
+| I-39 | AI assistant that searches the web for GLP-1 questions | Owner, 2026-11-26 | Your idea. Needs care: an AI service and web search cost money and need a key (breaks the $0 rule unless free options exist); questions would leave the phone; answers would need sources and could read as medical advice. Worth its own Ideas pass. |
 
 ## ✅ Done
 
