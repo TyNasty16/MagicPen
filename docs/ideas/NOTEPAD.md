@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 38 · ✅ 34 · ⏭️ 26_
+_Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 41 · ✅ 38 · ⏭️ 26_
 
 ---
 
@@ -30,7 +30,7 @@ _Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 38 · ✅ 34 · �
 | I-15 | "Save a copy first" link inside the reset card | 04e opening | Deferred until Milestone 7 export. |
 | I-16 | Short "All data erased" note after the reload | 04e after-build | Owner lands on the disclaimer with no sign the wipe worked. |
 | I-18 | Check other open tabs / installed app after a reset (stale data until refresh) | 04e after-build | Possibly a refresh prompt. |
-| I-20 | Move backup/export (Milestone 7) earlier | 05 opening, 05 after-build | Food log grows daily with no copy anywhere. |
+| I-20 | Move backup/export (Milestone 7) earlier | 05 opening, 05 after-build, 08a after-build | Food log grows daily with no copy anywhere. |
 | I-21 | Custom water amount | 05 after-build | Quick-adds are only 8 oz / 250 ml and 16 oz / 500 ml; custom was deferred. |
 | I-22 | 7-day protein strip on the Food screen | 05 after-build | Small bars per day vs target, so the protein note can be seen. |
 | I-23 | Recent foods list (one tap to log again) | 05 after-build, 05b opening | For foods not saved to My Foods. 05b also suggested "recent online picks" for offline use; same list would cover both. |
@@ -45,12 +45,15 @@ _Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 38 · ✅ 34 · �
 | I-34 | Weight chart: stop a switch label being hidden when it is close to an earlier mark | 07 after-build | Existing overlap rule hides it; the dotted line still shows. |
 | I-35 | Symptom page weekly injection chart should mark a medicine switch | 07 after-build | It marks dose changes only and has no medicine data. |
 | I-36 | Help box could follow a one-off per-entry medicine, not just the Profile medicine | 07 after-build | Optional; only matters if someone mixes medicines. |
-| I-37 | Exportable PDF summary for medical professionals (weight, doses, symptoms, measurements, food) | Owner, 2026-11-26 | Your idea. Matches PLAN v2 "PDF summary for doctor visits" and covers I-08. Made on the phone, your own data only, no advice. |
+| I-37 | Exportable PDF summary for medical professionals (weight, doses, symptoms, measurements, food) | Owner, 2026-11-26 | Your idea. Matches PLAN v2 "PDF summary for doctor visits" and covers I-08. Made on the phone, your own data only, no advice. 08a built (appointments + menu); 08b report next. |
 | I-38 | Insights section or tab that outlines your GLP-1 journey | Owner, 2026-11-26 | Your idea. Facts from your own logs (e.g. weeks on each dose, weight change, symptom trends); wording must stay factual, no advice. |
 | I-39 | AI assistant that searches the web for GLP-1 questions | Owner, 2026-11-26 | Your idea. Needs care: an AI service and web search cost money and need a key (breaks the $0 rule unless free options exist); questions would leave the phone; answers would need sources and could read as medical advice. Worth its own Ideas pass. |
 | I-40 | Connection to Apple Health (e.g. weight, steps, workouts in; weigh-ins and food out) | Owner, 2026-11-26 | Your idea. A web app can't reach Apple Health — it needs the App Store version (PLAN v3, Capacitor). Data would stay on the phone; Apple's own permission screen controls each item. |
 | I-41 | Connection to Apple Fitness (workouts, activity rings) | Owner, 2026-11-26 | Your idea. Apple Fitness has no separate connection for apps; its workouts and activity reach apps through Apple Health, so this comes with I-40 and the App Store version. |
 | I-42 | Medication curve (estimated medicine level over the week, from your logged doses) plus a plain "how GLP-1 works" explainer, including the ups and downs | Owner, 2026-11-26 | Your idea. The labels give the facts to draw it: peak "1 to 3 days post dose", half-life "approximately 1 week", steady state "4 to 5 weeks", "present in the circulation for about 5 weeks after the last dose" (Ozempic label, DailyMed). Must be shown as an estimate for understanding, never dose advice; explainer wording from cited sources, owner-approved. Pairs well with I-38 (Insights) and the symptom-by-day chart. |
+| I-43 | Home reminder card the day before the next appointment, with a "Make report for this visit" button | 08 opening, 08a after-build | Needs 08b (the report). Facts only, no advice. |
+| I-44 | Carry open questions into the report and tick them off after the visit | 08a after-build | "Questions open" marker already built in 08a; printed as your own words. |
+| I-45 | Back-to-Home link on Settings | 08a after-build | Settings has no back button today; the new menu makes this more noticeable. |
 
 ## ✅ Done
 
@@ -90,6 +93,10 @@ _Last updated: 2026-11-26 (owner ideas added) · Totals: 💡 38 · ✅ 34 · �
 | D-32 | "Not found" shortcut to enter the food by hand | 05c opening | 05c — built without keeping the barcode (see I-28) |
 | D-33 | Medicine stored per injection, defaulting to the Profile medicine, with a drug catalog file (approach 2 on 4, recommended) | 07 opening | 07 — commit e4afdc2; `drugs.ts`, Dexie v7, old rows read as Wegovy |
 | D-34 | Per-medicine help list, footer and tips (no more Wegovy-only text) | 07 opening (watch-out) | 07 — Ozempic wording from the label; stomach-pain alert uses the profile medicine |
+| D-35 | Two steps: 08a Appointments + menu first, 08b report next (approach 1, recommended) | 08 opening | 08a — Dexie v8 `appointments`, report page is a "Coming next" placeholder |
+| D-36 | Appointments list and form (date, who/what for, notes, questions; "Questions open" marker; confirm before delete) | 08 opening | 08a |
+| D-37 | Home gear becomes a menu: Doctor report, Appointments, Settings | 08 opening | 08a — plain disclosure, 48 px items, Escape / tap outside closes |
+| D-38 | Optional name in Profile, kept on the phone and cleared by reset (appointments cleared too) | 08 opening (watch-out) | 08a |
 
 ## ⏭️ Skipped
 

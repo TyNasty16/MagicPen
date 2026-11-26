@@ -46,3 +46,12 @@ Use `navigator.canShare({ files })` then `navigator.share({ files: [pdf] })` (iO
 - **Notes and questions** are the owner's own words; print them as plain text (sanitise control characters, long text wraps).
 - **Reuse:** `symptomAlerts` (alerts), `nutrition` (`dayTotals`, `proteinLowDays`), `weight` (`dailyWeights`, `weightStats`), `range` (`doseChanges`, `filterRange`), `drugs`/`injections` (names, doses, `formatDrugDose`), `units` (pounds), `profileTargets` (targets). Add one pure `buildReport()` and test it, with no PDF code inside.
 - **Cost and size:** $0, no new network calls; library loads only when the report opens, so the main bundle doesn't grow.
+
+## After-build (08a) — 2026-11-26
+
+**What landed:** Appointments list and form, Home gear menu (Doctor report, Appointments, Settings), optional name in Profile, Dexie v8; Doctor report is a "Coming next" placeholder.
+
+### Follow-ups
+1. **Reminder card on Home the day before the next appointment**, with a "Make report for this visit" button once 08b exists. Helps because the owner no longer has to remember the report.
+2. **Carry open questions into the report (08b)** and let the owner tick them off after the visit. The "Questions open" marker already exists, so the report can print them as the owner's own words.
+3. **Back to Home from Settings.** Settings has no back button today, so the new menu link leads somewhere with no clear way back. Small, but the menu makes it more noticeable.
