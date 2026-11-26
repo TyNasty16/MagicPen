@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { GearIcon, PlusIcon, SyringeIcon } from '../components/icons';
+import { PlusIcon, SyringeIcon } from '../components/icons';
+import GearMenu from '../components/GearMenu';
 import { Tile } from '../components/ui';
 import NutritionRings from '../components/NutritionRings';
 import Sparkline from '../components/Sparkline';
@@ -57,9 +58,7 @@ export default function Home({ profile }: { profile: Profile }) {
           <p className="text-sm text-muted">{now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
           <h1 className="mt-0.5 font-serif text-[30px] font-semibold">{greeting(now)}</h1>
         </div>
-        <a href="#/settings" aria-label="Settings" className="grid size-11 place-items-center rounded-2xl bg-surface text-muted shadow-soft">
-          <GearIcon width={22} height={22} />
-        </a>
+        <GearMenu />
       </header>
 
       {!targets ? (

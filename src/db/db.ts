@@ -18,6 +18,7 @@ export interface Profile {
   proteinPerKg?: number;
   overrides?: Partial<Targets>;
   drug?: DrugId; // medicine new injections default to; missing = Wegovy (workflow 07)
+  name?: string; // optional, printed on doctor reports; stays on this phone (workflow 08a)
 }
 
 export type Site = 'abdomen-left' | 'abdomen-right' | 'thigh-left' | 'thigh-right' | 'arm-left' | 'arm-right';
@@ -109,6 +110,15 @@ export interface DayMark {
   kind: 'low-intake';
 }
 
+/** A logged visit (workflow 08a). `date` is YYYY-MM-DD. Text is the owner's own; the app never suggests anything. */
+export interface Appointment {
+  id?: number;
+  date: string;
+  who?: string;
+  notes?: string;
+  questions?: string;
+}
+
 export const db = new Dexie('steady') as Dexie & {
   profile: EntityTable<Profile, 'id'>;
   injections: EntityTable<Injection, 'id'>;
@@ -120,6 +130,7 @@ export const db = new Dexie('steady') as Dexie & {
   foodLog: EntityTable<FoodLogEntry, 'id'>;
   water: EntityTable<WaterEntry, 'id'>;
   dayMarks: EntityTable<DayMark, 'date'>;
+  appointments: EntityTable<Appointment, 'id'>;
 };
 
 // Keep every version declared: Dexie upgrades existing databases in place, so profile data is kept.
@@ -136,6 +147,11 @@ db.version(6).stores({
 db.version(7).stores({
   profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
   foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date',
+});
+// v8 (workflow 08a): appointments.
+db.version(8).stores({
+  profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
+  foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date', appointments: '++id, date',
 });
 
 export const getProfile = async (): Promise<Profile | null> => (await db.profile.get('me')) ?? null;
@@ -210,6 +226,10 @@ export const deleteWater = (id: number) => db.water.delete(id);
 
 export const listDayMarksSince = (fromDay: string) => db.dayMarks.where('date').aboveOrEqual(fromDay).toArray();
 export const setLowIntake = (date: string, on: boolean) => (on ? db.dayMarks.put({ date, kind: 'low-intake' }) : db.dayMarks.delete(date));
+
+export const listAppointments = () => db.appointments.toArray();
+export const saveAppointment = (a: Appointment) => db.appointments.put(a);
+export const deleteAppointment = (id: number) => db.appointments.delete(id);
 
 const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck', 'steady.barcodeNoticeAck'];
 

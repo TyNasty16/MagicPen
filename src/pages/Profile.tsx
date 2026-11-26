@@ -4,6 +4,7 @@ import { Banner, Button, Card, Field, inputClass, ScreenHeader } from '../compon
 import { listWeights, saveProfile, type Profile as ProfileRecord } from '../db/db';
 import { latestWeightKg } from '../lib/weight';
 import { WEEKDAYS } from '../lib/nextDose';
+import { cleanText, WHO_MAX } from '../lib/appointments';
 import { DRUG_IDS, DRUGS, drugOf } from '../lib/drugs';
 import Segmented from '../components/Segmented';
 import { calculatedTargets, effectiveTargets } from '../lib/profileTargets';
@@ -123,7 +124,7 @@ export default function Profile({ profile, backHref, section }: { profile: Profi
     const e = validate(draft);
     setErrors(e);
     if (Object.keys(e).length > 0) return;
-    await saveProfile(draft);
+    await saveProfile({ ...draft, name: cleanText(draft.name ?? '', WHO_MAX, false) });
     setSaved(true);
   };
 
@@ -165,6 +166,9 @@ export default function Profile({ profile, backHref, section }: { profile: Profi
 
       <Card title="About you" id="about">
         <div className="space-y-4">
+          <Field label="Your name (optional)" hint="Printed on reports. Stays on this phone." htmlFor="name">
+            <input id="name" className={inputClass} autoComplete="name" maxLength={WHO_MAX} value={draft.name ?? ''} onChange={(e) => update({ name: e.target.value })} />
+          </Field>
           <Field label="Height" htmlFor="height" error={errors.height}>
             {imperial ? (
               <div className="grid grid-cols-2 gap-2">

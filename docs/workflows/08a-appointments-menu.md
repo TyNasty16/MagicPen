@@ -1,5 +1,5 @@
 # Workflow 08a — Appointments and the Home menu
-Status: Draft
+Status: Built — 2026-11-26
 Milestone: Part 1 of 2 of the doctor report (I-37); pulls "PDF summary for doctor visits" (PLAN.md §2, v2) forward. Follows milestone 7 (§5).
 
 ## Ideas considered
@@ -64,7 +64,12 @@ By hand (one browser pass, screenshots): v7 to v8 upgrade with real data; menu; 
 - Reply "approve the exact text" or give changes to the wording above.
 - Menu order: Doctor report, Appointments, Settings. Different order?
 
-## Review checkpoints
+## Build notes (2026-11-26)
+- Built as planned: Dexie v8 `appointments`; `Profile.name` (cleaned on save, cleared by reset); `src/lib/appointments.ts` with tests; Home gear → menu (Doctor report, Appointments, Settings); Appointments list and form; Doctor report placeholder.
+- Browser pass: v7 → v8 upgrade kept data; menu items 48 px, Escape and tapping outside close it; add / edit / delete; list newest first with a "Questions open" marker; name cleaned ("Alex Sample"); reset emptied appointments and the profile; no outside requests; no sideways scroll.
+- Code review fixes: rows show the "Questions open" marker as planned (the note preview was removed); the menu is a plain disclosure (no menu-role announcement) and closes when focus tabs out; the date error clears when a date is picked.
+- Not changed: the delete message uses the app's usual curly apostrophe (can’t), as in all other messages; the Settings link has no "back to Home" (Settings has no back button today).
+
 - Token Steward: before start
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
@@ -82,4 +87,4 @@ By hand (one browser pass, screenshots): v7 to v8 upgrade with real data; menu; 
 - Approve the exact wording, or ask for changes.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-26 (defaults OK; exact text approved)

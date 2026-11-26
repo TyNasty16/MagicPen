@@ -1,5 +1,5 @@
 # Workflow 08b — Doctor report (preview, PDF, share)
-Status: Draft
+Status: Approved
 Milestone: Part 2 of 2 of the doctor report (I-37); pulls "PDF summary for doctor visits" (PLAN.md §2, v2) forward. Needs 08a built first.
 
 ## Ideas considered
@@ -116,4 +116,4 @@ By hand (one browser pass, screenshots): menu to report; period switching; switc
 - Approve the exact wording, or ask for changes.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-26 (defaults OK; exact text approved; PDF option A; "build them": photos, food items and water switches included in the first version)
