@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 41 · ✅ 38 · ⏭️ 26_
+_Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 42 · ✅ 38 · ⏭️ 26_
 
 ---
 
@@ -54,6 +54,7 @@ _Last updated: 2026-11-26 (08a closing pass) · Totals: 💡 41 · ✅ 38 · ⏭
 | I-43 | Home reminder card the day before the next appointment, with a "Make report for this visit" button | 08 opening, 08a after-build | Needs 08b (the report). Facts only, no advice. |
 | I-44 | Carry open questions into the report and tick them off after the visit | 08a after-build | "Questions open" marker already built in 08a; printed as your own words. |
 | I-45 | Back-to-Home link on Settings | 08a after-build | Settings has no back button today; the new menu makes this more noticeable. |
+| I-46 | Several photos per weigh-in (e.g. front, side, back) | Owner, 2026-11-26 | Your idea. Today each weigh-in holds one photo (Milestone 2b). Needs the photos table to allow more than one per weigh-in, a small gallery in the viewer, and more phone storage — photos are the biggest data; the planned backup (Milestone 7) must include them. Could pair with the report's optional photos section. |
 
 ## ✅ Done
 
