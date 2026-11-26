@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { GearIcon } from './icons';
+import { MenuIcon } from './icons';
 
 const ITEMS = [
   { href: '#/report?from=home', label: 'Doctor report' },
@@ -7,7 +7,7 @@ const ITEMS = [
   { href: '#/settings', label: 'Settings' },
 ];
 
-/** Home's gear button: a small menu (workflow 08a). More items can be added to ITEMS. */
+/** Home's menu button (three lines): a small menu (workflow 08a; owner asked for a standard menu icon). More items can be added to ITEMS. */
 export default function GearMenu() {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
@@ -38,7 +38,7 @@ export default function GearMenu() {
       }}
     >
       <button ref={button} type="button" aria-label="Menu" aria-controls="home-menu" aria-expanded={open} onClick={() => setOpen(!open)} className="grid size-11 place-items-center rounded-2xl bg-surface text-muted shadow-soft">
-        <GearIcon width={22} height={22} />
+        <MenuIcon width={22} height={22} />
       </button>
       {open && (
         <nav id="home-menu" aria-label="Menu" className="absolute top-12 right-0 z-30 w-52 overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_10px_30px_rgb(80_50_30/0.15)]">
