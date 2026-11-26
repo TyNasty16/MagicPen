@@ -1,5 +1,5 @@
 # Workflow 08b — Doctor report (preview, PDF, share)
-Status: Approved
+Status: Built — 2026-11-26
 Milestone: Part 2 of 2 of the doctor report (I-37); pulls "PDF summary for doctor visits" (PLAN.md §2, v2) forward. Needs 08a built first.
 
 ## Ideas considered
@@ -98,7 +98,13 @@ By hand (one browser pass, screenshots): menu to report; period switching; switc
 - Reply "approve the exact text" or give changes to the wording above.
 - PDF approach: "A" or "B".
 
-## Review checkpoints
+## Build notes (2026-11-26)
+- Built as planned with option A: `src/lib/report.ts` (pure maths + approved wording), `src/lib/pdf/writer.ts` (own PDF writer: standard fonts, WinAnsi text, JPEG photos, xref), `src/lib/pdf/render.ts` (Warm Sand US Letter layout, running header "Page i of N", tables, weight chart, photos), `src/lib/shareReport.ts`, `src/pages/DoctorReport.tsx`. Owner's "build them": water, food items and photos sections included (off by default), plus past appointment notes.
+- Security (as for ZXing): no new packages; the PDF code is its own lazy chunk (4 KB gzip) with no network, eval or HTML-writing code; `npm audit --omit=dev`: 0; owner text is shown as plain text and cleaned.
+- Browser pass: default period "since last appointment"; default switches exactly as the brief; amber limited-data tags; a real 3-page PDF with two photos was made, downloaded on desktop (fallback message shown), checked with pdfinfo (US Letter) and rendered with pdftoppm for the owner; no outside requests; no sideways scroll.
+- Code review fixes: a half-typed year (e.g. 0002) could freeze the page — periods must now be from 2000 and at most about 10 years, and alerts are only checked on days with entries; switches no longer reset when new data arrives (only when the period changes); on iPhone, if sharing must follow a tap, a "Share PDF" button appears instead of falling back to a download; more WinAnsi letters (e.g. Š, œ) print instead of "?"; long tables repeat their header on a new page; "+0.0 lb" no longer appears; switch labels read cleanly to screen readers; the doses flag isn't repeated.
+- Small wording additions beyond the approved list, all factual labels: "Last logged dose: …", "Injections logged: n", "Start of period / Now / Change in period / BMI / Change since start", table headings, "No notes / No photos in this period.", "Share PDF", and the custom-date hint "(from 2000, up to 10 years)".
+
 - Token Steward: before start (applied: white-page alternative dropped, report strings folded into report.ts, duplicate tests removed, PDF image part of the one browser pass, owner chooses A or B explicitly — if A, tests limited to header/trailer, xref, escaping and one page break. Not applied: one combined browser pass for 08a and 08b — 08a can go online on its own, so it keeps its own short pass)
 - Code Reviewer: before commit
 - Plain-Language Explainer: summary for owner
