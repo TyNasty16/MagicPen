@@ -11,14 +11,18 @@ import { titleFor } from './milestones';
 export function useMilestones(ready: boolean): [Celebration | null, () => void] {
   const [shown, setShown] = useState<Celebration | null>(null);
   // Changes whenever an injection, weigh-in, symptom, food or water entry is added or removed.
-  const sig = useLiveQuery(async () => (await Promise.all([db.injections.count(), db.weights.count(), db.symptoms.count(), db.foodLog.count(), db.water.count()])).join(','), []);
+  // Also the Profile starting weight, so an edit there is synced (silently) straight away and the next weigh-in can show.
+  const sig = useLiveQuery(async () => [...(await Promise.all([db.injections.count(), db.weights.count(), db.symptoms.count(), db.foodLog.count(), db.water.count()])), (await db.profile.get('me'))?.startWeightKg].join(','), []);
   const run = useCallback(() => {
     void checkMilestones().then((c) => {
       if (!c) return;
       // A pop-up already open gains the new lines (and starts its 5 seconds again).
       setShown((cur) => {
         if (!cur) return c;
-        const lines = [...cur.lines, ...c.lines];
+        // Keep one line per series, the highest.
+        const bySeries = new Map(cur.lines.map((l) => [l.series, l]));
+        for (const l of c.lines) if (!bySeries.has(l.series) || l.n > bySeries.get(l.series)!.n) bySeries.set(l.series, l);
+        const lines = [...bySeries.values()];
         return { title: titleFor(Math.max(...lines.map((l) => l.step))), lines };
       });
     });

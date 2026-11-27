@@ -10,7 +10,7 @@ export function confettiBurst(canvas: HTMLCanvasElement, ms = 1500): () => void 
   const w = (canvas.width = canvas.clientWidth * devicePixelRatio);
   const h = (canvas.height = canvas.clientHeight * devicePixelRatio);
   const s = devicePixelRatio;
-  const bits = Array.from({ length: 60 }, (_, i) => ({
+  const bits = Array.from({ length: 40 }, (_, i) => ({
     x: w / 2, y: h * 0.18, vx: (Math.random() - 0.5) * 14 * s, vy: (-Math.random() * 10 - 4) * s,
     r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.4, c: COLOURS[i % COLOURS.length], size: (5 + Math.random() * 5) * s,
   }));

@@ -1,5 +1,5 @@
 // Backup and restore, tying the pure modules to the phone's database and Dropbox (workflow 10a).
-import { afterRestore } from '../milestoneCheck';
+import { afterRestore, beforeRestore } from '../milestoneCheck';
 import { db, SCHEMA_VERSION, UI_KEYS, type BackupState } from '../../db/db';
 import { deleteFile, downloadFile, DropboxError, listFiles, PKCE_KEY, refreshAccess, revoke, uploadFile, type DropboxFile } from './dropbox';
 import { BackupError, decryptBackup, decryptWithPassword, deriveKey, encryptBackup, keyFits, MAX_FILE_BYTES, PBKDF2_ITERATIONS, randomSalt, readHeader } from './format';
@@ -148,6 +148,7 @@ export async function applyRestore(p: Payload): Promise<void> {
   running = true;
   try {
     const deviceRecord = (await db.profile.get('me'))?.milestonesEarned;
+    beforeRestore();
     await restoreTables(p);
     await afterRestore(deviceRecord); // milestones already shown on this phone never show again (workflow 12)
   } finally {

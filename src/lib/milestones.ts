@@ -146,14 +146,21 @@ export function mergeRecords(a: MilestoneRecord[] = [], b: MilestoneRecord[] = [
   return [...m.values()];
 }
 
-export const MAX_RECORDS = 500;
-/** Keeps the record within its cap: ended streak runs go first, oldest first. */
-export function capRecords(record: MilestoneRecord[]): MilestoneRecord[] {
-  if (record.length <= MAX_RECORDS) return record;
-  const streaky = record.filter((r) => r.run).sort((x, y) => x.on.localeCompare(y.on));
-  const drop = new Set(streaky.slice(0, record.length - MAX_RECORDS));
-  return record.filter((r) => !drop.has(r));
+/** Streak records from runs that have ended are never needed again (a new run earns its steps afresh), so they are dropped. */
+export function dropEndedRuns(record: MilestoneRecord[], earned: Earned[]): MilestoneRecord[] {
+  const runStart = new Map<string, string>();
+  for (const e of earned) if (e.run) runStart.set(e.series, e.run);
+  return record.filter((r) => {
+    if (!r.run) return true;
+    const start = runStart.get(r.key.slice(0, r.key.indexOf('-')));
+    return !!start && r.run >= start;
+  });
 }
+
+export const MAX_RECORDS = 500;
+/** Keeps the record within its cap (backups refuse more): oldest first, never the newest 500. */
+export const capRecords = (record: MilestoneRecord[]): MilestoneRecord[] =>
+  record.length <= MAX_RECORDS ? record : [...record].sort((x, y) => x.on.localeCompare(y.on)).slice(record.length - MAX_RECORDS);
 
 export interface ShowLine { series: SeriesId; n: number; step: number; text: string }
 

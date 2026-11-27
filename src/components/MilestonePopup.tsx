@@ -21,13 +21,14 @@ export default function MilestonePopup({ celebration, onClose }: { celebration: 
     <div className={`fixed inset-0 z-50 ${leaving ? 'milestone-leave' : ''}`} onClick={onClose}>
       <canvas ref={canvas} aria-hidden="true" className="pointer-events-none absolute inset-0 size-full" />
       <div className="mx-auto mt-[max(1.25rem,env(safe-area-inset-top))] max-w-md px-4">
-        <div role="status" aria-live="polite" aria-label="Milestone reached" className="milestone-card rounded-card bg-surface p-5 text-center shadow-soft">
+        <div role="status" aria-live="polite" className="milestone-card rounded-card bg-surface p-5 text-center shadow-soft">
+          <p className="sr-only">Milestone reached</p>
           <p className="milestone-title font-sans text-[34px] leading-none font-black tracking-tight text-accent uppercase italic">{celebration.title}</p>
           <ul className="mt-3 space-y-1 text-sm font-medium">
             {celebration.lines.map((l) => <li key={`${l.series}-${l.n}`}>{l.text}</li>)}
           </ul>
           <p className="mt-3 text-xs text-muted">Tap to close</p>
-          <button type="button" className="sr-only" onClick={onClose}>Close</button>
+          <button type="button" className="sr-only focus:not-sr-only focus:mt-2 focus:underline" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>

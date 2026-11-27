@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { addDays, dayKey, fromDayKey } from './dates';
-import { computeEarned, firstArrivalLines, isRecorded, LADDERS, linesToShow, mergeRecords, milestoneText, monthsSince, stepsUpTo, titleFor, toRecords, type MilestoneData } from './milestones';
+import { computeEarned, dropEndedRuns, firstArrivalLines, isRecorded, LADDERS, linesToShow, mergeRecords, milestoneText, monthsSince, stepsUpTo, titleFor, toRecords, type MilestoneData } from './milestones';
 
 const empty = (): MilestoneData => ({ injections: [], weights: [], symptoms: [], foodLog: [], water: [] });
 const TODAY = '2026-11-27'; // a Friday
@@ -122,6 +122,13 @@ describe('showing', () => {
     d.weights = [{ date: day(0), weightKg: 90 }];
     const e = computeEarned(d, { units: 'metric', startWeightKg: 100 }, TODAY);
     expect(linesToShow(e, {}, true).some((l) => l.series === 'wabs' || l.series === 'wpct')).toBe(false);
+  });
+  it('records from ended streak runs are dropped; totals and the current run stay', () => {
+    const d = empty();
+    d.water = [0, 1, 2].map((n) => ({ date: day(n) }));
+    const earned = computeEarned(d, {}, TODAY);
+    const rec = [{ key: 'days-1', on: day(30) }, { key: 'dstreak-7', on: day(20), run: day(26) }, { key: 'dstreak-3', on: TODAY, run: day(2) }, { key: 'wis-2', on: day(40), run: day(50) }];
+    expect(dropEndedRuns(rec, earned).map((r) => r.key)).toEqual(['days-1', 'dstreak-3']);
   });
   it('merging keeps the earliest date per key and run', () => {
     expect(mergeRecords([{ key: 'inj-1', on: '2026-11-20' }], [{ key: 'inj-1', on: '2026-11-01' }, { key: 'inj-4', on: '2026-11-21' }])).toEqual([

@@ -1,5 +1,5 @@
 # Workflow 12 — Milestone celebrations
-Status: Approved
+Status: Built
 Milestone: Post-plan add-on (not in PLAN.md §5), owner idea I-63. Needs only data already stored.
 
 ## Owner decisions at approval (2026-11-27) — these override anything below
@@ -186,3 +186,39 @@ By hand: one mocked iPhone pass (390x844) with two screenshots, the pop-up with 
 
 ## Approval
 - [x] Approved by owner — 2026-11-27, with the decisions at the top of this document — date:
+
+## Build notes (2026-11-27)
+- **Built as approved,** with the owner decisions at the top of this document.
+- **New files:**
+  - `src/lib/milestones.ts` (pure)
+  - `src/lib/milestoneCheck.ts` (database glue; checks run one at a time)
+  - `src/lib/useMilestones.ts`
+  - `src/components/MilestonePopup.tsx`
+  - `src/components/confetti.ts` (40 pieces, no library)
+  - a Settings "Milestones" card
+- **Extra safety:**
+  - `saveProfile` now runs in a transaction.
+  - The Profile screen no longer writes back old copies of fields other screens own: the milestone record, the switches and the report's questions draft.
+- **Starting-weight edits:** a change to the starting weight triggers a silent check straight away, so the next weigh-in can show its weight milestone.
+- **Code review fixes:**
+  - The starting-weight sync above.
+  - Restore is now "quiet". No pop-up can show while a restore is under way, and a milestone hiccup can't make a finished restore look failed.
+  - Records from ended streak runs are dropped, so the list stays small.
+  - The 500 cap keeps the newest records.
+  - Lines merged into an open pop-up are de-duplicated, one per series.
+  - The fading pop-up no longer blocks taps.
+  - The screen reader announces "Milestone reached" plus the lines.
+  - The Close button is visible when focused.
+- **Known limit:** changing the injection weekday can, rarely, re-show an on-schedule streak step already seen in the current run. This is accepted as rare.
+- **Pop-up taps:** the full-screen tap-to-close layer catches one tap during the 5 seconds, as the owner decided ("click away").
+- **Checks:**
+  - 342 tests pass and the build passes.
+  - Mocked iPhone runs passed for:
+    - first arrival
+    - a new milestone after logging
+    - tap-away close
+    - auto-close at 5 seconds
+    - no repeat after reload
+    - Reduce Motion
+    - Dropbox backup and restore
+  - No CSP violations and no errors.
