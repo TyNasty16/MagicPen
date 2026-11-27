@@ -59,3 +59,22 @@ Generated on the phone as a Blob: `VEVENT` with `RRULE:FREQ=WEEKLY;BYDAY=<inject
 - **Same trap with a bad restore/update:** an automatic backup of broken data could push out the last good file after two days. Keep-2 is a fixed requirement; the guard above and the test-restore idea soften it.
 - **No dose advice:** backup screen, restore summary and .ics show facts only; the restore summary counts rows and dates, never interprets doses. Medical wording is not needed anywhere here.
 - **Dropbox "Development" status** caps the app at a limited number of users, which is fine for "Only you"; it may need a one-time re-consent if scopes change later.
+
+## After-build improvements and follow-ups — 2026-11-27
+
+**What landed:** 10a, an encrypted daily Dropbox backup with restore (Backup screen in the menu), and 10b, a weekly injection-day reminder for Calendar from the Doses screen. Both are pushed; a real-iPhone check is still needed.
+
+Suggestions only; nothing is built from them without a new request.
+
+1. **"Backup is behind" nudge (I-54).** Backup runs only when the app is opened, so a long gap is silent. A calm amber line after several days would close that.
+2. **Tidy leftover photos (I-55).** After a restore, photos for removed weigh-ins stay on the phone but are hidden (the known limit in 10a). Show a count and a confirmed "Remove unused photos".
+3. **Opt-in photo backup (I-56).** Photos are the biggest data and are not backed up. Off by default, with its own size and privacy note; pairs with several photos per weigh-in (I-46).
+4. **Password reminder and hint (I-57).** A forgotten password cannot be recovered. Offer a "write it down" check, and an optional hint with a warning that it is not encrypted.
+5. **Restore preview comparison (I-58).** Show backup counts beside the phone's counts so the owner can see they are about to replace newer data.
+6. **iPhone check for the .ics (I-59).** Confirm the Share sheet offers Calendar. If it does not, add a download or Files fallback.
+
+**Anything that felt off:**
+- The reminder button on Doses says "Tap the button again" when iPhone needs a second tap. This is honest, but it hints the first tap may feel dead. Check it on the phone.
+- Both builds added short texts that were not on the approved lists (the sign-in did not finish line, the second-tap line). They are factual, but the owner should confirm the wording.
+- Re-tapping the reminder still creates a duplicate calendar event, and a changed injection weekday does not update the old one. Make sure the button's note says so.
+- "Check my latest backup" (a test restore that replaces nothing) and "Save a copy to Files" were left out. Both are worth a thought, because the first real restore happens when something has already gone wrong.
