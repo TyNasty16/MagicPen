@@ -59,3 +59,33 @@ Turn on GitHub 2FA (an authenticator app or passkey, and save the recovery codes
 - Cost: all $0. Dependabot is free on public repos.
 - Order: do the CSP last, so everything else is in place when testing the camera, PDF and Dropbox end to end.
 - This is one change with eight items; the planner may prefer two steps (11a CI + owner checklist, 11b app code).
+
+## Second look — 2026-11-27
+
+Read from the owner's side: plan 11 plus the security reviewer's findings.
+
+### Could annoy or confuse
+- **Password messages.** "That password repeats too much" will also fire on keyboard runs and repeated pieces if the reviewer's extra rules go in. Say what to do, not what is wrong, and give one example each time.
+- **Which rule failed.** Tell the owner which rule failed instead of one general message.
+- **Change-your-password prompt.** The reviewer's one-time "consider changing" card is a nag about something the app cannot check. Keep it to a single line in the owner's checklist, not a card.
+- **Home Screen notice.** The wording is friendly. The risk is the reviewer's wider detection (Chrome and Firefox on iPhone, iPad as a Mac). A wrong guess shows an iPhone tip to someone who already installed the app. Err toward showing it less. "Got it" must be permanent.
+- **Longer checklist.** Reviewer additions take it from 4 to about 15 steps, which is where owners stop. Dropbox console settings and stale-token cleanup are fiddly and easy to get wrong.
+
+### Keep it friendly
+- Split the checklist into "Now, 10 minutes" (2FA, private email, protect `main`, Pages) and "When you have time" (Dropbox console, token clean-up, secret scanning). Each step gets one sentence of why and an "I did it" tick.
+- Show a live "12 of 16" counter under the password box, so the owner never meets a rejection after pressing Save.
+- Tell the owner the iPhone's suggested strong password passes, so there is an easy way out.
+
+### Probably not worth it
+- Reviewer #8 (full restore size caps, iteration ranges, string limits): the file is the owner's own, encrypted, from their own Dropbox. The calendar-date check is enough.
+- Reviewer #9 extras (more invisible characters, serving cap) and #11 (Dependabot cooldown, Node pin): marginal, and every extra item adds test and review time.
+- The "show commit hash in Settings" option: adds a screen for a developer's problem.
+- Reviewer #4's `--ignore-scripts`: low gain, and it risks a confusing failed build.
+
+### Worth taking
+- Reviewer #1 (CSP first in head), #2 (do not deploy from a branch) and #3 (test workflow for Dependabot PRs): they stop real mistakes and cost the owner nothing.
+
+### Fresh ideas (optional)
+1. After a password change, offer "Back up now with the new password", so the newest copy matches.
+2. A "Security checklist" tick-list the owner can keep in the repo docs and re-tick quarterly.
+3. A one-line "Last backed up" under the notice's "Got it", so the real protection is visible.
