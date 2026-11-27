@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (11 opening pass) · Totals: 💡 55 · ✅ 52 · ⏭️ 35_
+_Last updated: 2026-11-27 (owner idea I-63) · Totals: 💡 56 · ✅ 52 · ⏭️ 35_
 
 ---
 
@@ -65,6 +65,7 @@ _Last updated: 2026-11-27 (11 opening pass) · Totals: 💡 55 · ✅ 52 · ⏭�
 | I-60 | Plain-words "Security and privacy" section in Settings | 11 opening | What stays on the phone, what goes to Dropbox, what Open Food Facts sees. Also prepares the Phase 2 privacy policy. |
 | I-61 | Test that fails if the CSP loses a needed host or gains unsafe-eval | 11 opening | Guards the policy against accidental edits. |
 | I-62 | SECURITY.md so finders know whom to tell | 11 opening | Small file, no code. |
+| I-63 | Milestone celebrations: weight lost, injections logged, injection-day streaks, logging streaks, etc. | Owner, 2026-11-27 | Your idea. Calm, short, never about dose amounts or dose changes; celebrate consistency and your own logged progress only. Needs care with wording for weight (no pressure, no "goal missed"). |
 | I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
 | I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
 | I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore. |
