@@ -3,114 +3,149 @@ Status: Draft
 Milestone: Follow-on to 7 — Backup/restore, calendar reminder, deploy (PLAN.md §5). Not a numbered milestone; scope comes from the owner-approved audit plan (see question 1).
 
 ## Ideas considered
-Ideas file: [docs/ideas/11-security-phase1.md](../ideas/11-security-phase1.md). Audit: [docs/security/2026-11-27-app-store-audit.md](../security/2026-11-27-app-store-audit.md) (findings 1-3, 5, 6, 8-12). Chosen: one document, three groups (A CI and repo, B app, C owner checklist); CSP only in production builds (idea 2B); password rule on set/change only (3A); notice shown after a few days of use (4A); OFF out-of-range products go to the existing hidden count (5A); restore refuses the whole file on the first bad row (6A). Owner decisions 2026-11-27: photos stay out of backups (no photo backup); start Phase 1. Existing code touched: `.github/workflows/deploy-pages.yml`, `src/pages/Backup.tsx`, `src/lib/backup/*`, `src/lib/offSearch.ts`, `index.html`, `vite.config.ts`.
+Ideas file: [docs/ideas/11-security-phase1.md](../ideas/11-security-phase1.md) (opening pass and "Second look"). Audit: [docs/security/2026-11-27-app-store-audit.md](../security/2026-11-27-app-store-audit.md) (findings 1-3, 5, 6, 8-12). Cybersecurity review: [docs/security/2026-11-27-phase1-plan-review.md](../security/2026-11-27-phase1-plan-review.md). Chosen: one document, three groups (A CI and repo, B app, C owner checklist); CSP only in production builds; password rule on set/change only; notice shown after a few days of use; OFF out-of-range products go to the existing hidden count; restore refuses the whole file on the first bad row. Owner decisions 2026-11-27: photos stay out of backups; start Phase 1. Existing code touched: `.github/workflows/deploy-pages.yml`, `src/pages/Backup.tsx`, `src/lib/backup/*`, `src/lib/offSearch.ts`, `index.html`, `vite.config.ts`.
+
+## Changes after second review
+Settled between the security review and the user-experience view:
+- CSP goes first in `<head>`, starts without `'unsafe-inline'`, adds `object-src 'none'`, drops `data:` and `media-src`.
+- No deploy from a branch; `configure-pages` removed; `npm ci --ignore-scripts`; `cancel-in-progress: false`; new pull-request test workflow; Dependabot cooldown.
+- Password: stronger rules, NFC, live "12 of 16" counter, messages that say what to do. ("Back up now" after a change stays idea I-64, not in this plan.) No "consider changing" card; one checklist line instead.
+- Restore: file-size and decompressed-size caps, iterations max 2M, real calendar dates, more field checks. No string-length caps.
+- OFF: serving cap, more invisible characters stripped, missing carbs/fat count as 0.
+- Notice: wider iPhone/iPad detection, `persist()` on iOS/iPadOS only.
+- Checklist split into "Now" and "When you have time", with new items.
+- Deferred: Node pin, commit hash in Settings.
 
 ## Goal
 Close the cheap website-app security gaps from the audit without changing what the app does or who it talks to.
 
 ## In scope
 **A. CI and repo**
-- Split `deploy-pages.yml` permissions per job: build `contents: read`; deploy `pages: write`, `id-token: write`. Verify whether `actions/configure-pages` needs `pages: write` (if so, move it to deploy or give only that job the permission).
-- `.github/dependabot.yml`: npm and github-actions, weekly, grouped, small PR limit.
+- `deploy-pages.yml`: delete the `configure-pages` step (its output is unused; the base path is the hard-coded `VITE_BASE`), so the build job has only `contents: read`; deploy keeps `pages: write`, `id-token: write`. Use `npm ci --ignore-scripts` (after confirming the branch build passes). Set `cancel-in-progress: false`.
+- New pull-request workflow running tests and build with `contents: read`. Dependabot PRs never trigger the deploy (pushes to `main` only).
+- `.github/dependabot.yml`: npm and github-actions, weekly, grouped, small PR limit, cooldown of about 7 days.
 - Update vitest; clear the dev-tool `npm audit` findings.
+- Limit, stated plainly: splitting permissions protects the deploy token, but it does not stop a poisoned build-time dependency from shipping in the built site.
 
 **B. The app**
-- Meta CSP, production build only.
-- Password rule for new and changed passwords only: 16+ characters; reject one repeated character and fewer than 6 distinct characters. Restore and unlock never apply it.
-- One-time Home Screen notice plus `navigator.storage.persist()`.
+- Meta CSP and referrer meta, production build only.
+- Password rule for new and changed passwords only (restore and unlock never apply it).
+- One-time Home Screen notice; `navigator.storage.persist()` on iOS/iPadOS only.
 - Open Food Facts value caps, via the existing hidden-count path.
-- Stricter restore row checks.
+- Stricter restore checks.
 - Disconnect wording.
 
 **C. Owner checklist** (below; no code).
 
 ## Out of scope
-- Photo backup (owner decision: never). Keychain, Face ID lock, custom domain, native Dropbox sign-in, App Store work (Phase 2).
-- Pinning actions to commit hashes; a Settings "Security" section; `SECURITY.md`.
+- Photo backup (owner decision: never). Keychain, Face ID lock, custom domain, native Dropbox sign-in, App Store work, Argon2, Trusted Types, `upgrade-insecure-requests` (Phase 2).
+- Node version pin and a commit hash in Settings (deferred); pinning actions to commit hashes; a Settings "Security" section; `SECURITY.md`.
+- A "consider changing your password" card (the app cannot check old passwords).
 - Rewriting past commits (old email stays in history).
 - Any dose advice. The app still only logs doses.
 
 ## Steps
-1. **CI:** edit `.github/workflows/deploy-pages.yml` (per-job permissions; check configure-pages). Run on a branch with `workflow_dispatch` and confirm build and deploy both pass before merging.
-2. **Dependabot:** add `.github/dependabot.yml`.
+1. **CI:** edit `.github/workflows/deploy-pages.yml` as above. The new test workflow (step 2) builds the branch with `--ignore-scripts` on the pull request, so no separate branch run; the deploy is never run from a branch. Confirm the deploy after merge.
+2. **Test workflow and Dependabot:** add `.github/workflows/test.yml` (on `pull_request`, `contents: read`; `npm ci --ignore-scripts`, tests, build) and `.github/dependabot.yml`.
 3. **vitest:** update in `package.json`/lockfile; run `npm audit`; fix tests only if the update needs it.
-4. **Password rule:** new pure function `checkNewPassword(pw)` in `src/lib/backup/passwordRule.ts` (count characters, not bytes); use it in `PasswordSetup` in `src/pages/Backup.tsx` (replaces the 12-character check and note). Not called from restore or unlock.
-5. **OFF caps:** in `src/lib/offSearch.ts`, per 100 g/ml: kcal 0-900; protein, carbs, fat 0-100 g; protein + carbs + fat at most 105 g (allowance for rounding). Anything outside is counted as hidden. Update `hiddenLine` text.
-6. **Restore checks:** in `src/lib/backup/` validate every row (`site` in the allowed list, ids positive integers, required numbers finite and in sane ranges, dates parseable) in the step that runs before anything is wiped. Refuse the whole restore on the first bad row.
-7. **Home Screen notice and persist:** small component on `src/pages/Home.tsx`; `persist()` call at startup (`src/main.tsx`). Show only when not standalone (`navigator.standalone` and `display-mode: standalone`), on an iPhone/iPad browser, 3+ days after first use, no backup in the last 14 days, and not dismissed. "Dismissed" is stored on the phone.
-8. **Disconnect wording:** add one line under Disconnect in `src/pages/Backup.tsx`.
-9. **Tests** for steps 4-7 (one full run and production build happens once, after step 10).
-10. **CSP last:** small Vite HTML transform in `vite.config.ts` adds the meta tag to the production build only. Policy: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' https://search.openfoodfacts.org https://world.openfoodfacts.org https://api.dropboxapi.com https://content.dropboxapi.com; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'`.. Then the full tests, build and mocked iPhone pass (Tests).
+4. **Password rule:** new pure function `checkNewPassword(pw)` in `src/lib/backup/passwordRule.ts`. NFC-normalise, then count characters, not bytes. Rules: at least 16; not one repeated character; at least 6 distinct characters; not a piece of 4 characters or fewer repeated to fill the password (`passwordpassword`); no long sequence or keyboard run (6+ steps in a row, e.g. `123456`, `abcdef`, `qwerty`). It returns which rule failed. Use it in `PasswordSetup` in `src/pages/Backup.tsx` (replaces the 12-character check): live "12 of 16" counter under the box, so no rejection first appears after Save. Normalise the new password before it derives the key. Not called from restore or unlock (old passwords, with their original bytes, still work).
+5. **OFF caps:** in `src/lib/offSearch.ts`, per 100 g/ml: kcal 0-900; protein, carbs, fat 0-100 g; protein + carbs + fat at most 105 g (missing carbs or fat count as 0); serving amount at most 2000 g/ml. Anything outside is counted as hidden. Add U+061C, U+00AD and U+E0000-E007F to `cleanText` (it already strips control and bidi characters). The barcode path reuses the existing "not found" text. Update `hiddenLine`.
+6. **Restore checks:** in `src/lib/backup/`, in the step that runs before anything is wiped: refuse a listed file over about 25 MB before downloading it; cap the decompressed size (proposed 100 MB); iterations 100k-2M (was up to 10M); every row valid (`site` in the allowed list, ids positive integers, required numbers finite and in sane ranges); real calendar dates (`2026-13-45` fails); checks on `measurements`, `dayMarks` and `profile` fields. No string-length caps. First bad row refuses the whole restore.
+7. **Home Screen notice and persist:** small component on `src/pages/Home.tsx`; pure condition function. Show only when all hold: iPhone, or iPad (Macintosh user agent plus `maxTouchPoints > 1`), or CriOS/FxiOS; not standalone (`navigator.standalone` and `display-mode: standalone`); 3+ days after first use; no backup in the last 14 days; not dismissed. "Got it" stores dismissal on the phone and hides it for good. `persist()` call at startup in `src/main.tsx`, only on iOS/iPadOS.
+8. **Disconnect wording:** one line under Disconnect in `src/pages/Backup.tsx`.
+9. **Tests** for steps 4-7, table-driven at the boundaries (see Tests). Make the `Backup.tsx` changes (steps 4 and 8) in one edit. One full run and production build happens once, after step 10.
+10. **CSP last:** a Vite `transformIndexHtml` hook in `vite.config.ts` (`injectTo: 'head-prepend'`) adds the CSP meta tag and `<meta name="referrer" content="no-referrer">` to the production build only. Policy, starting strict: `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self' https://search.openfoodfacts.org https://world.openfoodfacts.org https://api.dropboxapi.com https://content.dropboxapi.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'`. Left out on purpose: `frame-ancestors`, `report-uri`, `sandbox` (a meta tag ignores them and warns). If the mocked pass shows a style violation, add `'unsafe-inline'` to `style-src` only, and note it here. The Dropbox sign-in step is a page navigation, so it needs no `connect-src` entry. Then the full tests, build and mocked iPhone pass.
 11. Owner works through the checklist (section C).
 
 ## Exact text for owner review
-- Password intro (replaces "at least 12 characters…"): "Choose a password of at least 16 characters. Four or more random words work well. If you forget this password, nobody, including us, can open your backups. There is no reset. Write it down and keep it somewhere safe."
-- Too short: "Use at least 16 characters."
-- Repeated or low variety: "That password repeats too much. Use four or more unrelated words."
+- Password intro: "Choose a password of at least 16 characters. Four or more random words work well. The strong password your iPhone suggests also works. If you forget this password, nobody, including us, can open your backups. There is no reset. Write it down and keep it somewhere safe."
+- Counter: "12 of 16 characters" (turns to "16 of 16 characters" when enough).
+- Too short: "Use at least 16 characters. For example: river lamp tiger chair."
+- One repeated character or fewer than 6 different characters: "Too few different characters. Mix in more, for example four unrelated words."
+- Repeated piece: "This repeats a short piece, like passwordpassword. Use four unrelated words instead."
+- Sequence or keyboard run: "This has a run like 123456 or qwerty. Use four unrelated words instead."
 - Hidden OFF line: "3 products hidden: nutrition not listed or not plausible." (1 product: "1 product hidden: nutrition not listed or not plausible.")
 - Home Screen notice title: "Keep your entries safe"
-- Notice body: "You are using Steady in a browser tab. Safari may clear its saved data if you do not open it for a week. Open Steady from your Home Screen instead: tap Share, then Add to Home Screen. Backing up to Dropbox also protects your entries."
+- Notice body: "You are using Steady in a browser tab. Your browser may clear its saved data if you do not open it for a week. Open Steady from your Home Screen instead: tap Share, then Add to Home Screen. Backing up to Dropbox also protects your entries."
 - Notice button: "Got it"
 - Disconnect line: "You can also remove Steady at dropbox.com under Connected apps."
 
 ## Acceptance criteria
-- CI: the build job has only `contents: read`; deploy still succeeds and the live site updates. `.github/dependabot.yml` lists npm and github-actions, weekly.
+- CI: the build job has only `contents: read` and no `configure-pages` step; the pull-request test run passes with `--ignore-scripts`; after merge the deploy succeeds and the live site updates. A pull request runs the test workflow. `.github/dependabot.yml` lists npm and github-actions, weekly, grouped, with a cooldown.
 - `npm audit` shows no critical findings; all tests pass.
-- Setting or changing a password: "aaaaaaaaaaaaaaaaaaaa" and 15 characters are refused with the messages above; "river lamp tiger chair" is accepted. A backup made with an old 12-character password still restores.
-- OFF: a product with 950 kcal, or protein 80 + carbs 60 + fat 10 per 100 g, is hidden and counted; olive oil (about 880 kcal, 100 g fat) is still shown.
-- Restore: a file with an unknown `site`, a negative id, or a non-finite number is refused with nothing changed on the phone; backups made by the current version still restore.
-- Notice: shown in a Safari tab on day 3+ with no recent backup; never shown in the Home Screen app, on desktop or on Android; "Got it" hides it for good. It never says data is safe.
-- The production page has one CSP meta tag; the dev server has none and still works.
+- Setting or changing a password: 15 characters, "aaaaaaaaaaaaaaaaaaaa", "passwordpassword" and "1234567890123456" are each refused with their own message above; "river lamp tiger chair" is accepted. The counter reads "12 of 16 characters" after 12 characters. A backup made with an old 12-character password still restores.
+- OFF: a product with 950 kcal, protein 80 + carbs 60 + fat 10 per 100 g, or a 5000 g serving is hidden and counted; olive oil (about 880 kcal, 100 g fat) is still shown. A name containing U+061C, U+00AD or a tag character (U+E0001) is shown without it. A barcode for an implausible product shows the existing "not found" text.
+- Restore: a file with an unknown `site`, a negative id, a non-finite number, the date `2026-13-45`, iterations of 3M, or a listed size over 25 MB is refused with nothing changed on the phone; backups made by the current version still restore.
+- Notice: shown in a Safari, Chrome or Firefox tab on iPhone, and on iPad, on day 3+ with no recent backup; never shown in the Home Screen app, on desktop or on Android; "Got it" hides it for good. It never says data is safe. `persist()` is not called on desktop or Android.
+- The production page has one CSP meta tag, placed before every `<script>` and `<link>`, and a referrer meta; the dev server has none and still works.
 - Under the CSP the browser console shows no violation for: scan screen camera start, taking a photo, PDF share, Dropbox round trip (connect, back up, list, restore), OFF text and barcode search.
 - No new network hosts. No dose advice anywhere.
 
 ## Tests
-Automatic (Vitest): password rule (length by characters incl. emoji, repeated, distinct count, boundary 16); OFF caps (boundaries, oil kept, hidden count and line text); restore validator (each bad-row type, plus a backup made by the current code passes); notice conditions as a pure function (one test per boundary: standalone, platform, 3 days, 14-day backup, dismissed); CSP guard that reads the built `dist/index.html` and fails if a needed host is missing or `unsafe-eval` appears.
+Automatic (Vitest), boundaries only: password rule (16 vs 15 by characters incl. emoji, NFC, one repeated character, 5 vs 6 distinct, repeated piece, sequence/keyboard run, counter text); OFF caps (boundaries incl. serving 2000/2001, missing carbs, oil kept, invisible characters, hidden line text); restore validator (each bad-row type, invalid calendar date, iterations 2M vs 3M, size caps, plus a backup made by the current code passes); notice conditions as a pure function (one test per boundary: standalone, iPhone/iPad/CriOS/FxiOS vs desktop/Android, 3 days, 14-day backup, dismissed); CSP guard that reads the built `dist/index.html` and fails if the tag is not before every `<script>` and `<link>`, a needed host is missing, or `unsafe-eval` appears.
 
 By hand: one scripted mocked iPhone pass on the production build (`vite preview`, fake camera stream) checking the console for CSP violations during: scan screen camera start, photo capture, PDF share, Dropbox round trip, OFF search. Service-worker update and the Home Screen app are left to the owner's real-phone check.
-Real iPhone after deploy (owner): one scan, one photo, one backup and restore, one report share, and the app still updates from the Home Screen. A wrong CSP fails quietly, so this matters.
+Real iPhone after deploy (owner): one scan, one photo, one backup and restore, one report share, a password change, and the app still updates from the Home Screen. A wrong CSP fails quietly, so this matters.
 
 ## Token Steward trims (applied)
-One full test/build run after the CSP step; no text-guard test; notice tests at boundaries only; CSP policy chosen once; one scripted mocked pass (service worker and Home Screen left to the real phone); review checkpoints section removed (CLAUDE.md covers it). Kept the vitest update: `npm audit` is not clean without it.
+One full test/build run after the CSP step; no text-guard test; notice tests at boundaries only; CSP policy chosen once; one scripted mocked pass (service worker and Home Screen left to the real phone); review checkpoints section removed (CLAUDE.md covers it). Kept the vitest update: `npm audit` is not clean without it. Second round: no separate branch run (the PR test workflow covers it); "Back up now" after a password change moved back to idea I-64; one `Backup.tsx` edit; table-driven boundary tests. Not applied: moving the Home Screen notice out. It was in the agreed audit plan (finding 6, Medium) and is the real fix for Safari's 7-day rule.
 
 ## Risks & open questions
 - A wrong CSP can break camera, photos or Dropbox with no visible error; mitigated by doing it last, testing on the production build, and the real-phone check. Rollback is removing one tag.
-- Workbox or vite-plugin-pwa may inject inline script; the test will show it. Meta CSP cannot block framing (low risk).
+- Workbox or vite-plugin-pwa may inject inline script; the guard and mocked pass will show it. A meta CSP cannot block framing (low risk).
+- `--ignore-scripts` could break the build (esbuild runs from its binary package); the pull-request test run checks this before merge.
+- Permission split does not stop a poisoned build dependency; Dependabot cooldown, PR tests and review are the mitigation.
 - `persist()` often returns false on Safari; the notice makes no safety claim.
+- Old backups stay in Dropbox's deleted-file history (30+ days) under the old password.
 - Branch protection (C) stops direct pushes to `main` by design; the pull request habit continues.
 - vitest bump could change test behaviour; fix tests only, not app code.
-- Dropbox may rename "Connected apps"; check against Dropbox's own page.
+- Dropbox may rename "Connected apps" or its console screens; check against Dropbox's own page.
 - Questions:
   1. This is not in PLAN.md §5; proceed under the audit plan? (yes/no)
   2. Notice after 3 days of use, hidden if a backup is under 14 days old? (yes/other)
   3. Approve the exact text above? (yes/changes)
-  4. Split into 11a (A and C) and 11b (B)? (default: one document, built in the order above)
+  4. Decompressed restore cap of 100 MB? (yes/other number)
+  5. Sequence rule at 6 characters in a row (`123456`, `qwerty`)? (yes/other number)
+  6. Split into 11a (A and C) and 11b (B)? (default: one document, built in the order above)
 
-## Owner checklist (C) — on github.com, step by step
-1. **Two-factor sign-in (2FA).** Open github.com, click your picture (top right), Settings, Password and authentication, Enable two-factor authentication. Choose "Authenticator app" (for example Apple Passwords or Google Authenticator) and scan the QR code. Download the recovery codes and save them somewhere safe, not only on this phone. Optionally add a passkey on the same page.
-2. **Private commit email.** Settings, Emails. Tick "Keep my email addresses private" and "Block command line pushes that expose my email". From then on, merges you do on github.com use a private `@users.noreply.github.com` address. Past commits keep the old address.
-3. **Protect `main`.** Open the MagicPen repository, Settings, Rules, Rulesets, New ruleset, New branch ruleset. Name it "Protect main". Set Enforcement to Active. Under Target branches, Add target, Include default branch. Tick "Require a pull request before merging" and "Block force pushes". Click Create. After this, changes reach `main` only through a pull request.
-4. **Pages only for Steady.** Your profile, Repositories. For each other repository, open Settings, Pages. It must say Pages is not published (source "None"). Do not publish any other site from this account. If you want a second site, tell me first.
+## Owner checklist (C) — on github.com and dropbox.com
+Tick each box when done.
+
+### Now (about 10 minutes)
+- [ ] **1. Two-factor sign-in (2FA) on GitHub.** Why: stops anyone with your password from publishing as you. Settings, Password and authentication, Enable two-factor authentication, "Authenticator app", scan the QR code, save the recovery codes somewhere safe, not only on this phone.
+- [ ] **2. Private commit email.** Why: keeps your email out of public history. Settings, Emails. Tick "Keep my email addresses private" and "Block command line pushes that expose my email". Past commits keep the old address.
+- [ ] **3. Protect `main`.** Why: nothing reaches the live app without a pull request. Repository, Settings, Rules, Rulesets, New branch ruleset, name "Protect main", Enforcement Active, include default branch, tick "Require a pull request before merging" and "Block force pushes". Create.
+- [ ] **4. Pages only for Steady.** Why: other sites on your account would share the address. For each other repository, Settings, Pages must say not published. Tell me first if you want a second site.
+- [ ] **5. Password line.** Why: old backups used a weaker rule and the app cannot check them. If your backup password is under 16 characters, change it in Steady (Backup, Change password), then tap "Back up now". Dropbox keeps deleted backups 30+ days, so the old copy lingers a while.
+
+### When you have time
+- [ ] **6. Secret scanning, push protection and Dependabot alerts.** Why: warns you if a key is ever pasted into the repo, and flags unsafe libraries. Repository, Settings, Advanced Security (or Code security): turn all three on.
+- [ ] **7. Actions token read-only.** Why: a hijacked workflow can then change nothing. Settings, Actions, General, Workflow permissions: "Read repository contents" and untick "Allow GitHub Actions to create and approve pull requests". Save.
+- [ ] **8. github-pages environment allows only `main`.** Why: a branch can never publish the live site. Settings, Environments, github-pages, Deployment branches: "Selected branches", add `main`.
+- [ ] **9. Ruleset requires the test check.** Why: a pull request cannot merge if tests fail. After the test workflow exists, edit "Protect main": tick "Require status checks to pass" and add the test check.
+- [ ] **10. Dropbox app console review.** Why: limits what a stolen sign-in could reach. dropbox.com/developers/apps, open Steady: permission type "App folder"; scopes only files.content.read, files.content.write, files.metadata.read; the only redirect URI is `https://tynasty16.github.io/MagicPen/` (remove any localhost entry).
+- [ ] **11. 2FA on Dropbox and on the email account** behind GitHub and Dropbox. Why: that email can reset both.
+- [ ] **12. Remove stale connections.** Why: forgotten tokens are open doors. GitHub Settings, Applications (authorised OAuth apps, GitHub Apps), Developer settings (personal access tokens), SSH and GPG keys: remove anything you do not recognise or use. Same for Dropbox, Security, Connected apps.
 
 ## In plain English
 **What changes**
-- **Website publishing:** the robot that publishes the app gets only the access it needs. Update checks run weekly.
+- **Website publishing:** the automatic publisher gets only the access it needs.
 - **Backup passwords:** new ones need 16+ characters. Old backups still open.
-- **Browser rules:** the app contacts only the sites it needs. A mistake could quietly break the camera, photos or Dropbox, so it is tested before release.
+- **Browser rules:** the app contacts only the sites it needs. A mistake could quietly break the camera, photos or Dropbox, so it is tested first.
 - **Food search:** implausible entries are hidden and counted.
-- **Restore:** a backup with any bad entry is refused whole.
-- **Dropbox disconnect:** a line points you to where to remove Steady.
+- **Restore:** any bad entry means the whole backup is refused.
+- **Dropbox disconnect:** a line says where to remove Steady.
 - **Photos:** stay out of backups, as you decided.
 
-**Why:** it closes cheap gaps found in the security audit without changing what the app does.
+**Why:** it closes cheap gaps from the security review without changing what the app does.
 
-**You will notice:** a stronger password rule, and a one-time Safari tip after 3 days to add Steady to your Home Screen.
+**You will notice:** a stronger password rule, and a one-time Home Screen tip after 3 days.
 
-**You need to do:** four github.com steps (section C), then a phone test after release: one scan, one photo, one backup and restore, one report share.
+**Your checklist (12 steps):** 5 now (about 10 minutes): GitHub two-step sign-in, private email, a rule blocking direct changes to the live app, unpublishing other GitHub sites, checking your backup password length. 7 later: alerts, tighter access, Dropbox and email security, removing old connections. Then one phone test after release.
 
 **You need to decide**
 - Approve the plan, or ask for changes.
-- Answer the four questions.
+- Answer the six questions (see "Risks & open questions").
 
 ## Approval
 - [ ] Approved by owner — date:
