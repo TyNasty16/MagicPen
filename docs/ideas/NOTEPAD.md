@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-26 (09 closing pass) · Totals: 💡 47 · ✅ 49 · ⏭️ 35_
+_Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭️ 35_
 
 ---
 
@@ -29,7 +29,6 @@ _Last updated: 2026-11-26 (09 closing pass) · Totals: 💡 47 · ✅ 49 · ⏭�
 | I-15 | "Save a copy first" link inside the reset card | 04e opening | Deferred until Milestone 7 export. |
 | I-16 | Short "All data erased" note after the reload | 04e after-build | Owner lands on the disclaimer with no sign the wipe worked. |
 | I-18 | Check other open tabs / installed app after a reset (stale data until refresh) | 04e after-build | Possibly a refresh prompt. |
-| I-20 | Move backup/export (Milestone 7) earlier | 05 opening, 05 after-build, 08a after-build | Food log grows daily with no copy anywhere. |
 | I-21 | Custom water amount | 05 after-build | Quick-adds are only 8 oz / 250 ml and 16 oz / 500 ml; custom was deferred. |
 | I-22 | 7-day protein strip on the Food screen | 05 after-build | Small bars per day vs target, so the protein note can be seen. |
 | I-23 | Recent foods list (one tap to log again) | 05 after-build, 05b opening | For foods not saved to My Foods. 05b also suggested "recent online picks" for offline use; same list would cover both. |
@@ -60,6 +59,12 @@ _Last updated: 2026-11-26 (09 closing pass) · Totals: 💡 47 · ✅ 49 · ⏭�
 | I-51 | "Clear questions" after the visit, so old ones don't print again | 09 opening, 09 after-build | Not built. Pairs with tick-off (I-44). |
 | I-52 | Quiet "Questions waiting" line in Appointments when a phone-only draft exists | 09 after-build | The draft is invisible until an appointment is added. |
 | I-53 | "Add the visit" link on the report screen when there is no appointment | 09 after-build | Closes the loop for the draft without leaving the report. |
+| I-54 | "Backup is behind" quiet nudge after several days with no backup | 10 after-build | Backup only runs when the app is opened, so a long gap is silent today. Calm amber line (Backup screen, maybe a small Home line); never an alarm. |
+| I-55 | Tidy photos left on the phone after a restore | 10 after-build | Photos for weigh-ins a restore removed stay stored but hidden (known limit in 10a). Show a count and "Remove unused photos" with a confirm. |
+| I-56 | Opt-in photo backup to Dropbox | 10 after-build | Photos are the biggest data and are not backed up. Needs its own size and privacy note and a switch that is off by default. Pairs with I-46. |
+| I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
+| I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
+| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore. |
 
 ## ✅ Done
 
@@ -114,6 +119,9 @@ _Last updated: 2026-11-26 (09 closing pass) · Totals: 💡 47 · ✅ 49 · ⏭�
 | D-47 | Type questions on the report, saved into the latest appointment (approach 1, recommended) | 09 opening | 09 — "Your questions for this visit", auto-saves; cleaned and capped at 2,000 characters |
 | D-48 | Phone-only draft when there is no appointment; it fills the next appointment dated today or earlier | 09 opening (approach 1 fallback) | 09 — `questionsDraft` on the profile, cleared once used |
 | D-49 | Line saying where the questions are saved | 09 opening | 09 — "Saved to your appointment on …" and "Saved" (read out to screen readers) |
+| D-50 | Move backup/export (Milestone 7) earlier (was I-20) | 05 opening, 05 after-build, 08a after-build | 10a — built (PR pending); photos not included, see I-56 |
+| D-51 | Encrypted daily backup to your own Dropbox, with restore, from a Backup screen in the menu | 10 opening | 10a — PR pending; automatic when the app is opened after 8 pm, newest 2 kept, Reset disconnects. Needs real-iPhone check |
+| D-52 | Weekly injection-day reminder for the phone Calendar (.ics) | 10 opening | 10b — PR pending; button on the Doses screen under Next injection |
 
 ## ⏭️ Skipped
 
@@ -157,4 +165,4 @@ _Last updated: 2026-11-26 (09 closing pass) · Totals: 💡 47 · ✅ 49 · ⏭�
 
 ---
 
-_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md), [`05c-barcode.md`](05c-barcode.md), [`07-ozempic.md`](07-ozempic.md)._
+_Detailed write-ups: [`04c-symptom-map.md`](04c-symptom-map.md), [`04d-symptom-map-polish.md`](04d-symptom-map-polish.md), [`04e-reset-data.md`](04e-reset-data.md), [`05-nutrition.md`](05-nutrition.md), [`05b-open-food-facts.md`](05b-open-food-facts.md), [`05c-barcode.md`](05c-barcode.md), [`07-ozempic.md`](07-ozempic.md), [`10-backup.md`](10-backup.md)._

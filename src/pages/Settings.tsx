@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, ScreenHeader } from '../components/ui';
 import BottomSheet from '../components/BottomSheet';
 import { resetAllData } from '../db/db';
+import { revokeForReset } from '../lib/backup/run';
 import { DISCLAIMER } from '../lib/disclaimer';
 
 const CONFIRM_WORD = 'RESET';
@@ -17,6 +18,7 @@ export default function Settings() {
     setBusy(true);
     setError('');
     try {
+      await revokeForReset(); // best effort: end the Dropbox sign-in first
       await resetAllData();
       location.replace(location.pathname + location.search); // fresh start on Home, not Settings
     } catch {
@@ -33,7 +35,7 @@ export default function Settings() {
           {DISCLAIMER.map((p) => <p key={p}>{p}</p>)}
         </div>
       </Card>
-      <p className="px-1 text-sm text-muted">All of your data is stored only on this device.</p>
+      <p className="px-1 text-sm text-muted">Your data is stored on this device. If you turn on Dropbox backup, an encrypted copy of your entries (not photos) is also saved to your Dropbox.</p>
 
       <Card title="Reset all data">
         <p className="text-sm leading-relaxed text-muted">Erase everything you have entered and start again from the beginning.</p>
@@ -61,7 +63,7 @@ export default function Settings() {
               <li>All symptoms</li>
               <li>Saved screen preferences</li>
             </ul>
-            <p className="font-semibold">There is no backup, and this cannot be undone.</p>
+            <p className="font-semibold">This cannot be undone. It also disconnects Dropbox and forgets your backup password on this phone. Backups already in your Dropbox are not deleted.</p>
             <p>The app will restart at the welcome notice and first-time setup.</p>
             <label htmlFor="reset-confirm" className="block pt-1 font-semibold">Type {CONFIRM_WORD} to confirm</label>
             <input id="reset-confirm" value={typed} onChange={(e) => setTyped(e.target.value)}

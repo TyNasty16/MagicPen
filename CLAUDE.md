@@ -21,6 +21,6 @@ Agent definitions are in `.claude/agents/`.
 
 ## Product rules
 - The app LOGS doses. It never recommends doses or dose increases.
-- Health data stays on the device (IndexedDB). No analytics, no third-party calls except the Open Food Facts food search.
+- Health data is stored on the device. It leaves the phone only as (1) an encrypted backup, made on the phone with the owner's password and sent to the owner's own Dropbox app folder (never photos, never the password), and (2) files the owner chooses to share, such as the doctor report. The Dropbox App secret is never used. No analytics. No third-party calls except the Open Food Facts food search and Dropbox (sign-in and backup only). (Owner approved 2026-11-27, workflow 10a.)
 - Style: clinical and calm.
 - Keep cost at $0/month. Hosting: GitHub Pages (repo made public for this, owner decision 2026-11-25) at https://tynasty16.github.io/MagicPen/ — deployed automatically by `.github/workflows/deploy-pages.yml` on every push to `main`.

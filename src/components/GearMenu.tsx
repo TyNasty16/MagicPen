@@ -4,6 +4,7 @@ import { MenuIcon } from './icons';
 const ITEMS = [
   { href: '#/report?from=home', label: 'Doctor report' },
   { href: '#/appointments?from=home', label: 'Appointments' },
+  { href: '#/backup?from=home', label: 'Backup' },
   { href: '#/settings', label: 'Settings' },
 ];
 

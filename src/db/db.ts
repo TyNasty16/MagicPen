@@ -120,6 +120,28 @@ export interface Appointment {
   questions?: string;
 }
 
+/**
+ * Dropbox backup state (workflow 10a): a single row, kept on this phone only and never included in a backup.
+ * The password is never stored — only a non-extractable key derived from it.
+ */
+export interface BackupState {
+  id: 'me';
+  refreshToken?: string;
+  accessToken?: string;
+  accessExpires?: number; // ms since epoch
+  key?: CryptoKey; // AES-GCM, non-extractable
+  salt?: Uint8Array;
+  iterations?: number;
+  eveningTime?: string; // "HH:MM", default 20:00
+  lastBackupAt?: string; // ISO
+  lastFingerprint?: string;
+  lastRows?: number;
+  lastSize?: number;
+  lastError?: string;
+  lastErrorAt?: string;
+  lastSkip?: string;
+}
+
 export const db = new Dexie('steady') as Dexie & {
   profile: EntityTable<Profile, 'id'>;
   injections: EntityTable<Injection, 'id'>;
@@ -132,6 +154,7 @@ export const db = new Dexie('steady') as Dexie & {
   water: EntityTable<WaterEntry, 'id'>;
   dayMarks: EntityTable<DayMark, 'date'>;
   appointments: EntityTable<Appointment, 'id'>;
+  backupState: EntityTable<BackupState, 'id'>;
 };
 
 // Keep every version declared: Dexie upgrades existing databases in place, so profile data is kept.
@@ -154,6 +177,12 @@ db.version(8).stores({
   profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
   foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date', appointments: '++id, date',
 });
+// v9 (workflow 10a): Dropbox backup state.
+db.version(9).stores({
+  profile: 'id', injections: '++id, datetime', weights: '++id, date', photos: '++id, weightId', measurements: '++id, date', symptoms: '++id, datetime',
+  foods: '++id, name', foodLog: '++id, date', water: '++id, date', dayMarks: 'date', appointments: '++id, date', backupState: 'id',
+});
+export const SCHEMA_VERSION = 9;
 
 export const getProfile = async (): Promise<Profile | null> => (await db.profile.get('me')) ?? null;
 
@@ -248,7 +277,7 @@ export const addAppointmentTakingDraft = (a: Appointment) =>
 export const saveAppointment = (a: Appointment) => db.appointments.put(a);
 export const deleteAppointment = (id: number) => db.appointments.delete(id);
 
-const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck', 'steady.barcodeNoticeAck'];
+export const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck', 'steady.barcodeNoticeAck'];
 
 /** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
 export async function resetAllData(): Promise<void> {

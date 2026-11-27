@@ -6,6 +6,9 @@ import Disclaimer from './pages/Disclaimer';
 import Food from './pages/Food';
 import Appointments from './pages/Appointments';
 import DoctorReport from './pages/DoctorReport';
+import Backup from './pages/Backup';
+import { handleRedirectReturn } from './lib/backup/auth';
+import { maybeAutoBackup } from './lib/backup/run';
 import Home from './pages/Home';
 import Injections from './pages/Injections';
 import Profile from './pages/Profile';
@@ -23,7 +26,7 @@ const TABS: { route: Route; label: string; Icon: ComponentType<SVGProps<SVGSVGEl
   { route: 'symptoms', label: 'Symptoms', Icon: PulseIcon },
   { route: 'profile', label: 'Profile', Icon: UserIcon },
 ];
-const ROUTES = ['home', 'injections', 'weight', 'symptoms', 'profile', 'settings', 'food', 'appointments', 'report'] as const;
+const ROUTES = ['home', 'injections', 'weight', 'symptoms', 'profile', 'settings', 'food', 'appointments', 'report', 'backup'] as const;
 type Route = (typeof ROUTES)[number];
 interface Location { route: Route; params: URLSearchParams }
 
@@ -54,6 +57,17 @@ export default function App() {
   useEffect(() => {
     storageAvailable().then(setStorageOk);
   }, []);
+  // Dropbox backup (workflow 10a): finish a sign-in that just returned to the app, then back up if it's due —
+  // now and whenever the app comes back to the screen. Never blocks or disturbs the app.
+  useEffect(() => {
+    void handleRedirectReturn().then((r) => {
+      if (r !== 'none') location.hash = `#/backup?signin=${r}`; // show how sign-in ended
+      void maybeAutoBackup();
+    });
+    const onVisible = () => document.visibilityState === 'visible' && void maybeAutoBackup();
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
 
   if (!storageOk) {
     return (
@@ -69,7 +83,7 @@ export default function App() {
   const backHref = params.get('from') === 'home' ? '#/home' : undefined;
   const startAdding = params.get('add') === '1';
   // Food opens from Home's nutrition tile, so Home stays highlighted there.
-  const activeTab = route === 'settings' ? null : route === 'food' || route === 'appointments' || route === 'report' ? 'home' : route;
+  const activeTab = route === 'settings' ? null : route === 'food' || route === 'appointments' || route === 'report' || route === 'backup' ? 'home' : route;
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
@@ -90,6 +104,7 @@ export default function App() {
         {route === 'settings' && <Settings />}
         {route === 'appointments' && <Appointments key={params.toString()} backHref={backHref} startAdding={startAdding} />}
         {route === 'report' && <DoctorReport backHref={backHref} />}
+        {route === 'backup' && <Backup key={params.toString()} backHref={backHref ?? '#/home'} signin={params.get('signin') ?? undefined} />}
         {route === 'food' && <Food key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
       </main>
       <nav className="fixed inset-x-0 bottom-0 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">

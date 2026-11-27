@@ -25,11 +25,13 @@ _Last updated: 2026-11-25_
 | 07 Ozempic as a second medicine (Dexie v7, per-entry medicine, label-quoted help/tips/guide) | workflows/07 | #9 |
 | 08a Appointments + Home ☰ menu + optional name (Dexie v8) | workflows/08a | #10 |
 | 08b Doctor report PDF (own PDF writer, preview, switches, limited-data flags, Share menu) | workflows/08b | #10 |
+| Fix: ☰ menu items did nothing on iPhone (focus handling) | workflows/08a build notes | #11 |
+| 09 Type questions on the report (saved to latest appointment, or a phone draft) | workflows/09 | #12 |
 
 ## Next (owner to choose)
 - **M7 backup/restore moved up** (food log grows with no copy; backup must include photos). Notepad I-20 — recommended.
 - **M6 workouts + Today dashboard — PAUSED by owner 2026-11-25** ("we can do better"). Draft plan, NHS quotes and the four-NHS-page finding are in workflows/06 and sources/06. Restart with a fresh Ideas pass when the owner is ready.
-- Open ideas: see the notepad (up to I-50; owner ideas I-38 to I-42 and I-46), e.g. I-25 calorie-mismatch flag, I-29 dev-tool security upgrade (Vitest, Workbox), I-34/I-35 medicine-switch chart labels.
+- Open ideas: see the notepad (up to I-53; owner ideas I-38 to I-42 and I-46), e.g. I-25 calorie-mismatch flag, I-29 dev-tool security upgrade (Vitest, Workbox), I-34/I-35 medicine-switch chart labels.
 - Before sharing publicly: trademark check on the name "Steady" (PLAN §4).
 
 ## Environment
