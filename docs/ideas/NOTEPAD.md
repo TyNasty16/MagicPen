@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (13 after-build) · Totals: 💡 68 · ✅ 56 · ⏭️ 36_
+_Last updated: 2026-11-27 (14 opening) · Totals: 💡 71 · ✅ 56 · ⏭️ 36_
 
 ---
 
@@ -72,6 +72,9 @@ _Last updated: 2026-11-27 (13 after-build) · Totals: 💡 68 · ✅ 56 · ⏭�
 | I-76 | Let a tap pass through to the screen underneath while the pop-up is open | 12 after-build | Owner chose "tap anywhere closes it", so the first tap is used up closing it. A pass-through would close it and still press the button. Owner decision needed. |
 | I-77 | Planned "major upgrade pass" every few months (React 19, Vite 8, TypeScript 7, recharts 3, vitest 5 …), one package family per change, with a note of which majors are held back | 13 opening, 13 after-build | Dependabot will stop proposing majors (change 13), so they need their own planned changes. Relates to I-29. Do soon: the ignore rule hides majors for good. |
 | I-78 | Split the Dependabot npm group into dev tools and app packages | 13 after-build | One failing package holds up all small updates today. |
+| I-79 | Brand "steady line" as loading and empty-state artwork | 14 opening | Optional; only if the owner picks the steady-line direction. |
+| I-80 | "Plain mode" switch: stronger contrast, no decoration | 14 opening | Accessibility option; stored on the phone. |
+| I-81 | Before/after screenshot check for every screen after a redesign | 14 opening | Keeps screens consistent. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
