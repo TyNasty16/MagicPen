@@ -28,17 +28,21 @@ function firstBrand(brands: unknown): string | undefined {
 }
 
 /**
- * Text from OFF: strings only, control and invisible direction characters removed (they can disguise a name),
+ * Text from OFF: strings only, control, invisible direction, soft-hyphen, joiner, filler, variation-selector and tag characters removed (they can disguise a name),
  * whitespace collapsed, length capped. Always shown as plain React text, never as HTML.
  */
 export function cleanText(v: unknown, max = 120): string {
   if (typeof v !== 'string') return '';
   // eslint-disable-next-line no-control-regex
-  return v.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+  return v.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u061c\u00ad\u034f\u180e\u2060-\u2064\u3164\ufe00-\ufe0f\u{e0000}-\u{e007f}]/gu, '').replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
+/** Plausible values per 100 g/ml (workflow 11). Olive oil, about 880 kcal and 100 g fat, is the real-world top. */
+export const OFF_LIMITS = { kcal: 900, eachMacroG: 100, macrosTotalG: 105, servingMax: 2000 };
+
 /**
- * One OFF product, or null if it has no name, kcal or protein per 100 g (per 100 ml for drinks).
+ * One OFF product, or null if it has no name, kcal or protein per 100 g (per 100 ml for drinks),
+ * or if its numbers are not plausible (counted as hidden, like missing nutrition).
  * OFF lists drinks per 100 ml in its `_100g` fields, so an ml serving scales directly, with no ml-to-g guess.
  */
 export function parseOffProduct(h: Record<string, unknown> | null | undefined): OffProduct | null {
@@ -48,8 +52,13 @@ export function parseOffProduct(h: Record<string, unknown> | null | undefined): 
   const kcal = num(n['energy-kcal_100g']);
   const proteinG = num(n['proteins_100g']);
   if (!name || kcal === undefined || proteinG === undefined) return null;
+  const carbsG = num(n['carbohydrates_100g']);
+  const fatG = num(n['fat_100g']);
+  const L = OFF_LIMITS;
+  if (kcal > L.kcal || [proteinG, carbsG ?? 0, fatG ?? 0].some((g) => g > L.eachMacroG) || proteinG + (carbsG ?? 0) + (fatG ?? 0) > L.macrosTotalG) return null;
   const sizeText = cleanText(h.serving_size, 60);
   const qty = num(h.serving_quantity);
+  if (qty !== undefined && qty > L.servingMax) return null;
   const unitField = typeof h.serving_quantity_unit === 'string' ? h.serving_quantity_unit.toLowerCase() : '';
   const unit: 'g' | 'ml' = unitField === 'ml' || (!unitField && /\bml\b/i.test(sizeText) && !/\d\s*g\b/i.test(sizeText)) ? 'ml' : 'g';
   const portions: [string, number][] = [];
@@ -59,7 +68,7 @@ export function parseOffProduct(h: Record<string, unknown> | null | undefined): 
     name,
     brand: firstBrand(h.brands),
     unit,
-    per100: { kcal, proteinG, carbsG: num(n['carbohydrates_100g']), fatG: num(n['fat_100g']), fiberG: num(n['fiber_100g']) },
+    per100: { kcal, proteinG, carbsG, fatG, fiberG: num(n['fiber_100g']) },
     portions,
   };
 }
@@ -78,7 +87,7 @@ export function parseOffResults(json: unknown): { shown: OffProduct[]; hidden: n
   return { shown, hidden };
 }
 
-export const hiddenLine = (n: number) => (n === 0 ? null : `${n} ${n === 1 ? 'product' : 'products'} hidden: nutrition not listed.`);
+export const hiddenLine = (n: number) => (n === 0 ? null : `${n} ${n === 1 ? 'product' : 'products'} hidden: nutrition not listed or not plausible.`);
 
 /** Name saved to the log and My Foods: "Name (Brand)". */
 export const offSavedName = (p: OffProduct) => (p.brand ? `${p.name} (${p.brand})` : p.name);

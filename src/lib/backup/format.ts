@@ -7,7 +7,10 @@
 export const MAGIC = 'STEADYBK';
 export const FORMAT_VERSION = 1;
 export const PBKDF2_ITERATIONS = 600_000;
-export const MIN_PASSWORD = 12;
+/** Limits that stop a damaged or planted file from freezing the phone. Steady's own backups are a few KB. */
+export const MAX_FILE_BYTES = 25 * 1024 * 1024;
+export const MAX_UNZIPPED_BYTES = 100 * 1024 * 1024;
+export const MAX_ITERATIONS = 2_000_000; // Steady uses 600,000; a higher number would only make opening a file slow
 const SALT_LEN = 16;
 const IV_LEN = 12;
 export const HEADER_LEN = 8 + 1 + 1 + 4 + SALT_LEN + IV_LEN;
@@ -32,23 +35,39 @@ export async function deriveKey(password: string, salt: Uint8Array, iterations =
 export interface Header { format: number; schema: number; iterations: number; salt: Uint8Array; iv: Uint8Array }
 
 export function readHeader(file: Uint8Array): Header {
+  if (file.length > MAX_FILE_BYTES) throw new BackupError('unreadable');
   if (file.length < HEADER_LEN + 16 || new TextDecoder().decode(file.subarray(0, 8)) !== MAGIC) throw new BackupError('not-steady');
   const format = file[8];
   if (format !== FORMAT_VERSION) throw new BackupError('unknown-version');
   const iterations = new DataView(file.buffer, file.byteOffset + 10, 4).getUint32(0);
-  if (iterations < 100_000 || iterations > 10_000_000) throw new BackupError('not-steady');
+  if (iterations < 100_000 || iterations > MAX_ITERATIONS) throw new BackupError('not-steady');
   return { format, schema: file[9], iterations, salt: file.slice(14, 14 + SALT_LEN), iv: file.slice(14 + SALT_LEN, HEADER_LEN) };
 }
 
 async function gzip(data: Uint8Array): Promise<Uint8Array> {
   return new Uint8Array(await new Response(new Blob([buf(data)]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());
 }
-async function gunzip(data: Uint8Array): Promise<Uint8Array> {
+/** Unpacks, stopping (and refusing the file) as soon as it grows past `max` bytes. */
+export async function gunzip(data: Uint8Array, max = MAX_UNZIPPED_BYTES): Promise<Uint8Array> {
+  const reader = new Blob([buf(data)]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();
+  const parts: Uint8Array[] = [];
+  let total = 0;
   try {
-    return new Uint8Array(await new Response(new Blob([buf(data)]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.length;
+      if (total > max) throw new Error('too big');
+      parts.push(value);
+    }
   } catch {
+    reader.cancel().catch(() => undefined);
     throw new BackupError('unreadable');
   }
+  const out = new Uint8Array(total);
+  let at = 0;
+  for (const p of parts) { out.set(p, at); at += p.length; }
+  return out;
 }
 
 /** Compresses and encrypts `json` into a backup file. */
@@ -82,6 +101,22 @@ export async function decryptBackup(file: Uint8Array, key: CryptoKey, maxSchema:
     throw new BackupError('wrong-password');
   }
   return new TextDecoder().decode(await gunzip(new Uint8Array(plain)));
+}
+
+/**
+ * Decrypts with a typed password: as typed first (passwords set before workflow 11), then NFC-normalised (set since),
+ * so the same letters typed on another keyboard still open the file.
+ */
+export async function decryptWithPassword(file: Uint8Array, password: string, maxSchema: number): Promise<string> {
+  const h = readHeader(file);
+  const tries = [...new Set([password, password.normalize('NFC')])];
+  for (let i = 0; ; i++) {
+    try {
+      return await decryptBackup(file, await deriveKey(tries[i], h.salt, h.iterations), maxSchema);
+    } catch (e) {
+      if (!(e instanceof BackupError && e.code === 'wrong-password') || i === tries.length - 1) throw e;
+    }
+  }
 }
 
 /** True when a stored key was made with this file's salt and iterations (so it can open it without asking). */

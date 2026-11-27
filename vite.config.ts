@@ -3,11 +3,16 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import type { Plugin } from 'vite';
+import { injectSecurityMeta } from './src/lib/csp';
 
-// VITE_BASE lets the same build run under a GitHub Pages sub-path, e.g. VITE_BASE=/MagicPen/
+// Browser safety rule, production build only (the dev server injects inline scripts). See src/lib/csp.ts.
+const securityMeta = (): Plugin => ({ name: 'steady-security-meta', apply: 'build', transformIndexHtml: { order: 'post', handler: injectSecurityMeta } });
+
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   plugins: [
+    securityMeta(),
     react(),
     tailwindcss(),
     VitePWA({

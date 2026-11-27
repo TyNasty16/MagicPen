@@ -1,7 +1,7 @@
 // Backup and restore, tying the pure modules to the phone's database and Dropbox (workflow 10a).
 import { db, SCHEMA_VERSION, UI_KEYS, type BackupState } from '../../db/db';
 import { deleteFile, downloadFile, DropboxError, listFiles, PKCE_KEY, refreshAccess, revoke, uploadFile, type DropboxFile } from './dropbox';
-import { BackupError, decryptBackup, deriveKey, encryptBackup, keyFits, PBKDF2_ITERATIONS, randomSalt, readHeader } from './format';
+import { BackupError, decryptBackup, decryptWithPassword, deriveKey, encryptBackup, keyFits, MAX_FILE_BYTES, PBKDF2_ITERATIONS, randomSalt, readHeader } from './format';
 import { BACKUP_TABLES, buildPayload, entryRows, fingerprint, validatePayload, type Payload, type Tables } from './serialize';
 import { backupFileName, FAILED_RETRY_MS, isBackupDue, KEEP, pickToDelete, shouldSkipAsEmpty, steadyBackups } from './schedule';
 
@@ -120,15 +120,16 @@ export async function listBackups(): Promise<(DropboxFile & { made: Date })[]> {
 }
 
 /** Downloads and fully checks a backup without changing anything. Needs the password unless the stored key fits the file. */
-export async function openBackup(path: string, password?: string): Promise<Payload> {
-  const file = await withToken((t) => downloadFile(t, path));
+export async function openBackup(f: { path: string; size: number }, password?: string): Promise<Payload> {
+  if (f.size > MAX_FILE_BYTES) throw new BackupError('unreadable'); // far bigger than any Steady backup: don't download it
+  const file = await withToken((t) => downloadFile(t, f.path));
   const h = readHeader(file);
   const s = await getBackupState();
-  const key = keyFits(h, s.salt, s.iterations) && s.key ? s.key : password ? await deriveKey(password, h.salt, h.iterations) : null;
-  if (!key) throw new BackupError('needs-password'); // made with another password (or on another phone): ask for it
+  const stored = keyFits(h, s.salt, s.iterations) && s.key ? s.key : null;
+  if (!stored && !password) throw new BackupError('needs-password'); // made with another password (or on another phone): ask for it
   let raw: unknown;
   try {
-    raw = JSON.parse(await decryptBackup(file, key, SCHEMA_VERSION));
+    raw = JSON.parse(stored ? await decryptBackup(file, stored, SCHEMA_VERSION) : await decryptWithPassword(file, password!, SCHEMA_VERSION));
   } catch (e) {
     if (e instanceof BackupError) throw e;
     throw new BackupError('unreadable');
@@ -171,7 +172,7 @@ async function restoreTables(p: Payload): Promise<void> {
 /** Sets (or changes) the backup password: a new salt and key; the password itself is never kept. */
 export async function setPassword(password: string): Promise<void> {
   const salt = randomSalt();
-  const key = await deriveKey(password, salt, PBKDF2_ITERATIONS);
+  const key = await deriveKey(password.normalize('NFC'), salt, PBKDF2_ITERATIONS); // same letters typed on another keyboard give the same key
   await saveBackupState({ key, salt, iterations: PBKDF2_ITERATIONS, lastFingerprint: undefined });
 }
 

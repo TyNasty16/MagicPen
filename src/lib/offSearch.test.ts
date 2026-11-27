@@ -20,8 +20,8 @@ describe('parseOffResults', () => {
   it('shows products with a name, kcal and protein; counts the rest as hidden', () => {
     expect(shown.map((p) => p.name)).toEqual(['Chocolate chip muffins', 'Protein shake', 'Sparkling water', 'Crackers']);
     expect(hidden).toBe(3);
-    expect(hiddenLine(hidden)).toBe('3 products hidden: nutrition not listed.');
-    expect(hiddenLine(1)).toBe('1 product hidden: nutrition not listed.');
+    expect(hiddenLine(hidden)).toBe('3 products hidden: nutrition not listed or not plausible.');
+    expect(hiddenLine(1)).toBe('1 product hidden: nutrition not listed or not plausible.');
     expect(hiddenLine(0)).toBeNull();
   });
   it('keeps 0 kcal, reads numeric strings, leaves unlisted values undefined', () => {

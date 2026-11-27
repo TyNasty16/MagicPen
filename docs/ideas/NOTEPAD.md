@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭️ 35_
+_Last updated: 2026-11-27 (11 closing, I-67 to I-69) · Totals: 💡 61 · ✅ 53 · ⏭️ 36_
 
 ---
 
@@ -35,7 +35,7 @@ _Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭�
 | I-25 | Warn when an online product's calories don't match its protein/carbs/fat | 05b after-build | Volunteer entries can be wrong (one shake was about 3x off). Simple arithmetic check, no medical wording. |
 | I-27 | Add common café and restaurant items to the built-in list | 05b after-build | Online search mostly misses Starbucks-type items. Needs a sourced data list. |
 | I-28 | Keep the barcode on a saved food (and on "not found" hand entry) so the next scan finds it offline | 05c opening, 05c after-build | Needs a new stored field. Deliberately left out of 05c. |
-| I-29 | Upgrade the dev-only tools flagged by npm audit (Vitest major upgrade, vite-plugin-pwa / Workbox) | 05c after-build | Build tools only, not shipped to the phone. Do as its own small change with the full test run. |
+| I-29 | Upgrade the dev-only tools flagged by npm audit (Vitest major upgrade, vite-plugin-pwa / Workbox) | 05c after-build, 11 after-build | Vitest done in 11 (2 critical findings gone). Left: 4 moderate build-time findings in workbox-build; wait for a vite-plugin-pwa fix instead of downgrading. |
 | I-30 | Re-try the torch toggle, and "scan another" without closing the scanner | 05c after-build | Torch was left out (iPhone support unreliable). Needs a real-phone check first. |
 | I-31 | Optional "Switched medicine" note on the timeline when the Medicine setting changes (no advice attached) | 07 opening | Not built. The chart mark already names a switch. |
 | I-32 | First-run "Which medicine?" question so new users never see the wrong dose chips | 07 opening | Not built; Medicine defaults to Wegovy and is set in Profile. |
@@ -61,10 +61,19 @@ _Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭�
 | I-53 | "Add the visit" link on the report screen when there is no appointment | 09 after-build | Closes the loop for the draft without leaving the report. |
 | I-54 | "Backup is behind" quiet nudge after several days with no backup | 10 after-build | Backup only runs when the app is opened, so a long gap is silent today. Calm amber line (Backup screen, maybe a small Home line); never an alarm. |
 | I-55 | Tidy photos left on the phone after a restore | 10 after-build | Photos for weigh-ins a restore removed stay stored but hidden (known limit in 10a). Show a count and "Remove unused photos" with a confirm. |
-| I-56 | Opt-in photo backup to Dropbox | 10 after-build | Photos are the biggest data and are not backed up. Needs its own size and privacy note and a switch that is off by default. Pairs with I-46. |
+| I-60 | Plain-words "Security and privacy" section in Settings | 11 opening | What stays on the phone, what goes to Dropbox, what Open Food Facts sees. Also prepares the Phase 2 privacy policy. |
+| I-61 | Test that fails if the CSP loses a needed host or gains unsafe-eval | 11 opening | Guards the policy against accidental edits. |
+| I-62 | SECURITY.md so finders know whom to tell | 11 opening | Small file, no code. |
+| I-63 | Milestone celebrations: weight lost, injections logged, injection-day streaks, logging streaks, etc. | Owner, 2026-11-27 | Your idea. Calm, short, never about dose amounts or dose changes; celebrate consistency and your own logged progress only. Needs care with wording for weight (no pressure, no "goal missed"). |
+| I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
+| I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
+| I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
 | I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
 | I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
-| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore. |
+| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. |
+| I-67 | SHA-pin the GitHub Actions | 11 after-build | Left out of Phase 1 on purpose. Dependabot can keep the hashes fresh. |
+| I-68 | Check the live site's CSP after deploy (no policy errors in the console) | 11 after-build | The CSP is a meta tag and does not cover sw.js (GitHub Pages cannot send headers). |
+| I-69 | Show a plain build version and date in Settings | 11 after-build | Confirms the Home Screen copy has updated. Earlier "commit hash" idea was judged too developer-ish. |
 
 ## ✅ Done
 
@@ -122,6 +131,7 @@ _Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭�
 | D-50 | Move backup/export (Milestone 7) earlier (was I-20) | 05 opening, 05 after-build, 08a after-build | 10a — built (PR pending); photos not included, see I-56 |
 | D-51 | Encrypted daily backup to your own Dropbox, with restore, from a Backup screen in the menu | 10 opening | 10a — PR pending; automatic when the app is opened after 8 pm, newest 2 kept, Reset disconnects. Needs real-iPhone check |
 | D-52 | Weekly injection-day reminder for the phone Calendar (.ics) | 10 opening | 10b — PR pending; button on the Doses screen under Next injection |
+| D-53 | Security Phase 1: CSP (with deploy-time check), split CI permissions and Dependabot, vitest upgrade, backup password rule, Home Screen notice, food-value caps, restore checks, Dropbox disconnect wording, owner checklist | 11 opening, 11 second look | 11 — PR pending; needs real-iPhone check (I-59) |
 
 ## ⏭️ Skipped
 
@@ -162,6 +172,7 @@ _Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭�
 | S-33 | Separate "next visit" question list with a move step (approach 2) | 09 opening | Technical: the phone-only draft covers it with less to go wrong |
 | S-34 | Report-only questions, not saved (approach 3) | 09 opening | Not a real option: text would be lost after the PDF or a reload |
 | S-35 | Edit older visits' questions from the report with custom dates | 09 plan question | Owner decision: "No" — the box shows only for "Since last appointment" |
+| S-36 | Opt-in photo backup to Dropbox (was I-56) | 10 after-build | Owner decision 2026-11-27 (11): photos stay out of backups; the "never photos" rule stands |
 
 ---
 

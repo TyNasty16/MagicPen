@@ -31,23 +31,50 @@ export async function fingerprint(tables: Tables): Promise<string> {
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 const str = (r: Record<string, unknown>, k: string) => typeof r[k] === 'string';
-const num = (r: Record<string, unknown>, k: string) => typeof r[k] === 'number' && Number.isFinite(r[k]);
-const optNum = (r: Record<string, unknown>, k: string) => r[k] === undefined || num(r, k);
-const day = (r: Record<string, unknown>, k: string) => str(r, k) && /^\d{4}-\d{2}-\d{2}$/.test(r[k] as string);
+const optStr = (r: Record<string, unknown>, k: string) => r[k] === undefined || str(r, k);
+/** A finite number within [min, max]. */
+const num = (r: Record<string, unknown>, k: string, min = 0, max = 1e6) => typeof r[k] === 'number' && Number.isFinite(r[k]) && (r[k] as number) >= min && (r[k] as number) <= max;
+const optNum = (r: Record<string, unknown>, k: string, min = 0, max = 1e6) => r[k] === undefined || num(r, k, min, max);
+const oneOf = (r: Record<string, unknown>, k: string, list: readonly string[]) => typeof r[k] === 'string' && list.includes(r[k] as string);
+const optOneOf = (r: Record<string, unknown>, k: string, list: readonly string[]) => r[k] === undefined || oneOf(r, k, list);
+/** A real calendar date "YYYY-MM-DD" (2026-13-45 fails). */
+export function isCalendarDay(v: unknown): boolean {
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const [y, m, d] = v.split('-').map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === m - 1 && t.getUTCDate() === d;
+}
+const day = (r: Record<string, unknown>, k: string) => isCalendarDay(r[k]);
+/** A date-time Steady wrote: starts with a real calendar day and parses. */
+const dateTime = (r: Record<string, unknown>, k: string) => str(r, k) && isCalendarDay((r[k] as string).slice(0, 10)) && !Number.isNaN(Date.parse(r[k] as string));
+const optDateTime = (r: Record<string, unknown>, k: string) => r[k] === undefined || dateTime(r, k);
+/** Row ids are optional on new rows; when present, a positive whole number. */
+const id = (r: Record<string, unknown>) => r.id === undefined || (Number.isSafeInteger(r.id) && (r.id as number) > 0);
 const MAX_ROWS = 200_000;
 
-// The fields each table must have to be restored safely (enough to catch a wrong or damaged file).
+const SITES = ['abdomen-left', 'abdomen-right', 'thigh-left', 'thigh-right', 'arm-left', 'arm-right'] as const;
+const DRUGS = ['wegovy', 'ozempic'] as const;
+const MEALS = ['breakfast', 'lunch', 'dinner', 'snack', 'none'] as const;
+const MEASURES = ['waistCm', 'hipsCm', 'chestCm', 'neckCm', 'upperArmCm', 'thighCm'] as const;
+const food = (r: Record<string, unknown>) =>
+  str(r, 'name') && num(r, 'kcal', 0, 100_000) && num(r, 'proteinG', 0, 10_000) && optNum(r, 'carbsG', 0, 10_000) && optNum(r, 'fatG', 0, 10_000) && optNum(r, 'fiberG', 0, 10_000);
+
+// What each table's rows must look like to be restored safely: the fields the app relies on, with types, allowed values and sane ranges.
 const ROW_CHECKS: Record<BackupTable, (r: Record<string, unknown>) => boolean> = {
-  profile: (r) => r.id === 'me' && (r.units === 'imperial' || r.units === 'metric'),
-  injections: (r) => str(r, 'datetime') && num(r, 'doseMg') && str(r, 'site'),
-  weights: (r) => day(r, 'date') && num(r, 'weightKg'),
-  measurements: (r) => day(r, 'date'),
-  symptoms: (r) => str(r, 'datetime') && str(r, 'type') && num(r, 'severity'),
-  foods: (r) => str(r, 'name') && num(r, 'kcal') && num(r, 'proteinG'),
-  foodLog: (r) => day(r, 'date') && str(r, 'name') && num(r, 'kcal') && num(r, 'proteinG') && num(r, 'servings'),
-  water: (r) => day(r, 'date') && num(r, 'ml'),
-  dayMarks: (r) => day(r, 'date'),
-  appointments: (r) => day(r, 'date') && optNum(r, 'id'),
+  profile: (r) =>
+    r.id === 'me' && oneOf(r, 'units', ['imperial', 'metric']) && optNum(r, 'heightCm', 30, 300) && optNum(r, 'startWeightKg', 20, 500) &&
+    optNum(r, 'goalWeightKg', 20, 500) && optNum(r, 'birthYear', 1900, 2100) && (r.injectionWeekday === undefined || (Number.isInteger(r.injectionWeekday) && num(r, 'injectionWeekday', 0, 6))) &&
+    optNum(r, 'proteinPerKg', 0, 10) && optOneOf(r, 'drug', DRUGS) && optStr(r, 'name') && optStr(r, 'questionsDraft') && optDateTime(r, 'disclaimerAcceptedAt') &&
+    (r.overrides === undefined || isObj(r.overrides)),
+  injections: (r) => id(r) && dateTime(r, 'datetime') && num(r, 'doseMg', 0, 100) && oneOf(r, 'site', SITES) && optOneOf(r, 'drug', DRUGS) && optStr(r, 'notes'),
+  weights: (r) => id(r) && day(r, 'date') && num(r, 'weightKg', 20, 500),
+  measurements: (r) => id(r) && day(r, 'date') && MEASURES.every((k) => optNum(r, k, 0, 500)) && optNum(r, 'bodyFatPct', 0, 100),
+  symptoms: (r) => id(r) && dateTime(r, 'datetime') && str(r, 'type') && Number.isInteger(r.severity) && num(r, 'severity', 1, 5) && optStr(r, 'notes'),
+  foods: (r) => id(r) && food(r),
+  foodLog: (r) => id(r) && day(r, 'date') && food(r) && num(r, 'servings', 0, 1000) && optOneOf(r, 'meal', MEALS),
+  water: (r) => id(r) && day(r, 'date') && num(r, 'ml', 0, 50_000),
+  dayMarks: (r) => day(r, 'date') && r.kind === 'low-intake',
+  appointments: (r) => id(r) && day(r, 'date') && optStr(r, 'who') && optStr(r, 'notes') && optStr(r, 'questions'),
 };
 
 /** The backup's contents if every table and row passes; throws 'unreadable' / 'newer' otherwise. Nothing is changed. */
