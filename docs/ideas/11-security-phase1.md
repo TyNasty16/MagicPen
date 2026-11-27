@@ -89,3 +89,15 @@ Read from the owner's side: plan 11 plus the security reviewer's findings.
 1. After a password change, offer "Back up now with the new password", so the newest copy matches.
 2. A "Security checklist" tick-list the owner can keep in the repo docs and re-tick quarterly.
 3. A one-line "Last backed up" under the notice's "Got it", so the real protection is visible.
+
+## After-build improvements and follow-ups — 2026-11-27
+
+**What landed:** Phase 1 hardening is built and pushed (PR pending): CSP with a deploy-time check, split CI permissions, vitest upgrade, password rule, Home Screen notice, food-value caps, restore checks and Dropbox wording. Photos stay out of backups.
+
+1. **Real-iPhone check (most important).** Only mocked runs were done. On the phone, try: barcode scan, photo pick, report share, Dropbox back up and restore, and a Home Screen update. A silent CSP block would only show there. (Adds to I-59.)
+2. **Check the live site's CSP.** After the next deploy, open the live page once and confirm there are no policy errors. The CSP does not cover `sw.js`, so note that limit.
+3. **SHA-pin the GitHub actions.** Left out of this plan on purpose. Dependabot can keep the hashes fresh, so upkeep is low.
+4. **Leftover moderate audit findings.** Four build-time findings remain in `workbox-build`. Revisit when vite-plugin-pwa ships a fix, rather than downgrading. (Narrows I-29.)
+5. **Show the build version in Settings.** The earlier "commit hash" idea was too developer-ish; a plain version and date line would help confirm the Home Screen copy updated.
+
+**Felt off:** nothing in the result itself. One honest gap: the app still has no visible sign of how recent the backup is next to the Home Screen notice (I-66), so the notice cannot yet point at the real protection.
