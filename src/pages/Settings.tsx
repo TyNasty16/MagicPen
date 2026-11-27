@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Card, ScreenHeader } from '../components/ui';
 import BottomSheet from '../components/BottomSheet';
-import { resetAllData } from '../db/db';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { getProfile, resetAllData, saveProfile } from '../db/db';
 import { revokeForReset } from '../lib/backup/run';
 import { DISCLAIMER } from '../lib/disclaimer';
 
@@ -36,6 +37,8 @@ export default function Settings() {
         </div>
       </Card>
       <p className="px-1 text-sm text-muted">Your data is stored on this device. If you turn on Dropbox backup, an encrypted copy of your entries (not photos) is also saved to your Dropbox.</p>
+
+      <MilestoneSettings />
 
       <Card title="Reset all data">
         <p className="text-sm leading-relaxed text-muted">Erase everything you have entered and start again from the beginning.</p>
@@ -74,5 +77,33 @@ export default function Settings() {
         </BottomSheet>
       )}
     </div>
+  );
+}
+
+/** Milestone celebration switches (workflow 12). Missing = on. Turning one off still records milestones silently. */
+function MilestoneSettings() {
+  const profile = useLiveQuery(getProfile);
+  if (!profile) return null;
+  const all = profile.showMilestones !== false;
+  const weight = profile.showWeightMilestones !== false;
+  return (
+    <Card title="Milestones">
+      <div className="space-y-4 text-sm">
+        <div>
+          <label className="flex min-h-11 items-center justify-between gap-3 font-medium">
+            Show milestones
+            <input type="checkbox" role="switch" className="size-5 accent-accent" checked={all} onChange={(e) => void saveProfile({ showMilestones: e.target.checked })} />
+          </label>
+          <p className="leading-relaxed text-muted">A short pop-up with confetti when you pass a round number, such as 12 injections logged. It appears only inside the app, with no sound, and nothing leaves your phone.</p>
+        </div>
+        <div className={all ? '' : 'opacity-50'}>
+          <label className="flex min-h-11 items-center justify-between gap-3 font-medium">
+            Show weight milestones
+            <input type="checkbox" role="switch" className="size-5 accent-accent" disabled={!all} checked={weight} onChange={(e) => void saveProfile({ showWeightMilestones: e.target.checked })} />
+          </label>
+          <p className="leading-relaxed text-muted">{all ? 'Includes weight lost since your starting weight. Turn this off to hide only those.' : 'Turn on Show milestones first.'}</p>
+        </div>
+      </div>
+    </Card>
   );
 }

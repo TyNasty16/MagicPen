@@ -59,13 +59,21 @@ const MEASURES = ['waistCm', 'hipsCm', 'chestCm', 'neckCm', 'upperArmCm', 'thigh
 const food = (r: Record<string, unknown>) =>
   str(r, 'name') && num(r, 'kcal', 0, 100_000) && num(r, 'proteinG', 0, 10_000) && optNum(r, 'carbsG', 0, 10_000) && optNum(r, 'fatG', 0, 10_000) && optNum(r, 'fiberG', 0, 10_000);
 
+const optBool = (r: Record<string, unknown>, k: string) => r[k] === undefined || typeof r[k] === 'boolean';
+/** Milestone record and switches on the profile (workflow 12), all optional. */
+const milestoneFields = (r: Record<string, unknown>) =>
+  optBool(r, 'showMilestones') && optBool(r, 'showWeightMilestones') && optNum(r, 'milestoneStartKg', 0, 1000) &&
+  (r.milestonesEarned === undefined ||
+    (Array.isArray(r.milestonesEarned) && r.milestonesEarned.length <= 500 &&
+      r.milestonesEarned.every((m) => isObj(m) && typeof m.key === 'string' && isCalendarDay(m.on) && (m.run === undefined || isCalendarDay(m.run)))));
+
 // What each table's rows must look like to be restored safely: the fields the app relies on, with types, allowed values and sane ranges.
 const ROW_CHECKS: Record<BackupTable, (r: Record<string, unknown>) => boolean> = {
   profile: (r) =>
     r.id === 'me' && oneOf(r, 'units', ['imperial', 'metric']) && optNum(r, 'heightCm', 30, 300) && optNum(r, 'startWeightKg', 20, 500) &&
     optNum(r, 'goalWeightKg', 20, 500) && optNum(r, 'birthYear', 1900, 2100) && (r.injectionWeekday === undefined || (Number.isInteger(r.injectionWeekday) && num(r, 'injectionWeekday', 0, 6))) &&
     optNum(r, 'proteinPerKg', 0, 10) && optOneOf(r, 'drug', DRUGS) && optStr(r, 'name') && optStr(r, 'questionsDraft') && optDateTime(r, 'disclaimerAcceptedAt') &&
-    (r.overrides === undefined || isObj(r.overrides)),
+    (r.overrides === undefined || isObj(r.overrides)) && milestoneFields(r),
   injections: (r) => id(r) && dateTime(r, 'datetime') && num(r, 'doseMg', 0, 100) && oneOf(r, 'site', SITES) && optOneOf(r, 'drug', DRUGS) && optStr(r, 'notes'),
   weights: (r) => id(r) && day(r, 'date') && num(r, 'weightKg', 20, 500),
   measurements: (r) => id(r) && day(r, 'date') && MEASURES.every((k) => optNum(r, k, 0, 500)) && optNum(r, 'bodyFatPct', 0, 100),

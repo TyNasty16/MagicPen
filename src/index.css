@@ -35,3 +35,11 @@ body { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
 
 /* Calm, on-brand keyboard focus ring. */
 :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* Milestone pop-up (workflow 12): the title slams in, the whole thing fades out. Reduce Motion turns both off (rule above). */
+@keyframes slam { 0% { transform: scale(2.4) rotate(-4deg); opacity: 0; } 60% { transform: scale(0.94) rotate(1deg); opacity: 1; } 100% { transform: scale(1) rotate(0); } }
+@keyframes pop-in { from { transform: translateY(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+.milestone-card { animation: pop-in 0.25s ease-out; }
+.milestone-title { animation: slam 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.milestone-leave { transition: opacity 0.4s; opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .milestone-leave { transition: none; } }

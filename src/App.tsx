@@ -9,6 +9,8 @@ import DoctorReport from './pages/DoctorReport';
 import Backup from './pages/Backup';
 import { handleRedirectReturn } from './lib/backup/auth';
 import { maybeAutoBackup } from './lib/backup/run';
+import { useMilestones } from './lib/useMilestones';
+import MilestonePopup from './components/MilestonePopup';
 import Home from './pages/Home';
 import Injections from './pages/Injections';
 import Profile from './pages/Profile';
@@ -69,6 +71,8 @@ export default function App() {
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, []);
 
+  const [celebration, closeCelebration] = useMilestones(!!profile?.disclaimerAcceptedAt);
+
   if (!storageOk) {
     return (
       <main className="mx-auto max-w-md px-4 py-10">
@@ -87,6 +91,7 @@ export default function App() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
+      {celebration && <MilestonePopup celebration={celebration} onClose={closeCelebration} />}
       <main className="px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-40">
         {route === 'home' && <Home profile={profile} />}
         {route === 'injections' && <Injections key={params.toString()} profile={profile} backHref={backHref} startAdding={startAdding} />}
