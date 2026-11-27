@@ -1,6 +1,35 @@
 # Workflow 12 — Milestone celebrations
-Status: Draft
+Status: Approved
 Milestone: Post-plan add-on (not in PLAN.md §5), owner idea I-63. Needs only data already stored.
+
+## Owner decisions at approval (2026-11-27) — these override anything below
+1. **Pop-up time:** 5 seconds, kept. A tap anywhere also closes it, including outside the card. A full-screen transparent layer catches the tap and is removed when the pop-up closes.
+2. **Starting weight:** editing the Profile starting weight never shows a pop-up. Weight steps it passes are recorded silently. Weight milestones are shown only when a new weigh-in is saved, or on app open after a weigh-in.
+3. **Heading:** replaced by "funky" escalating titles, inspired by shooter-game announcer call-outs but original, non-violent and copying no game.
+   - **Title per step** (step index within that series):
+     1. NICE START
+     2. ON A ROLL
+     3. HEATING UP
+     4. LOCKED IN
+     5. ON FIRE
+     6. NO STOPPING YOU
+     7. CRUSHING IT
+     8. LEGENDARY
+     9. HALL OF FAME
+     10. HISTORY MADE (10 and beyond)
+   - "Then every N" steps continue the count, capped at HISTORY MADE.
+   - A broken streak climbs again from NICE START.
+   - Several at once: the highest title wins, with each factual line listed under it.
+   - **Style:** big, bold, slanted, uppercase title that slams in (scale and fade) with the confetti. Reduce Motion shows the title with no slam and no confetti. The "Well done" heading is gone. The factual lines are unchanged.
+   - Owner asked to revisit the titles later (notepad I-73).
+4. **First arrival:** up to 5 lines, kept.
+5. **No end to the lists:**
+   - Weight percent continues every 5% (20%, 25%, …). Pounds continue every 5 lb, and kg every 2 kg.
+   - The daily streak continues every 365 days after 1460.
+   - Weekly streaks continue every 52 weeks after 208.
+6. **Metric profiles:** every 2 kg. Yes.
+
+Exact text: approved as listed below, with the titles above replacing "Well done".
 
 ## Ideas considered
 Ideas file: [docs/ideas/12-milestone-celebrations.md](../ideas/12-milestone-celebrations.md). The owner's answers there are binding: a fading pop-up (no Home card, no list), five categories, full streaks, confetti. Chosen approach: one pure module that works out what has been earned from existing tables, a small record of what has already been shown kept in the profile row, and one pop-up component. Existing code reused: `Profile` and `saveProfile` (`src/db/db.ts`), the backup of the `profile` table (`src/lib/backup/serialize.ts`), `dayKey` (`src/lib/dates.ts`), `injectionWeekday` (as in `src/lib/nextDose.ts`).
@@ -156,4 +185,4 @@ By hand: one mocked iPhone pass (390x844) with two screenshots, the pop-up with 
 - Let edits to your starting weight earn new weight steps, shown once? (Suggested: yes)
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — 2026-11-27, with the decisions at the top of this document — date:
