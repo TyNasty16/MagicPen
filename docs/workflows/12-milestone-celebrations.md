@@ -29,6 +29,8 @@ Milestone: Post-plan add-on (not in PLAN.md §5), owner idea I-63. Needs only da
    - Weekly streaks continue every 52 weeks after 208.
 6. **Metric profiles:** every 2 kg. Yes.
 
+7. **Pop-up position (owner, after the build, 2026-11-27):** the pop-up is centred on the screen, and the app behind it is blurred and dimmed, because it was getting lost among the other information on the screen.
+
 Exact text: approved as listed below, with the titles above replacing "Well done".
 
 ## Ideas considered
