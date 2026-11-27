@@ -2,7 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { Button, Card, inputClass, ScreenHeader } from '../components/ui';
 import { connectWithRedirect, finishCodeSignIn, startCodeSignIn } from '../lib/backup/auth';
-import { MIN_PASSWORD } from '../lib/backup/format';
+import { checkNewPassword, counterText, PASSWORD_TEXT } from '../lib/backup/passwordRule';
 import { applyRestore, disconnect, ERROR_TEXT, getBackupState, listBackups, openBackup, runBackup, saveBackupState, setPassword } from '../lib/backup/run';
 import { DEFAULT_EVENING, EVENING_CHOICES } from '../lib/backup/schedule';
 import { summarize, type Payload } from '../lib/backup/serialize';
@@ -71,7 +71,8 @@ function PasswordSetup({ first, onDone }: { first?: boolean; onDone?: () => void
   const [b, setB] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string>();
-  const ok = a.length >= MIN_PASSWORD && a === b;
+  const problem = checkNewPassword(a);
+  const ok = !problem && a === b;
   const save = async () => {
     setBusy(true);
     await setPassword(a);
@@ -82,13 +83,14 @@ function PasswordSetup({ first, onDone }: { first?: boolean; onDone?: () => void
   };
   return (
     <Card title={first ? 'Backup password' : 'Change password'}>
-      <p className="text-sm leading-relaxed">Choose a password of at least 12 characters. Three or four random words work well. If you forget this password, nobody, including us, can open your backups. There is no reset. Write it down and keep it somewhere safe.</p>
+      <p className="text-sm leading-relaxed">Choose a password of at least 16 characters. Four or more random words work well. The strong password your iPhone suggests also works. If you forget this password, nobody, including us, can open your backups. There is no reset. Write it down and keep it somewhere safe.</p>
       <div className="mt-3 space-y-2">
         <label htmlFor="pw1" className="block text-sm font-medium">Password</label>
-        <input id="pw1" type="password" autoComplete="new-password" className={inputClass} value={a} onChange={(e) => setA(e.target.value)} />
+        <input id="pw1" type="password" autoComplete="new-password" aria-describedby="pw-count pw-rule" className={inputClass} value={a} onChange={(e) => setA(e.target.value)} />
+        <p id="pw-count" className="text-sm text-muted" aria-live="polite">{counterText(a)}</p>
+        {a.length > 0 && problem && <p id="pw-rule" className="text-sm text-muted">{PASSWORD_TEXT[problem]}</p>}
         <label htmlFor="pw2" className="block text-sm font-medium">Type it again</label>
         <input id="pw2" type="password" autoComplete="new-password" className={inputClass} value={b} onChange={(e) => setB(e.target.value)} />
-        {a.length > 0 && a.length < MIN_PASSWORD && <p className="text-sm text-muted">{MIN_PASSWORD - a.length} more characters needed.</p>}
         {b.length > 0 && a !== b && <p className="text-sm text-muted">The two passwords don’t match yet.</p>}
         <Button className="w-full" disabled={!ok || busy} onClick={() => void save()}>{busy ? 'Saving…' : 'Save password'}</Button>
         {msg && <p role="status" className="text-sm">{msg}</p>}
@@ -149,7 +151,7 @@ function Ready() {
       <button type="button" onClick={() => setView('password')} className="min-h-11 w-full rounded-2xl border border-line bg-surface font-semibold text-accent">Change password</button>
       <div>
         <button type="button" onClick={() => void disconnect()} className="min-h-11 w-full rounded-2xl border border-line bg-surface font-semibold text-danger">Disconnect Dropbox</button>
-        <p className="mt-1 px-1 text-sm text-muted">Your backups stay in Dropbox.</p>
+        <p className="mt-1 px-1 text-sm text-muted">Your backups stay in Dropbox. You can also remove Steady at dropbox.com under Connected apps.</p>
       </div>
     </>
   );
@@ -173,7 +175,7 @@ function Restore({ onClose }: { onClose: () => void }) {
     setBusy(true);
     setMsg(undefined);
     try {
-      setPayload(await openBackup(f.path, password));
+      setPayload(await openBackup(f, password));
       setNeedPw(false);
     } catch (e) {
       if ((e as { code?: string }).code === 'needs-password') setNeedPw(true);

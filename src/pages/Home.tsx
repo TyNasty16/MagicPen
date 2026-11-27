@@ -7,6 +7,7 @@ import Sparkline from '../components/Sparkline';
 import { addWater, listFoodLogSince, listInjections, listSymptoms, listWaterSince, listWeights, type Injection, type Profile } from '../db/db';
 import { symptomLabel } from '../lib/symptoms';
 import AlertCards from '../components/AlertCards';
+import HomeScreenTip from '../components/HomeScreenTip';
 import { dayKey, daysBetween, shortDate } from '../lib/dates';
 import { dayTotals } from '../lib/nutrition';
 import { waterAmount, waterQuickAdds, waterUnit } from '../lib/water';
@@ -70,6 +71,7 @@ export default function Home({ profile }: { profile: Profile }) {
       ) : (
         <>
           <AlertCards symptoms={symptoms} now={now} mode="popup" />
+          <HomeScreenTip firstUse={profile.disclaimerAcceptedAt} now={now} />
           <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 

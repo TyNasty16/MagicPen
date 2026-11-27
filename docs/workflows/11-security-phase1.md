@@ -1,5 +1,5 @@
 # Workflow 11 — Security hardening, Phase 1
-Status: Draft
+Status: Approved
 Milestone: Follow-on to 7 — Backup/restore, calendar reminder, deploy (PLAN.md §5). Not a numbered milestone; scope comes from the owner-approved audit plan (see question 1).
 
 ## Ideas considered
@@ -148,4 +148,4 @@ Tick each box when done.
 - Answer the six questions (see "Risks & open questions").
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-27 ("Defaults ok, approved exact text": questions 1-6 at their defaults; exact text approved)

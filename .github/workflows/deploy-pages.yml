@@ -6,30 +6,32 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+# Least privilege: the build job (which runs npm ci and the tests) can only read the repo.
+# Only the deploy job may publish. This protects the deploy token; it cannot stop a
+# poisoned dependency from ending up in the built site, which is why updates are
+# tested on pull requests first (test.yml) and Dependabot waits 7 days.
+permissions: {}
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false # never cut a deployment off halfway
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run build
         env:
           VITE_BASE: /MagicPen/
-      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -37,6 +39,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
