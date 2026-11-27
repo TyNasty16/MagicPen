@@ -35,7 +35,7 @@ _Last updated: 2026-11-25_
 - Backup follow-ups: I-56 opt-in photo backup, I-54 "backup is behind" note, I-57 password reminder.
 - **M6 workouts + Today dashboard — PAUSED by owner 2026-11-25** ("we can do better"). Draft plan, NHS quotes and the four-NHS-page finding are in workflows/06 and sources/06. Restart with a fresh Ideas pass when the owner is ready.
 - Open ideas: see the notepad (up to I-69; owner ideas I-38 to I-42 and I-46), e.g. I-25 calorie-mismatch flag, I-29 dev-tool security upgrade (Vitest, Workbox), I-34/I-35 medicine-switch chart labels.
-- Pending owner checks: barcode scan on real iPhone (after the CSP); 7 "when you have time" checklist steps in workflows/11. Phase 2 (App Store) starts with a go/no-go on Apple guideline 4.2.
+- Pending owner checks: barcode scan on real iPhone (after the CSP). Phase 2 (App Store) starts with a go/no-go on Apple guideline 4.2.
 - Before sharing publicly: trademark check on the name "Steady" (PLAN §4).
 
 ## Environment

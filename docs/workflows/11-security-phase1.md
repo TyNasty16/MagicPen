@@ -112,20 +112,20 @@ One full test/build run after the CSP step; no text-guard test; notice tests at 
 Tick each box when done.
 
 ### Now (about 10 minutes)
-- [ ] **1. Two-factor sign-in (2FA) on GitHub.** Why: stops anyone with your password from publishing as you. Settings, Password and authentication, Enable two-factor authentication, "Authenticator app", scan the QR code, save the recovery codes somewhere safe, not only on this phone.
-- [ ] **2. Private commit email.** Why: keeps your email out of public history. Settings, Emails. Tick "Keep my email addresses private" and "Block command line pushes that expose my email". Past commits keep the old address.
-- [ ] **3. Protect `main`.** Why: nothing reaches the live app without a pull request. Repository, Settings, Rules, Rulesets, New branch ruleset, name "Protect main", Enforcement Active, include default branch, tick "Require a pull request before merging" and "Block force pushes". Create.
-- [ ] **4. Pages only for Steady.** Why: other sites on your account would share the address. For each other repository, Settings, Pages must say not published. Tell me first if you want a second site.
-- [ ] **5. Password line.** Why: old backups used a weaker rule and the app cannot check them. If your backup password is under 16 characters, change it in Steady (Backup, Change password), then tap "Back up now". Dropbox keeps deleted backups 30+ days, so the old copy lingers a while.
+- [x] **1. Two-factor sign-in (2FA) on GitHub.** Why: stops anyone with your password from publishing as you. Settings, Password and authentication, Enable two-factor authentication, "Authenticator app", scan the QR code, save the recovery codes somewhere safe, not only on this phone.
+- [x] **2. Private commit email.** Why: keeps your email out of public history. Settings, Emails. Tick "Keep my email addresses private" and "Block command line pushes that expose my email". Past commits keep the old address.
+- [x] **3. Protect `main`.** Why: nothing reaches the live app without a pull request. Repository, Settings, Rules, Rulesets, New branch ruleset, name "Protect main", Enforcement Active, include default branch, tick "Require a pull request before merging" and "Block force pushes". Create.
+- [x] **4. Pages only for Steady.** Why: other sites on your account would share the address. For each other repository, Settings, Pages must say not published. Tell me first if you want a second site.
+- [x] **5. Password line.** Why: old backups used a weaker rule and the app cannot check them. If your backup password is under 16 characters, change it in Steady (Backup, Change password), then tap "Back up now". Dropbox keeps deleted backups 30+ days, so the old copy lingers a while.
 
 ### When you have time
-- [ ] **6. Secret scanning, push protection and Dependabot alerts.** Why: warns you if a key is ever pasted into the repo, and flags unsafe libraries. Repository, Settings, Advanced Security (or Code security): turn all three on.
-- [ ] **7. Actions token read-only.** Why: a hijacked workflow can then change nothing. Settings, Actions, General, Workflow permissions: "Read repository contents" and untick "Allow GitHub Actions to create and approve pull requests". Save.
-- [ ] **8. github-pages environment allows only `main`.** Why: a branch can never publish the live site. Settings, Environments, github-pages, Deployment branches: "Selected branches", add `main`.
-- [ ] **9. Ruleset requires the test check.** Why: a pull request cannot merge if tests fail. After the test workflow exists, edit "Protect main": tick "Require status checks to pass" and add the test check.
-- [ ] **10. Dropbox app console review.** Why: limits what a stolen sign-in could reach. dropbox.com/developers/apps, open Steady: permission type "App folder"; scopes only files.content.read, files.content.write, files.metadata.read; the only redirect URI is `https://tynasty16.github.io/MagicPen/` (remove any localhost entry).
-- [ ] **11. 2FA on Dropbox and on the email account** behind GitHub and Dropbox. Why: that email can reset both.
-- [ ] **12. Remove stale connections.** Why: forgotten tokens are open doors. GitHub Settings, Applications (authorised OAuth apps, GitHub Apps), Developer settings (personal access tokens), SSH and GPG keys: remove anything you do not recognise or use. Same for Dropbox, Security, Connected apps.
+- [x] **6. Secret scanning, push protection and Dependabot alerts.** Why: warns you if a key is ever pasted into the repo, and flags unsafe libraries. Repository, Settings, Advanced Security (or Code security): turn all three on.
+- [x] **7. Actions token read-only.** Why: a hijacked workflow can then change nothing. Settings, Actions, General, Workflow permissions: "Read repository contents" and untick "Allow GitHub Actions to create and approve pull requests". Save.
+- [x] **8. github-pages environment allows only `main`.** Why: a branch can never publish the live site. Settings, Environments, github-pages, Deployment branches: "Selected branches", add `main`.
+- [x] **9. Ruleset requires the test check.** Why: a pull request cannot merge if tests fail. After the test workflow exists, edit "Protect main": tick "Require status checks to pass" and add the test check.
+- [x] **10. Dropbox app console review.** Why: limits what a stolen sign-in could reach. dropbox.com/developers/apps, open Steady: permission type "App folder"; scopes only files.content.read, files.content.write, files.metadata.read; the only redirect URI is `https://tynasty16.github.io/MagicPen/` (remove any localhost entry).
+- [x] **11. 2FA on Dropbox and on the email account** behind GitHub and Dropbox. Why: that email can reset both.
+- [x] **12. Remove stale connections.** Why: forgotten tokens are open doors. GitHub Settings, Applications (authorised OAuth apps, GitHub Apps), Developer settings (personal access tokens), SSH and GPG keys: remove anything you do not recognise or use. Same for Dropbox, Security, Connected apps.
 
 ## In plain English
 **What changes**
@@ -180,3 +180,4 @@ Tick each box when done.
 - Merged in PR #14. The deploy succeeded, and the deploy-time CSP check passed.
 - On a real iPhone, the owner tested a photo pick, backup and restore, report share and the Home Screen update. All passed. The barcode scan is not yet tested (owner will do it later).
 - Owner checklist: all 5 "Now" steps are done. In the ruleset, required approvals are set to 0, so the owner can merge their own pull requests.
+- 2026-11-27: the owner finished all 12 checklist steps. Steps 7 and 8 were already in place. The ruleset requires the test check, with 0 approvals. The Dropbox console was reviewed. An unused "Netlify Auth" GitHub app was removed.
