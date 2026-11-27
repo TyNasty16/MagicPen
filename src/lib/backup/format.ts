@@ -35,7 +35,8 @@ export async function deriveKey(password: string, salt: Uint8Array, iterations =
 export interface Header { format: number; schema: number; iterations: number; salt: Uint8Array; iv: Uint8Array }
 
 export function readHeader(file: Uint8Array): Header {
-  if (file.length < HEADER_LEN + 16 || file.length > MAX_FILE_BYTES || new TextDecoder().decode(file.subarray(0, 8)) !== MAGIC) throw new BackupError('not-steady');
+  if (file.length > MAX_FILE_BYTES) throw new BackupError('unreadable');
+  if (file.length < HEADER_LEN + 16 || new TextDecoder().decode(file.subarray(0, 8)) !== MAGIC) throw new BackupError('not-steady');
   const format = file[8];
   if (format !== FORMAT_VERSION) throw new BackupError('unknown-version');
   const iterations = new DataView(file.buffer, file.byteOffset + 10, 4).getUint32(0);
@@ -100,6 +101,22 @@ export async function decryptBackup(file: Uint8Array, key: CryptoKey, maxSchema:
     throw new BackupError('wrong-password');
   }
   return new TextDecoder().decode(await gunzip(new Uint8Array(plain)));
+}
+
+/**
+ * Decrypts with a typed password: as typed first (passwords set before workflow 11), then NFC-normalised (set since),
+ * so the same letters typed on another keyboard still open the file.
+ */
+export async function decryptWithPassword(file: Uint8Array, password: string, maxSchema: number): Promise<string> {
+  const h = readHeader(file);
+  const tries = [...new Set([password, password.normalize('NFC')])];
+  for (let i = 0; ; i++) {
+    try {
+      return await decryptBackup(file, await deriveKey(tries[i], h.salt, h.iterations), maxSchema);
+    } catch (e) {
+      if (!(e instanceof BackupError && e.code === 'wrong-password') || i === tries.length - 1) throw e;
+    }
+  }
 }
 
 /** True when a stored key was made with this file's salt and iterations (so it can open it without asking). */

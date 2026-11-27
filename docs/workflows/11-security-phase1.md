@@ -1,5 +1,5 @@
 # Workflow 11 — Security hardening, Phase 1
-Status: Approved
+Status: Built
 Milestone: Follow-on to 7 — Backup/restore, calendar reminder, deploy (PLAN.md §5). Not a numbered milestone; scope comes from the owner-approved audit plan (see question 1).
 
 ## Ideas considered
@@ -149,3 +149,29 @@ Tick each box when done.
 
 ## Approval
 - [x] Approved by owner — date: 2026-11-27 ("Defaults ok, approved exact text": questions 1-6 at their defaults; exact text approved)
+
+## Build notes (2026-11-27)
+- Built as planned. The CSP works with `style-src 'self'` (no `'unsafe-inline'` needed).
+- **Extra safeguard:** the deploy job now checks the built page and refuses to publish if the CSP is missing or comes after a script or stylesheet.
+- **vitest 4.1.12:**
+  - The 2 critical `npm audit` findings are gone.
+  - 4 moderate findings remain in `workbox-build`'s glob/minimatch. They are build-time only, and clearing them would mean downgrading vite-plugin-pwa.
+  - It was installed with `--legacy-peer-deps` because of an npm installer crash. `npm ci` in CI works without that flag.
+- **Barcode path:** an implausible product shows the existing "no nutrition" barcode text, the same as a product with no nutrition listed.
+- **Passwords:** new passwords are NFC-normalised. Opening a backup tries the password as typed first, then normalised, so old passwords keep working (tested).
+- **Code review:** no bugs found. Applied:
+  - more invisible characters removed from Open Food Facts names
+  - one error code for oversize files
+  - tests for the password fallback and for rows shaped like the app's real saves
+  - the deploy-time CSP check
+
+  Not applied:
+  - SHA-pinning actions (out of scope in this plan)
+  - lowering the 100 MB unpack cap. The owner approved 100 MB, and unpacking only runs after the file has passed the password check, so it can only be the owner's own file.
+- **Limits:**
+  - The CSP is a meta tag. It does not cover `sw.js`, because GitHub Pages can't send headers.
+  - The mocked pass used fake Open Food Facts and Dropbox replies. The real-iPhone check confirms the real hosts.
+- **Checks:**
+  - 318 tests pass, and a clean `npm ci --ignore-scripts` build passes.
+  - Mocked iPhone runs on the production build covered the Dropbox round trip, a barcode camera scan, the PDF report, a photo pick and Open Food Facts search. There were no CSP violations and no errors.
+  - The dev server has no CSP and works.

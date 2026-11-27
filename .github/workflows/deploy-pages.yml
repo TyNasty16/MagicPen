@@ -32,6 +32,12 @@ jobs:
       - run: npm run build
         env:
           VITE_BASE: /MagicPen/
+      # Refuse to publish if the browser safety rule (CSP) is missing or comes after a script or stylesheet.
+      - name: Check the CSP is in the built page, before every script and stylesheet
+        run: |
+          csp=$(grep -n 'http-equiv="Content-Security-Policy"' dist/index.html | head -1 | cut -d: -f1)
+          first=$(grep -nE '<script|<link' dist/index.html | head -1 | cut -d: -f1)
+          test -n "$csp" && test -n "$first" && test "$csp" -lt "$first"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

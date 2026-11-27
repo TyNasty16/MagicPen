@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { checkNewPassword, counterText, PASSWORD_TEXT } from './backup/passwordRule';
-import { gunzip, MAX_ITERATIONS, readHeader, HEADER_LEN, BackupError } from './backup/format';
+import { BackupError, decryptWithPassword, deriveKey, encryptBackup, gunzip, HEADER_LEN, MAX_ITERATIONS, randomSalt, readHeader } from './backup/format';
 import { BACKUP_TABLES, isCalendarDay, validatePayload, type Tables } from './backup/serialize';
 import { cleanText, parseOffProduct, parseOffResults } from './offSearch';
 import { isAppleMobile, shouldShowTip } from './homeScreenTip';
@@ -51,6 +51,15 @@ describe('restore limits and checks', () => {
     expect((await gunzip(packed, 5000)).length).toBe(5000);
     await expect(gunzip(packed, 4999)).rejects.toThrow(BackupError);
   });
+  it('opens with the password as typed (old) or NFC-normalised (new), refuses a wrong one', async () => {
+    const nfd = 'cafe\u0301 river lamp tiger';
+    const salt = randomSalt();
+    for (const setAs of [nfd, nfd.normalize('NFC')]) {
+      const file = await encryptBackup('{"ok":1}', await deriveKey(setAs, salt, 100_000), salt, 100_000, 9);
+      expect(await decryptWithPassword(file, nfd, 9)).toBe('{"ok":1}');
+      await expect(decryptWithPassword(file, 'cafe river lamp tiger', 9)).rejects.toThrow('wrong-password');
+    }
+  }, 20_000);
   it.each([['2026-02-28', true], ['2028-02-29', true], ['2026-02-29', false], ['2026-13-45', false], ['26-1-1', false]])('calendar day %s', (d, ok) =>
     expect(isCalendarDay(d)).toBe(ok));
 
@@ -64,6 +73,14 @@ describe('restore limits and checks', () => {
     dayMarks: [{ date: '2026-11-22', kind: 'low-intake' }],
   });
   const withRow = (k: keyof Tables, row: Record<string, unknown>) => ({ format: 1, schemaVersion: 9, tables: { ...good(), [k]: [row] } });
+  it('rows shaped like the app\'s own save paths pass', () => {
+    const t = { ...good(),
+      injections: [{ id: 4, datetime: '2026-11-20T09:00:00.000Z', doseMg: 0.25, site: 'abdomen-left', notes: '' }],
+      foodLog: [{ id: 5, date: '2026-11-22', meal: 'none', name: 'Soup', servingDesc: '1 cup', kcal: 200, proteinG: 20, carbsG: 10, fatG: 5, servings: 1.5, createdAt: '2026-11-22T12:00:00.000Z' }],
+      water: [{ id: 6, date: '2026-11-22', ml: 236.6 }],
+      foods: [{ id: 7, name: 'Bar', kcal: 190, proteinG: 20, carbsG: 22, fatG: 6, fiberG: 3 }] };
+    expect(() => validatePayload({ format: 1, schemaVersion: 9, tables: t }, 9)).not.toThrow();
+  });
   it('a backup made by the current app passes', () => expect(validatePayload({ format: 1, schemaVersion: 9, tables: good() }, 9).tables.injections).toHaveLength(1));
   it.each([
     ['an unknown site', 'injections', { datetime: '2026-11-20T09:00:00Z', doseMg: 0.5, site: 'elbow' }],
@@ -92,7 +109,7 @@ describe('Open Food Facts plausibility', () => {
   it('implausible products are counted as hidden', () =>
     expect(parseOffResults({ hits: [product({ 'energy-kcal_100g': 5000, proteins_100g: 1 })] })).toEqual({ shown: [], hidden: 1 }));
   it('removes invisible characters that could disguise a name', () =>
-    expect(cleanText('Oat­meal؜ bar\u{e0001}\u{e0041}')).toBe('Oatmeal bar'));
+    expect(cleanText('Oat\u00admeal\u061c bar\u{e0001}\u{e0041}\u2060\u034f\u3164\ufe0f')).toBe('Oatmeal bar'));
 });
 
 describe('Home Screen tip', () => {

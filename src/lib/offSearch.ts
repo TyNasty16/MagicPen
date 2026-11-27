@@ -28,13 +28,13 @@ function firstBrand(brands: unknown): string | undefined {
 }
 
 /**
- * Text from OFF: strings only, control, invisible direction, soft-hyphen and tag characters removed (they can disguise a name),
+ * Text from OFF: strings only, control, invisible direction, soft-hyphen, joiner, filler, variation-selector and tag characters removed (they can disguise a name),
  * whitespace collapsed, length capped. Always shown as plain React text, never as HTML.
  */
 export function cleanText(v: unknown, max = 120): string {
   if (typeof v !== 'string') return '';
   // eslint-disable-next-line no-control-regex
-  return v.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u061c\u00ad\u{e0000}-\u{e007f}]/gu, '').replace(/\s+/g, ' ').trim().slice(0, max);
+  return v.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u061c\u00ad\u034f\u180e\u2060-\u2064\u3164\ufe00-\ufe0f\u{e0000}-\u{e007f}]/gu, '').replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
 /** Plausible values per 100 g/ml (workflow 11). Olive oil, about 880 kcal and 100 g fat, is the real-world top. */
