@@ -18,3 +18,10 @@
 **Fresh ideas**
 - A planned "major upgrade pass" every few months, one package family per change (added to the notepad as I-77).
 - A short README note listing which majors are deliberately held back.
+
+## After-build follow-ups — 2026-11-27
+
+1. **Split the npm group into dev tools and app packages.** One failing package currently holds up every small update; two groups would let the safe ones through (new, I-78).
+2. **Make the held-back majors visible.** The ignore rule hides them for good, so the planned upgrade pass and a short "held back" list (I-77) are the only safety net. Worth doing soon, before the list is forgotten.
+
+Not yet verified: the first weekly PR with no majors, and the "Dependabot security updates" setting (owner checklist step 3).

@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (13 opening) · Totals: 💡 67 · ✅ 55 · ⏭️ 36_
+_Last updated: 2026-11-27 (13 after-build) · Totals: 💡 68 · ✅ 56 · ⏭️ 36_
 
 ---
 
@@ -70,7 +70,8 @@ _Last updated: 2026-11-27 (13 opening) · Totals: 💡 67 · ✅ 55 · ⏭️ 36
 | I-74 | "Preview" button in Settings that plays a sample milestone pop-up | 12 after-build | There is nothing to look back on, so this is the only way to see the confetti and title again, or to check Reduce Motion. Sample text only, records nothing. |
 | I-75 | Stop the on-schedule streak re-showing a step after the injection weekday is changed | 12 after-build | Known rare limit from 12. Fix idea: tie the run to the first injection date only, ignoring the weekday. |
 | I-76 | Let a tap pass through to the screen underneath while the pop-up is open | 12 after-build | Owner chose "tap anywhere closes it", so the first tap is used up closing it. A pass-through would close it and still press the button. Owner decision needed. |
-| I-77 | Planned "major upgrade pass" every few months (React 19, Vite 8, TypeScript 7, recharts 3, vitest 5 …), one package family per change, with a note of which majors are held back | 13 opening | Dependabot will stop proposing majors (change 13), so they need their own planned changes. Relates to I-29. |
+| I-77 | Planned "major upgrade pass" every few months (React 19, Vite 8, TypeScript 7, recharts 3, vitest 5 …), one package family per change, with a note of which majors are held back | 13 opening, 13 after-build | Dependabot will stop proposing majors (change 13), so they need their own planned changes. Relates to I-29. Do soon: the ignore rule hides majors for good. |
+| I-78 | Split the Dependabot npm group into dev tools and app packages | 13 after-build | One failing package holds up all small updates today. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
@@ -140,6 +141,7 @@ _Last updated: 2026-11-27 (13 opening) · Totals: 💡 67 · ✅ 55 · ⏭️ 36
 | D-53 | Security Phase 1: CSP (with deploy-time check), split CI permissions and Dependabot, vitest upgrade, backup password rule, Home Screen notice, food-value caps, restore checks, Dropbox disconnect wording, owner checklist | 11 opening, 11 second look | 11 — PR pending; needs real-iPhone check (I-59) |
 | D-54 | Milestone celebrations: weight lost, injections logged, on-schedule and logging streaks, weigh-in weeks, time on treatment (was I-63) | Owner, 2026-11-27 | 12 — PR pending; 5-second pop-up with confetti and escalating titles, no end to the lists, recorded so nothing shows twice, restore-safe |
 | D-55 | Off switch for milestones, and no praise for eating less (was I-70) | 12 opening | 12 — built in: "Show milestones" and "Show weight milestones" switches; "barely ate" mark and food amounts never earn anything |
+| D-56 | Dependabot only proposes small, safe npm updates (patch and minor; security fixes still arrive) | 13 opening (approach 1, recommended) | 13 — PR pending; `ignore` rule for majors in `.github/dependabot.yml`, Actions left as is. Owner still to enable "Dependabot security updates" |
 
 ## ⏭️ Skipped
 
