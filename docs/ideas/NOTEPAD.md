@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (12 after-build) · Totals: 💡 66 · ✅ 55 · ⏭️ 36_
+_Last updated: 2026-11-27 (13 opening) · Totals: 💡 67 · ✅ 55 · ⏭️ 36_
 
 ---
 
@@ -70,6 +70,7 @@ _Last updated: 2026-11-27 (12 after-build) · Totals: 💡 66 · ✅ 55 · ⏭�
 | I-74 | "Preview" button in Settings that plays a sample milestone pop-up | 12 after-build | There is nothing to look back on, so this is the only way to see the confetti and title again, or to check Reduce Motion. Sample text only, records nothing. |
 | I-75 | Stop the on-schedule streak re-showing a step after the injection weekday is changed | 12 after-build | Known rare limit from 12. Fix idea: tie the run to the first injection date only, ignoring the weekday. |
 | I-76 | Let a tap pass through to the screen underneath while the pop-up is open | 12 after-build | Owner chose "tap anywhere closes it", so the first tap is used up closing it. A pass-through would close it and still press the button. Owner decision needed. |
+| I-77 | Planned "major upgrade pass" every few months (React 19, Vite 8, TypeScript 7, recharts 3, vitest 5 …), one package family per change, with a note of which majors are held back | 13 opening | Dependabot will stop proposing majors (change 13), so they need their own planned changes. Relates to I-29. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
