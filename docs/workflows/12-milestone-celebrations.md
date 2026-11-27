@@ -49,7 +49,7 @@ Days are local calendar days. Weeks run Monday to Sunday. Earned is never remove
 
 ## When to check
 - Once the profile is loaded and the disclaimer accepted: on app open, when the app returns to the screen (`visibilitychange`, as backup does), and shortly after a save to injections, weights, symptoms, food or water (a small Dexie live query on row counts, with a 600 ms delay so a sheet can close first).
-- A milestone earned while the app was closed shows on the next open. Everything newly earned in one check is one pop-up. The record is written before the pop-up shows, so none can repeat. A check that finds more while a pop-up is open adds its lines to it and restarts its 5 seconds.
+- A milestone earned while the app was closed shows on the next open. Everything newly earned in one check is one pop-up, but within one series (for example weight in lb) only the highest newly passed step is shown; the steps below it are recorded silently. The record is written before the pop-up shows, so none can repeat. A check that finds more while a pop-up is open adds its lines to it and restarts its 5 seconds.
 
 ## Pop-up
 - Fixed card near the top, `role="status"` with `aria-live="polite"`, plus a visually hidden "Close" button. It does not take focus. The text is announced in full even if it fades first.
@@ -94,7 +94,7 @@ Settings, new card "Milestones" above "Reset all data":
 - 12 injections logged shows "12 injections logged"; 11 shows nothing.
 - Logging on 7 days in a row shows "7 days in a row with something logged"; 6 shows nothing. Today still empty does not end a streak that ran through yesterday.
 - A missed day ends the run silently; 7 more days in a row earns the 7-day line again. Total counts never reset.
-- Starting weight 180 lb and a weigh-in of 175.0 lb shows "5 lb lost since your starting weight"; 175.1 does not. 162.0 lb (10%) shows both "18 lb lost..." and "10% of your starting weight lost" in the same pop-up.
+- Starting weight 180 lb and a weigh-in of 175.0 lb shows "5 lb lost since your starting weight"; 175.1 does not. Starting weight 200 lb and a weigh-in of 180.0 lb shows "20 lb lost since your starting weight" and "10% of your starting weight lost" in one pop-up (the 5, 10 and 15 lb steps are recorded silently).
 - A weight gain afterwards never re-shows or removes anything.
 - First injection 2026-01-31: "1 month since your first injection" shows from 2026-02-28.
 - Injections logged in each of 4 consecutive schedule weeks show the schedule line; a late injection inside the week counts.
@@ -111,7 +111,7 @@ Automatic (Vitest, pure functions with boundary cases):
 - Streaks: today empty, yesterday gap, run restart and re-earn, back-fill merging two runs without re-firing, "barely ate" mark not counted, no injection weekday set.
 - Time: month-end clamp, leap year.
 - Weight: 4.9/5.0 lb, percent steps, no starting weight, lowest-ever weigh-in, regain.
-- `pickNew`: same-day combining, already-recorded skipped, first arrival one line per category.
+- `pickNew`: same-day combining, highest step per series, already-recorded skipped, first arrival one line per category.
 - Backup: `validatePayload` accepts and rejects the new fields; a pre-feature backup is recorded silently; Reset clears the fields.
 - Text guard over every string: `/dose|mg\b|increase|decrease|raise|lower|skip|escalat|titrat|should|recommend|miss|break|broke|to go|until|next|ate\b|calorie|diet/i`.
 
