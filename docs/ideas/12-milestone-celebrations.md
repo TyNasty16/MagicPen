@@ -61,3 +61,24 @@ Data check: everything needed is already stored (`injections`, `weights`, `sympt
 ### Watch-outs
 
 Rules touched: dose-neutral, no advice. Privacy: all local, stored in the profile. Cost: $0. Backup: the new profile field must be included in backup and restore, with a version bump to the stored shape.
+
+## Owner's answers (Q&A, 2026-11-27)
+1. **Where:** D. A pop-up that fades after a few seconds. No Home card and no Milestones list. One earned while the app was closed shows the next time it opens. No sound and no vibration.
+2. **Categories:** A–E:
+   - injections logged
+   - weigh-in weeks
+   - days with something logged
+   - time on treatment
+   - weight lost
+
+   Using-the-app milestones (first backup, first report) are out.
+3. **Weight switch:** A. "Show weight milestones" is its own switch, on by default, next to a main "Show milestones" switch in Settings. Earned milestones are never un-earned by a gain.
+4. **Weight counting:** C. Both every 5 lb and 5%, 10% and 15% of the Profile starting weight. Same-day ones combine into one pop-up.
+5. **Streaks:** C. Full streaks, including daily logging streaks. Guardrails (to confirm in the plan):
+   - A break is never mentioned.
+   - There are no "don't break it" prompts.
+   - Injection streaks celebrate logging on schedule, never the dose.
+   - There are no countdowns to the next milestone.
+6. **Duration:** A. About 5 seconds, then it fades. Tapping closes it sooner. There is nothing to look back on, but milestones are recorded so none shows twice.
+7. **Look:** B. A short confetti burst in the app's colours, then a fade. "Reduce Motion" means no animation. This is the owner's deliberate exception to the "clinical and calm" style, for celebrations only.
+8. **Already passed:** B. On first arrival, celebrate only the latest milestone in each category, once. The rest is recorded silently. **Owner addition:** a streak broken by a missed day starts fresh, and its milestones can be earned again in the new streak. Totals are never reset.
