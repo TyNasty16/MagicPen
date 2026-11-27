@@ -175,3 +175,8 @@ Tick each box when done.
   - 318 tests pass, and a clean `npm ci --ignore-scripts` build passes.
   - Mocked iPhone runs on the production build covered the Dropbox round trip, a barcode camera scan, the PDF report, a photo pick and Open Food Facts search. There were no CSP violations and no errors.
   - The dev server has no CSP and works.
+
+## Release (2026-11-27)
+- Merged in PR #14. The deploy succeeded, and the deploy-time CSP check passed.
+- On a real iPhone, the owner tested a photo pick, backup and restore, report share and the Home Screen update. All passed. The barcode scan is not yet tested (owner will do it later).
+- Owner checklist: all 5 "Now" steps are done. In the ruleset, required approvals are set to 0, so the owner can merge their own pull requests.
