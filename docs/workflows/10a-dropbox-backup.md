@@ -135,7 +135,7 @@ Optional live check by the agent: only if the cloud environment allows `www.drop
   - A backup missing any table is refused.
   - A refused access token is renewed once before showing "sign-in ended".
   - Backup, restore and reset never overlap.
-- Added text, not on the approved list (short, factual): "Dropbox sign-in didn’t finish. Nothing was changed. Try again." It is shown when the owner cancels at Dropbox or the sign-in fails.
+- Added text, approved by the owner on 2026-11-27: "Dropbox sign-in didn’t finish. Nothing was changed. Try again." It is shown when the owner cancels at Dropbox or the sign-in fails.
 - Known limit: photos attached to weigh-ins that a restore removes stay on the phone but are no longer shown.
 - Checks:
   - 262 tests pass and the build passes.
@@ -144,3 +144,6 @@ Optional live check by the agent: only if the cloud environment allows `www.drop
   - Dropbox sign-in by redirect and by code
   - Back up now
   - Restore
+
+## Release (2026-11-27)
+Merged in PR #13. The owner tested on a real iPhone (connect, back up, restore, Calendar), and all checks passed.

@@ -77,5 +77,8 @@ By hand: browser pass (button, disabled state, download on desktop). On the real
 
 ## Build notes (2026-11-27)
 - The button sits on the Doses screen under Next injection (the owner's change at approval). The calendar code is in `src/lib/calendar.ts`, with 3 tests.
-- If iPhone needs a second tap to share, the screen says: "Tap the button again to add it to Calendar." This text is not on the approved list; it is short and factual.
+- If iPhone needs a second tap to share, the screen says: "Tap the button again to add it to Calendar." The owner approved this text on 2026-11-27.
 - Needs a real-iPhone check that the Share sheet offers Calendar for the .ics file.
+
+## Release (2026-11-27)
+Merged in PR #13. The owner tested on a real iPhone (connect, back up, restore, Calendar), and all checks passed.
