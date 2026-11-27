@@ -1,5 +1,5 @@
 # Workflow 10a — Encrypted Dropbox backup and restore
-Status: Draft
+Status: Built
 Milestone: 7 — Backup/restore, calendar reminder, deploy (PLAN.md §5). Part 1 of 2; 10b (calendar reminder) is separate. Deploy to GitHub Pages already exists.
 
 ## Ideas considered
@@ -123,4 +123,24 @@ Optional live check by the agent: only if the cloud environment allows `www.drop
 - Approve the new privacy rule wording for CLAUDE.md (the project rules file).
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-27 (defaults OK; exact text approved as written, including the CLAUDE.md rule)
+
+## Build notes (2026-11-27)
+- Built as designed: `src/lib/backup/` (format, serialize, schedule, dropbox, auth, run), `src/pages/Backup.tsx`, "Backup" in the ☰ menu, Dexie v9 `backupState`.
+- Code review fixes:
+  - Disconnect now ends the sign-in at Dropbox with a fresh token.
+  - Rotation never deletes the file just saved (clock changes, same-minute copies).
+  - Every sign-in return opens Backup, and the one-time sign-in secret is cleared on every outcome and on Reset.
+  - All Dropbox calls time out after 30 s, and Reset stops waiting on Dropbox after 6 s.
+  - A backup missing any table is refused.
+  - A refused access token is renewed once before showing "sign-in ended".
+  - Backup, restore and reset never overlap.
+- Added text, not on the approved list (short, factual): "Dropbox sign-in didn’t finish. Nothing was changed. Try again." It is shown when the owner cancels at Dropbox or the sign-in fails.
+- Known limit: photos attached to weigh-ins that a restore removes stay on the phone but are no longer shown.
+- Checks:
+  - 262 tests pass and the build passes.
+  - A mocked-Dropbox iPhone pass covered connect, password, 3 uploads (2 kept), restore, the small-backup guard and the browser return, with only Dropbox hosts contacted.
+- Needs a real-iPhone check after release:
+  - Dropbox sign-in by redirect and by code
+  - Back up now
+  - Restore

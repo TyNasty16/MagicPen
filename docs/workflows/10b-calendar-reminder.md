@@ -1,5 +1,5 @@
 # Workflow 10b — Weekly injection reminder (calendar file)
-Status: Draft
+Status: Built
 Milestone: 7 — Backup/restore, calendar reminder, deploy (PLAN.md §5). Part 2 of 2; independent of 10a, but the button sits on the 10a Backup screen if built after it.
 
 ## Ideas considered
@@ -50,7 +50,7 @@ By hand: browser pass (button, disabled state, download on desktop). On the real
 - iPhone may open the shared file in Files or Mail rather than Calendar; "Add to Calendar" or opening the file from Files then works. Needs the real phone.
 - Duplicate events if tapped twice (stated in the note).
 - Proposed defaults, reply "defaults OK":
-  - The button lives on the Backup screen (no new menu item), under a "Calendar reminder" heading.
+  - ~~The button lives on the Backup screen~~ → **Owner change (2026-11-27): the button lives on the Doses screen, directly under the "Next injection" card** (where the injection day is shown).
   - All-day event, title "Injection day (Steady)", no alarm.
   - Starts on the next injection weekday.
 - Reply "approve the exact text", or give changes to the wording above.
@@ -73,4 +73,9 @@ By hand: browser pass (button, disabled state, download on desktop). On the real
 - Approve the exact wording.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-27 (exact text approved; owner: "this button should not be in back up" — moved to the Doses screen, under the Next injection card)
+
+## Build notes (2026-11-27)
+- The button sits on the Doses screen under Next injection (the owner's change at approval). The calendar code is in `src/lib/calendar.ts`, with 3 tests.
+- If iPhone needs a second tap to share, the screen says: "Tap the button again to add it to Calendar." This text is not on the approved list; it is short and factual.
+- Needs a real-iPhone check that the Share sheet offers Calendar for the .ics file.

@@ -1,4 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
+import { shareReport } from '../lib/shareReport';
+import { ICS_FILE, injectionDayIcs } from '../lib/calendar';
 import { useCallback, useState } from 'react';
 import BodyMap from '../components/BodyMap';
 import BodyThumb from '../components/BodyThumb';
@@ -57,6 +59,8 @@ export default function Injections({ profile, backHref, startAdding }: { profile
           <p className="mt-2 text-sm">No injections logged yet.</p>
         )}
       </section>
+
+      <CalendarReminder weekday={profile.injectionWeekday} />
 
       <Button className="flex w-full items-center justify-center gap-2" onClick={() => setEditing('new')}>
         <PlusIcon width={20} height={20} /> Log injection
@@ -197,5 +201,28 @@ function InjectionSheet({ initial, history, defaultDrug, onDone }: { initial?: I
         {initial && <button type="button" onClick={remove} className="min-h-11 w-full text-sm font-medium text-danger">Delete injection</button>}
       </div>
     </BottomSheet>
+  );
+}
+
+/** "Add weekly injection reminder to Calendar" (workflow 10b): a repeating all-day event, made on the phone. */
+function CalendarReminder({ weekday }: { weekday?: number }) {
+  const [msg, setMsg] = useState<string>();
+  const add = async () => {
+    if (weekday === undefined) return;
+    const r = await shareReport(new TextEncoder().encode(injectionDayIcs(weekday, new Date())), ICS_FILE, 'Injection day reminder', 'text/calendar');
+    setMsg(r === 'downloaded' ? 'Sharing isn’t available here. The calendar file was downloaded instead.' : r === 'blocked' ? 'Tap the button again to add it to Calendar.' : undefined);
+  };
+  return (
+    <div>
+      <button type="button" disabled={weekday === undefined} onClick={() => void add()} className="min-h-11 w-full rounded-2xl border border-line bg-surface px-3 text-sm font-semibold text-accent disabled:opacity-50">
+        Add weekly injection reminder to Calendar
+      </button>
+      <p className="mt-1 px-1 text-xs text-muted">
+        {weekday === undefined
+          ? 'Choose your injection day in Profile first.'
+          : 'Makes a repeating all-day event on your injection day. It has no dose or medicine in it. Tapping again adds another copy, and changing your injection day later does not change the event already in your Calendar.'}
+      </p>
+      <div aria-live="polite">{msg && <p className="mt-1 px-1 text-sm">{msg}</p>}</div>
+    </div>
   );
 }
