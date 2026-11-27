@@ -1,5 +1,5 @@
 # Workflow 13 — Dependabot: small npm updates only
-Status: Draft
+Status: Built
 Milestone: None (maintenance change after milestone 7, outside PLAN.md §5; owner request "close 16 and set it up")
 
 ## Ideas considered
@@ -46,4 +46,7 @@ YAML parse check only (no app code, so no full run); post-merge checks moved to 
 Dependabot is a GitHub helper that suggests updates to the code libraries this app uses. After this change it suggests only small updates and security fixes, and skips big "major" versions, which often need real rework. Cost: nothing. You need to turn on one GitHub setting by hand (checklist step 3). Risks: skipped big updates stay hidden until someone plans them, and small updates can still break things, so tests must pass before merging. One failing update can hold up the rest.
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — date: 2026-11-27
+
+## Build notes (2026-11-27)
+The `ignore` rule was added to the npm entry, along with a comment. The YAML parses and the `github-actions` entry is unchanged. PR #16 was closed at the owner's request.
