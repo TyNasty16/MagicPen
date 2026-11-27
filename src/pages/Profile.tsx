@@ -26,7 +26,9 @@ const TARGET_ROWS: { key: keyof Targets; label: string }[] = [
   { key: 'waterMl', label: 'Water' },
 ];
 
-type Draft = Omit<ProfileRecord, 'id' | 'disclaimerAcceptedAt'> & { overrides: Partial<Targets> };
+// Fields other screens own are left out, so saving the Profile never writes back an old copy of them.
+type OtherFields = 'id' | 'disclaimerAcceptedAt' | 'questionsDraft' | 'milestonesEarned' | 'showMilestones' | 'showWeightMilestones' | 'milestoneStartKg';
+type Draft = Omit<ProfileRecord, OtherFields> & { overrides: Partial<Targets> };
 type Texts = Record<string, string>;
 
 const str = (n: number | undefined) => (n === undefined ? '' : String(n));
@@ -85,7 +87,7 @@ export default function Profile({ profile, backHref, section }: { profile: Profi
   }, [section]);
 
   const [draft, setDraft] = useState<Draft>(() => {
-    const { id: _id, disclaimerAcceptedAt: _d, ...rest } = profile;
+    const { id: _id, disclaimerAcceptedAt: _d, questionsDraft: _q, milestonesEarned: _m, showMilestones: _s, showWeightMilestones: _w, milestoneStartKg: _k, ...rest } = profile;
     return { ...rest, overrides: profile.overrides ?? {} };
   });
   const [texts, setTexts] = useState<Texts>(() => textsFor(draft));

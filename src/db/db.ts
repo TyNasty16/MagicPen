@@ -20,6 +20,11 @@ export interface Profile {
   drug?: DrugId; // medicine new injections default to; missing = Wegovy (workflow 07)
   name?: string; // optional, printed on doctor reports; stays on this phone (workflow 08a)
   questionsDraft?: string; // questions typed on the report before any appointment exists; moves into the next new appointment (workflow 09)
+  // Milestone celebrations (workflow 12). Missing switches = on. The record stops any milestone showing twice and travels with backups.
+  milestonesEarned?: { key: string; on: string; run?: string }[];
+  showMilestones?: boolean;
+  showWeightMilestones?: boolean;
+  milestoneStartKg?: number; // starting weight at the last check: a change in Profile records weight steps silently (owner, 2026-11-27)
 }
 
 export type Site = 'abdomen-left' | 'abdomen-right' | 'thigh-left' | 'thigh-right' | 'arm-left' | 'arm-right';
@@ -190,8 +195,11 @@ export const getProfile = async (): Promise<Profile | null> => (await db.profile
 export const storageAvailable = () => db.open().then(() => true, () => false);
 
 export async function saveProfile(changes: Omit<Partial<Profile>, 'id'>): Promise<void> {
-  const current = (await db.profile.get('me')) ?? { id: 'me' as const, units: 'imperial' as const };
-  await db.profile.put({ ...current, ...changes, id: 'me' });
+  // One transaction, so a milestone record written at the same moment is never overwritten with an older copy.
+  await db.transaction('rw', db.profile, async () => {
+    const current = (await db.profile.get('me')) ?? { id: 'me' as const, units: 'imperial' as const };
+    await db.profile.put({ ...current, ...changes, id: 'me' });
+  });
 }
 
 export const listInjections = () => db.injections.orderBy('datetime').reverse().toArray();

@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (11 closing, I-67 to I-69) · Totals: 💡 61 · ✅ 53 · ⏭️ 36_
+_Last updated: 2026-11-27 (12 after-build) · Totals: 💡 66 · ✅ 55 · ⏭️ 36_
 
 ---
 
@@ -64,13 +64,18 @@ _Last updated: 2026-11-27 (11 closing, I-67 to I-69) · Totals: 💡 61 · ✅ 5
 | I-60 | Plain-words "Security and privacy" section in Settings | 11 opening | What stays on the phone, what goes to Dropbox, what Open Food Facts sees. Also prepares the Phase 2 privacy policy. |
 | I-61 | Test that fails if the CSP loses a needed host or gains unsafe-eval | 11 opening | Guards the policy against accidental edits. |
 | I-62 | SECURITY.md so finders know whom to tell | 11 opening | Small file, no code. |
-| I-63 | Milestone celebrations: weight lost, injections logged, injection-day streaks, logging streaks, etc. | Owner, 2026-11-27 | Your idea. Calm, short, never about dose amounts or dose changes; celebrate consistency and your own logged progress only. Needs care with wording for weight (no pressure, no "goal missed"). |
+| I-71 | Weekly "This week" line (days logged, weigh-in done) | 12 opening | Counts only, no streak. |
+| I-72 | "Clear milestones" button for a fresh start | 12 opening | Optional. |
+| I-73 | Revisit the milestone pop-up titles (NICE START … HISTORY MADE) | Owner, 2026-11-27 | Your request: the titles were approved for now; come back and change them later. |
+| I-74 | "Preview" button in Settings that plays a sample milestone pop-up | 12 after-build | There is nothing to look back on, so this is the only way to see the confetti and title again, or to check Reduce Motion. Sample text only, records nothing. |
+| I-75 | Stop the on-schedule streak re-showing a step after the injection weekday is changed | 12 after-build | Known rare limit from 12. Fix idea: tie the run to the first injection date only, ignoring the weekday. |
+| I-76 | Let a tap pass through to the screen underneath while the pop-up is open | 12 after-build | Owner chose "tap anywhere closes it", so the first tap is used up closing it. A pass-through would close it and still press the button. Owner decision needed. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
 | I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
 | I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
-| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. |
+| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build, 12 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. From 12: confetti runs smoothly, Reduce Motion is respected, nothing repeats after reopening. |
 | I-67 | SHA-pin the GitHub Actions | 11 after-build | Left out of Phase 1 on purpose. Dependabot can keep the hashes fresh. |
 | I-68 | Check the live site's CSP after deploy (no policy errors in the console) | 11 after-build | The CSP is a meta tag and does not cover sw.js (GitHub Pages cannot send headers). |
 | I-69 | Show a plain build version and date in Settings | 11 after-build | Confirms the Home Screen copy has updated. Earlier "commit hash" idea was judged too developer-ish. |
@@ -132,6 +137,8 @@ _Last updated: 2026-11-27 (11 closing, I-67 to I-69) · Totals: 💡 61 · ✅ 5
 | D-51 | Encrypted daily backup to your own Dropbox, with restore, from a Backup screen in the menu | 10 opening | 10a — PR pending; automatic when the app is opened after 8 pm, newest 2 kept, Reset disconnects. Needs real-iPhone check |
 | D-52 | Weekly injection-day reminder for the phone Calendar (.ics) | 10 opening | 10b — PR pending; button on the Doses screen under Next injection |
 | D-53 | Security Phase 1: CSP (with deploy-time check), split CI permissions and Dependabot, vitest upgrade, backup password rule, Home Screen notice, food-value caps, restore checks, Dropbox disconnect wording, owner checklist | 11 opening, 11 second look | 11 — PR pending; needs real-iPhone check (I-59) |
+| D-54 | Milestone celebrations: weight lost, injections logged, on-schedule and logging streaks, weigh-in weeks, time on treatment (was I-63) | Owner, 2026-11-27 | 12 — PR pending; 5-second pop-up with confetti and escalating titles, no end to the lists, recorded so nothing shows twice, restore-safe |
+| D-55 | Off switch for milestones, and no praise for eating less (was I-70) | 12 opening | 12 — built in: "Show milestones" and "Show weight milestones" switches; "barely ate" mark and food amounts never earn anything |
 
 ## ⏭️ Skipped
 
