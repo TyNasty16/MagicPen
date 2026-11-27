@@ -82,3 +82,4 @@ Rules touched: dose-neutral, no advice. Privacy: all local, stored in the profil
 6. **Duration:** A. About 5 seconds, then it fades. Tapping closes it sooner. There is nothing to look back on, but milestones are recorded so none shows twice.
 7. **Look:** B. A short confetti burst in the app's colours, then a fade. "Reduce Motion" means no animation. This is the owner's deliberate exception to the "clinical and calm" style, for celebrations only.
 8. **Already passed:** B. On first arrival, celebrate only the latest milestone in each category, once. The rest is recorded silently. **Owner addition:** a streak broken by a missed day starts fresh, and its milestones can be earned again in the new streak. Totals are never reset.
+9. **Streak difficulty (owner addition):** streak milestones get progressively longer and harder to reach. The gaps widen, for example daily 3, 7, 14, 30, 60, 100, 180, 365 days and weekly 2, 4, 8, 12, 26, 52 weeks.
