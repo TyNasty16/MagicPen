@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (11 closing, I-67 to I-69) · Totals: 💡 61 · ✅ 53 · ⏭️ 36_
+_Last updated: 2026-11-27 (12 opening, I-70 to I-72) · Totals: 💡 64 · ✅ 53 · ⏭️ 36_
 
 ---
 
@@ -65,6 +65,9 @@ _Last updated: 2026-11-27 (11 closing, I-67 to I-69) · Totals: 💡 61 · ✅ 5
 | I-61 | Test that fails if the CSP loses a needed host or gains unsafe-eval | 11 opening | Guards the policy against accidental edits. |
 | I-62 | SECURITY.md so finders know whom to tell | 11 opening | Small file, no code. |
 | I-63 | Milestone celebrations: weight lost, injections logged, injection-day streaks, logging streaks, etc. | Owner, 2026-11-27 | Your idea. Calm, short, never about dose amounts or dose changes; celebrate consistency and your own logged progress only. Needs care with wording for weight (no pressure, no "goal missed"). |
+| I-70 | Off switch for milestones, and no praise for eating less | 12 opening | Disordered-eating safeguard. Could be folded into I-63. |
+| I-71 | Weekly "This week" line (days logged, weigh-in done) | 12 opening | Counts only, no streak. |
+| I-72 | "Clear milestones" button for a fresh start | 12 opening | Optional. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
