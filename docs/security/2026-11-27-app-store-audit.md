@@ -26,7 +26,7 @@
 | 4 | **Data is not encrypted inside the app.** It relies on the iPhone's own encryption and has no in-app lock. | L | L–M | Pair with the CSP. Keychain storage and a Face ID lock are optional. |
 | 5 | **Weak backup passwords are accepted** (for example 12 × "a"). Dropbox keeps deleted versions, so old backups stay around. | M | M | Require 16+ characters and reject repeated or low-variety passwords. Advise four or more random words. |
 | 6 | **Safari's 7-day rule.** If Steady is used in a Safari tab, not the Home Screen app, Safari can wipe its data after 7 days without a visit. Photos are not backed up. | M | – | Show a one-time "Add to Home Screen" notice. Call `navigator.storage.persist()`. |
-| 7 | **Photos have no backup.** They are lost for good if storage is wiped. | M | M | Opt-in encrypted photo backup (I-56). This needs a product-rule change. |
+| 7 | **Photos have no backup.** They are lost for good if storage is wiped. | M | M | **Owner decision 2026-11-27: accepted. Photos stay out of backups (rule unchanged); I-56 not pursued.** |
 | 8 | **Personal email in public commits.** Thirteen merge commits show the owner's personal Gmail address. | L–M | L–M | Set a GitHub noreply commit email. Past commits stay as they are. |
 | 9 | **Dev-tool vulnerabilities.** vitest/tinypool have 2 critical issues, in dev tools only. | L | L | Update vitest. |
 | 10 | **Open Food Facts values are not capped** (calories, protein). | L | L | Cap them to plausible amounts. |

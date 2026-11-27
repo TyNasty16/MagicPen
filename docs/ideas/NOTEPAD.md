@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭️ 35_
+_Last updated: 2026-11-27 (11 opening pass) · Totals: 💡 55 · ✅ 52 · ⏭️ 35_
 
 ---
 
@@ -61,7 +61,10 @@ _Last updated: 2026-11-27 (10 closing pass) · Totals: 💡 52 · ✅ 52 · ⏭�
 | I-53 | "Add the visit" link on the report screen when there is no appointment | 09 after-build | Closes the loop for the draft without leaving the report. |
 | I-54 | "Backup is behind" quiet nudge after several days with no backup | 10 after-build | Backup only runs when the app is opened, so a long gap is silent today. Calm amber line (Backup screen, maybe a small Home line); never an alarm. |
 | I-55 | Tidy photos left on the phone after a restore | 10 after-build | Photos for weigh-ins a restore removed stay stored but hidden (known limit in 10a). Show a count and "Remove unused photos" with a confirm. |
-| I-56 | Opt-in photo backup to Dropbox | 10 after-build | Photos are the biggest data and are not backed up. Needs its own size and privacy note and a switch that is off by default. Pairs with I-46. |
+| I-56 | Opt-in photo backup to Dropbox | 10 after-build | Photos are the biggest data and are not backed up. Needs its own size and privacy note and a switch that is off by default. Pairs with I-46. **Owner decided 2026-11-27 (11 opening): keep photos out of backups; not part of Phase 1.** Move to Skipped at the 11 closing pass. |
+| I-60 | Plain-words "Security and privacy" section in Settings | 11 opening | What stays on the phone, what goes to Dropbox, what Open Food Facts sees. Also prepares the Phase 2 privacy policy. |
+| I-61 | Test that fails if the CSP loses a needed host or gains unsafe-eval | 11 opening | Guards the policy against accidental edits. |
+| I-62 | SECURITY.md so finders know whom to tell | 11 opening | Small file, no code. |
 | I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
 | I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
 | I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore. |
