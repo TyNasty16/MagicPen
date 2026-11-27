@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-27 (14 opening) · Totals: 💡 71 · ✅ 56 · ⏭️ 36_
+_Last updated: 2026-11-27 (14 parked, I-82) · Totals: 💡 72 · ✅ 56 · ⏭️ 36_
 
 ---
 
@@ -75,6 +75,7 @@ _Last updated: 2026-11-27 (14 opening) · Totals: 💡 71 · ✅ 56 · ⏭️ 36
 | I-79 | Brand "steady line" as loading and empty-state artwork | 14 opening | Optional; only if the owner picks the steady-line direction. |
 | I-80 | "Plain mode" switch: stronger contrast, no decoration | 14 opening | Accessibility option; stored on the phone. |
 | I-81 | Before/after screenshot check for every screen after a redesign | 14 opening | Keeps screens consistent. |
+| I-82 | Bullet-journal redesign: dot-grid pages, washi-tape section labels, bullet-journal signifiers, sticky notes, handwritten notes (Caveat, self-hosted) | Owner, 2026-11-27 | Your idea, parked: not sure yet. Mockups: `docs/screenshots/14-bujo-screen-*.png` (Home, Doses, Body, Food) and `14-bujo-1-dot-grid.png` (the weight chart you liked). Questions still open: handwriting for numbers?, tape colours, Symptoms and Profile screens. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
