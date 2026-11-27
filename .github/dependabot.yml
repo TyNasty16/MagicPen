@@ -1,5 +1,7 @@
 # Weekly update checks. Each update waits 7 days after release (most poisoned packages are caught by then)
 # and is tested by test.yml before it can be merged.
+# npm: only patch and minor updates; major versions are done as planned changes (workflow 13, notepad I-77).
+# Security fixes still arrive for any version when "Dependabot security updates" is on in the repo settings.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -9,6 +11,9 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
     groups:
       npm:
         patterns: ['*']
