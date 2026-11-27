@@ -83,3 +83,15 @@ Rules touched: dose-neutral, no advice. Privacy: all local, stored in the profil
 7. **Look:** B. A short confetti burst in the app's colours, then a fade. "Reduce Motion" means no animation. This is the owner's deliberate exception to the "clinical and calm" style, for celebrations only.
 8. **Already passed:** B. On first arrival, celebrate only the latest milestone in each category, once. The rest is recorded silently. **Owner addition:** a streak broken by a missed day starts fresh, and its milestones can be earned again in the new streak. Totals are never reset.
 9. **Streak difficulty (owner addition):** streak milestones get progressively longer and harder to reach. The gaps widen, for example daily 3, 7, 14, 30, 60, 100, 180, 365 days and weekly 2, 4, 8, 12, 26, 52 weeks.
+
+## After-build improvements and follow-ups — 2026-11-27
+
+**What landed:** a 5-second confetti pop-up with escalating titles for five milestone categories, recorded so nothing repeats and restore-safe, with two Settings switches (I-63 and I-70 done).
+
+1. **Preview button (I-74).** Nothing can be looked back on, so a "Preview" in Settings would let the owner see the confetti, title and Reduce Motion again. Sample text only, nothing recorded.
+2. **Tap-through (I-76).** Felt off: the full-screen tap layer uses up the first tap, so someone mid-task presses a button and nothing happens. It was the owner's choice, so only a question: close and also pass the tap on?
+3. **Weekday-change limit (I-75).** Changing the injection weekday can rarely re-show a schedule step. Tying the run to the first injection date alone would remove it.
+4. **Titles (I-73, still open).** Worth reading them aloud at some point. "NO STOPPING YOU" is the longest, so check it fits on a small iPhone without wrapping badly.
+5. **Real-iPhone check.** Added to I-59: smooth confetti, Reduce Motion, and no repeat after closing and reopening. Only mocked runs were done.
+
+**Felt off:** the calm style rule has a deliberate exception here, and the loud titles are the biggest gap from the rest of the app. Fine as the owner chose, but keep it to these pop-ups only.
