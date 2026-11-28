@@ -6,13 +6,13 @@ import { Tile } from '../components/ui';
 import { ChevronIcon } from '../components/icons';
 import Segmented from '../components/Segmented';
 import { CompactNutritionRings } from '../components/NutritionRings';
-import { addWater, listFoodLogSince, listInjections, listSymptoms, listWaterSince, listWeights, type Injection, type Profile } from '../db/db';
+import WaterTile from '../components/WaterTile';
+import { listFoodLogSince, listInjections, listSymptoms, listWaterSince, listWeights, type Injection, type Profile } from '../db/db';
 import { symptomLabel } from '../lib/symptoms';
 import AlertCards from '../components/AlertCards';
 import HomeScreenTip from '../components/HomeScreenTip';
 import { dayKey, daysBetween, shortDate } from '../lib/dates';
 import { dayTotals } from '../lib/nutrition';
-import { waterAmount, waterQuickAdds, waterUnit } from '../lib/water';
 import { formatDrugDose } from '../lib/injections';
 import { nextDose } from '../lib/nextDose';
 import { dailyWeights, latestWeightKg } from '../lib/weight';
@@ -53,7 +53,6 @@ export default function Home({ profile }: { profile: Profile }) {
   const targets = effectiveTargets(profile, latestWeightKg(weights));
   const totals = dayTotals(food.filter((e) => e.date === today));
   const waterMl = water.filter((w) => w.date === today).reduce((s, w) => s + w.ml, 0);
-  const quickWater = waterQuickAdds(profile.units)[0];
   const lastSymptom = symptoms[0];
   const bmiNow = currentBmi(profile, weights);
 
@@ -86,18 +85,7 @@ export default function Home({ profile }: { profile: Profile }) {
             <Tile title="Nutrition" href="#/food?from=home">
               <CompactNutritionRings totals={totals} targets={targets} today={today} />
             </Tile>
-            <Tile title="Water">
-              <p className="font-serif text-2xl font-semibold" aria-live="polite">
-                {waterAmount(waterMl, profile.units)}{' '}
-                <span className="font-sans text-xs text-muted">/ {waterAmount(targets.waterMl, profile.units)} {waterUnit(profile.units)}</span>
-              </p>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-track" aria-hidden>
-                <div className="h-full rounded-full bg-[#2a6fb8]" style={{ width: `${Math.min(100, (waterMl / targets.waterMl) * 100)}%` }} />
-              </div>
-              <button type="button" aria-label={`Add ${quickWater.label.slice(2)} water`} onClick={() => addWater(today, quickWater.ml)} className="mt-2.5 min-h-11 w-full rounded-2xl border border-line font-semibold text-accent">
-                {quickWater.label}
-              </button>
-            </Tile>
+            <WaterTile ml={waterMl} targetMl={targets.waterMl} units={profile.units} today={today} />
           </div>
 
           <section aria-label="Quick add">

@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Water vessels</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box} body{background:#f7f1ea;font-family:Inter,system-ui,sans-serif;color:#3a2a22;width:390px}
+.wrap{padding:16px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:#fffaf5;border-radius:22px;box-shadow:0 6px 18px rgb(80 50 30 / .08);padding:16px 14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:600;color:#6f5b4c} .muted{color:#6f5b4c} .serif{font-family:Georgia,serif}
+.btn{border:1px solid #eadfd3;border-radius:16px;text-align:center;padding:11px 0;margin-top:10px;color:#a85540;font-weight:600;font-size:17px}
+.lbl{font-size:12px;font-weight:600;color:#6f5b4c;margin:6px 0 0 2px}
+</style></head><body><div class="wrap">
+<div class="grid" id="row"></div>
+</div>
+<script>
+const W = 42, GOAL = 90, FILL = W / GOAL;
+const defs = (id) => `<defs>
+  <linearGradient id="${id}w" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7fc4e8" stop-opacity=".85"/><stop offset="1" stop-color="#2f7fbf" stop-opacity=".95"/></linearGradient>
+  <linearGradient id="${id}g" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".2" stop-color="#eef3f6" stop-opacity=".45"/><stop offset=".8" stop-color="#e6edf2" stop-opacity=".45"/><stop offset="1" stop-color="#cfd9e0" stop-opacity=".8"/></linearGradient>
+  <radialGradient id="${id}f"><stop offset="0" stop-color="#3a2a22" stop-opacity=".2"/><stop offset="1" stop-color="#3a2a22" stop-opacity="0"/></radialGradient></defs>`;
+const surface = (y, w = 96) => `M0,${y} C${w * .3},${y - 2.5} ${w * .65},${y + 2.5} ${w},${y}`;
+// A: a tall glass with ice
+function glass(f, id = 'a') {
+  const top = 40, bot = 168, body = `M16,${top} L80,${top} L72,${bot - 6} Q71,${bot} 65,${bot} L31,${bot} Q25,${bot} 24,${bot - 6} Z`;
+  const y = bot - 6 - (bot - top - 12) * f;
+  return `<svg width="76" height="150" viewBox="0 30 96 150">${defs(id)}<clipPath id="${id}c"><path d="${body}"/></clipPath>
+  <ellipse cx="48" cy="${bot + 3}" rx="30" ry="4" fill="url(#${id}f)"/>
+  <path d="${body}" fill="url(#${id}g)"/>
+  <g clip-path="url(#${id}c)"><path d="${surface(y)} L96,200 L0,200 Z" fill="url(#${id}w)"/>
+   <path d="${surface(y)} L96,${y + 3} C64,${y + 5} 30,${y + 1} 0,${y + 3} Z" fill="#fff" opacity=".45"/>
+   <rect x="34" y="${y - 6}" width="14" height="13" rx="3" transform="rotate(-12 41 ${y})" fill="#fff" opacity=".55" stroke="#bcd9ea"/>
+   <rect x="50" y="${y - 3}" width="12" height="11" rx="3" transform="rotate(14 56 ${y + 2})" fill="#fff" opacity=".5" stroke="#bcd9ea"/>
+   ${[[30, .5], [58, .3], [44, .75]].map(([x, k]) => `<circle cx="${x}" cy="${y + 10 + k * (bot - y - 18)}" r="1.4" fill="#fff" opacity=".6"/>`).join('')}</g>
+  <path d="${body}" fill="none" stroke="#2a4a60" stroke-opacity=".3"/>
+  <ellipse cx="48" cy="${top}" rx="32" ry="3.5" fill="none" stroke="#2a4a60" stroke-opacity=".25"/>
+  <path d="M22,${top + 8} L29,${bot - 14}" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".75"/></svg>`;
+}
+// B: a sport bottle with a straw lid and fl oz marks
+function bottle(f, id = 'b') {
+  const top = 58, bot = 172, body = `M22,${top} Q22,${top - 6} 28,${top - 6} L68,${top - 6} Q74,${top - 6} 74,${top} L74,${bot - 8} Q74,${bot} 66,${bot} L30,${bot} Q22,${bot} 22,${bot - 8} Z`;
+  const y = bot - 4 - (bot - top - 6) * f;
+  let marks = ''; for (let oz = 30; oz < GOAL; oz += 30) { const yy = bot - 4 - (bot - top - 6) * (oz / GOAL); marks += `<line x1="27" x2="35" y1="${yy}" y2="${yy}" stroke="#fff" stroke-width="1.3"/><text x="37" y="${yy + 3.4}" font-size="10" font-weight="700" fill="#fff" stroke="#24465e" stroke-opacity=".55" stroke-width="1.4" paint-order="stroke">${oz}</text>`; }
+  return `<svg width="72" height="150" viewBox="0 28 96 152">${defs(id)}<clipPath id="${id}c"><path d="${body}"/></clipPath>
+  <ellipse cx="48" cy="${bot + 3}" rx="28" ry="4" fill="url(#${id}f)"/>
+  <path d="M58,30 L58,12 Q58,8 62,8 L66,8" fill="none" stroke="#2b2725" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="${body}" fill="url(#${id}g)"/>
+  <g clip-path="url(#${id}c)"><path d="${surface(y)} L96,200 L0,200 Z" fill="url(#${id}w)"/><path d="${surface(y)} L96,${y + 3} C64,${y + 5} 30,${y + 1} 0,${y + 3} Z" fill="#fff" opacity=".45"/>
+   <line x1="58" y1="${top - 4}" x2="58" y2="${bot - 6}" stroke="#fff" stroke-opacity=".7" stroke-width="3"/></g>
+  <path d="${body}" fill="none" stroke="#2a4a60" stroke-opacity=".3"/>${marks}
+  <path d="M18,52 Q18,34 34,32 L62,32 Q78,34 78,52 Z" fill="#2f6fb5"/><path d="M18,52 Q18,34 34,32 L62,32 Q78,34 78,52 Z" fill="url(#${id}g)" opacity=".25"/>
+  <rect x="18" y="48" width="60" height="6" rx="2" fill="#24568f"/>
+  <path d="M27,${top + 6} L27,${bot - 12}" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/></svg>`;
+}
+// C: a round carafe / jug
+function jug(f, id = 'c') {
+  const bot = 170, body = `M34,34 L62,34 L62,58 C86,68 88,100 86,140 Q85,${bot} 70,${bot} L26,${bot} Q11,${bot} 10,140 C8,100 10,68 34,58 Z`;
+  const y = bot - 6 - (bot - 50) * f;
+  return `<svg width="80" height="150" viewBox="0 26 96 154">${defs(id)}<clipPath id="${id}c"><path d="${body}"/></clipPath>
+  <ellipse cx="48" cy="${bot + 3}" rx="34" ry="4.5" fill="url(#${id}f)"/>
+  <path d="${body}" fill="url(#${id}g)"/>
+  <g clip-path="url(#${id}c)"><path d="${surface(y)} L96,200 L0,200 Z" fill="url(#${id}w)"/><path d="${surface(y)} L96,${y + 3} C64,${y + 5} 30,${y + 1} 0,${y + 3} Z" fill="#fff" opacity=".45"/>
+   <path d="M30,${y + 30} q6,-4 12,0 t12,0" fill="none" stroke="#fff" stroke-opacity=".35"/></g>
+  <path d="${body}" fill="none" stroke="#2a4a60" stroke-opacity=".3"/>
+  <rect x="31" y="30" width="34" height="6" rx="3" fill="#c8735a"/>
+  <path d="M18,78 C14,100 14,124 20,140" stroke="#fff" stroke-width="3.2" stroke-linecap="round" fill="none" opacity=".7"/></svg>`;
+}
+const tile = (svg, name) => `<div><div class="card"><div class="eyebrow">WATER</div>
+ <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:6px"><div style="white-space:nowrap"><div class="serif" style="font-size:26px;font-weight:600;line-height:1">${W}</div><div class="muted" style="font-size:12px;margin-top:3px">of ${GOAL} fl oz</div></div>${svg}</div>
+ <div class="btn">+ 8 fl oz</div></div><div class="lbl">${name}</div></div>`;
+document.getElementById('row').innerHTML = tile(glass(FILL), 'A · Glass with ice') + tile(bottle(FILL), 'B · Sport bottle') + tile(jug(FILL), 'C · Carafe') + '<div></div>';
+</script></body></html>

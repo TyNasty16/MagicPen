@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react';
-import { reducedMotion } from './confetti';
+import { useId } from 'react';
+import { useFillAnimation } from '../lib/useFillAnimation';
 import type { ShakerPlay } from '../lib/shaker';
 
 // Protein shaker (workflow 16): an original drawing (faceted tinted bottle, rounded lid with grip band,
@@ -22,7 +22,8 @@ export function ShakerDrawing({ pose, goal, width = 72 }: { pose: ShakerPose; go
   const tilt = slosh * 7;
   const surf = `M0,${lvl - tilt} C30,${lvl - tilt * 0.4 - 2} 66,${lvl + tilt * 0.4 + 2} 96,${lvl + tilt}`;
   const drinkEdge = TOP + (BOT - TOP) * level;
-  const pivotY = Math.abs(angle) > 26 ? (TOP + BOT) / 2 - 10 : BOT;
+  // The pivot moves smoothly from the base to the middle as the bottle tips, so it never jumps.
+  const pivotY = BOT + ((TOP + BOT) / 2 - 10 - BOT) * Math.min(1, Math.abs(angle) / 26);
   const marks: number[] = [];
   for (let g = 20; g < goal; g += 20) marks.push(g);
   const u = (n: string) => `url(#${id}${n})`;
@@ -112,38 +113,8 @@ function goalSteps(from: number): Step[] {
   ];
 }
 
-/** Waits while a milestone pop-up is open (it marks the page while showing), so the two never overlap. */
-const popupOpen = () => typeof document !== 'undefined' && document.body.dataset.milestone === 'open';
-
 /** The shaker with its animation: plays `play` once when shown, then rests at `level`. Reduce Motion: no movement, same end. */
 export default function ProteinShaker({ from, level, play, goal, onSettled }: { from: number; level: number; play: ShakerPlay; goal: number; onSettled?: () => void }) {
-  const [pose, setPose] = useState<ShakerPose>(REST(play === 'none' ? level : from));
-  const settled = useRef(onSettled);
-  settled.current = onSettled;
-  useEffect(() => {
-    if (play === 'none' || reducedMotion()) {
-      setPose(REST(level));
-      settled.current?.();
-      return;
-    }
-    const steps = play === 'goal' ? goalSteps(from) : shakeSteps(from, level);
-    let frame = 0, wait = 0, cancelled = false;
-    const start = () => {
-      if (cancelled) return;
-      if (play === 'goal' && popupOpen()) { wait = window.setTimeout(start, 250); return; }
-      let i = 0, t0 = performance.now();
-      const tick = (now: number) => {
-        if (cancelled) return;
-        let t = (now - t0) / steps[i].ms;
-        while (t >= 1 && i < steps.length - 1) { t0 += steps[i].ms; i++; t = (now - t0) / steps[i].ms; }
-        if (t >= 1) { setPose(REST(level)); settled.current?.(); return; }
-        setPose(steps[i].pose(Math.max(0, t)));
-        frame = requestAnimationFrame(tick);
-      };
-      frame = requestAnimationFrame(tick);
-    };
-    start();
-    return () => { cancelled = true; cancelAnimationFrame(frame); clearTimeout(wait); };
-  }, [play, from, level]);
+  const pose = useFillAnimation<ShakerPose>(play, REST(from), REST(level), () => (play === 'goal' ? goalSteps(from) : shakeSteps(from, level)), [play, from, level], onSettled);
   return <ShakerDrawing pose={pose} goal={goal} />;
 }
