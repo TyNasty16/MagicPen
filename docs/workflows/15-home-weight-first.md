@@ -10,6 +10,9 @@ Milestone: Post-plan add-on (not in PLAN.md §5). Uses only data already stored 
 5. Underweight in purple #6A4C93: yes.
 6. Age counts as 20 or older only when the year difference is 21 or more: yes.
 
+## Owner change after the build (2026-11-28)
+The Home nutrition tile drops carbs and fat; those stay on the Food screen. The tile shows the protein goal in the larger ring ("84 g of 114", "Protein") and today's calories as a small ring with "1,240 of 1,900" and "Calories".
+
 ## Ideas considered
 Ideas file: [docs/ideas/15-home-weight-first.md](../ideas/15-home-weight-first.md). Its owner decisions are binding. Mockups: `docs/screenshots/15-mock-home-swap.png` and `docs/screenshots/15-mock-weight-bmi-line-red.png` (sources in `docs/mockups/`). Chosen approach: reuse `TrendChart` (it already draws goal line, dose marks, key and tap details) instead of extending `Sparkline`, loaded lazily on Home so Home does not pull in the chart library up front. One pure function in `body.ts` works out category and colour segments. `NutritionRings` gets a compact variant. The old Home weight tile and `Sparkline` are no longer used on Home.
 

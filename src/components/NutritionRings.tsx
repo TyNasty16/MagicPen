@@ -84,9 +84,9 @@ function MiniRing({ frac: f, colour, label }: { frac: number; colour: string; la
   );
 }
 
-/** Home's compact nutrition (workflow 15): protein first in one larger ring, small rings for carbs, fat and calories. */
+/** Home's compact nutrition (workflow 15, owner change 2026-11-28): the protein goal in a larger ring, and today's calories. Carbs and fat are on the Food screen. */
 export function CompactNutritionRings({ totals, targets }: { totals: Totals; targets: Targets }) {
-  const summary = `Protein ${whole(totals.proteinG)} of ${targets.proteinG} g, carbs ${whole(totals.carbsG)} of ${targets.carbsG} g, fat ${whole(totals.fatG)} of ${targets.fatG} g, calories ${whole(totals.kcal)} of ${targets.calories.toLocaleString()}.`;
+  const summary = `Protein ${whole(totals.proteinG)} of ${targets.proteinG} g, calories ${whole(totals.kcal)} of ${targets.calories.toLocaleString()}.`;
   const S = 96, r = 42, len = 2 * Math.PI * r, p = Math.min(Math.max(frac(totals.proteinG, targets.proteinG), 0), 1);
   return (
     <div role="img" aria-label={summary}>
@@ -103,10 +103,12 @@ export function CompactNutritionRings({ totals, targets }: { totals: Totals; tar
         </div>
       </div>
       <p className="mt-1 text-center text-sm font-semibold" aria-hidden>Protein</p>
-      <div className="mt-2 flex justify-around" aria-hidden>
-        <MiniRing frac={frac(totals.carbsG, targets.carbsG)} colour="stroke-sage" label="Carbs" />
-        <MiniRing frac={frac(totals.fatG, targets.fatG)} colour="stroke-gold" label="Fat" />
-        <MiniRing frac={frac(totals.kcal, targets.calories)} colour="stroke-clay" label="Calories" />
+      <div className="mt-2.5 flex items-center justify-center gap-2" aria-hidden>
+        <MiniRing frac={frac(totals.kcal, targets.calories)} colour="stroke-clay" label="" />
+        <div className="leading-tight">
+          <div className="text-sm font-semibold">{whole(totals.kcal).toLocaleString()} <span className="text-xs font-normal text-muted">of {targets.calories.toLocaleString()}</span></div>
+          <div className="text-[11px] text-muted">Calories</div>
+        </div>
       </div>
     </div>
   );
