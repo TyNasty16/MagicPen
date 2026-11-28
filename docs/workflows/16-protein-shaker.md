@@ -2,6 +2,11 @@
 Status: Draft
 Milestone: Post-plan add-on (not in PLAN.md §5). Builds on workflow 15 (not yet merged). Uses only food totals already stored.
 
+## Owner answers (2026-11-28)
+1. Keep "Goal reached" for the day if food is deleted later: yes.
+2. A tap on the shaker opens Food: yes.
+3. No replay button: yes.
+
 ## Ideas considered
 Ideas file: [docs/ideas/16-protein-shaker.md](../ideas/16-protein-shaker.md). Its owner decisions are binding. Design source: `docs/mockups/18-shaker.html` (lid B, no whisk ball, DRINK and COVER states); previews `docs/screenshots/18-mock-shaker-shake.gif` and `18-mock-shaker-goal.gif`. Chosen approach: port the mockup drawing into one pure SVG component, drive it with a small timed animation driver, and keep the "protein was added" memory in localStorage. Existing code touched: `CompactNutritionRings` (`src/components/NutritionRings.tsx`) and `src/pages/Home.tsx`.
 
