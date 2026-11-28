@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-28 (15 after-build, I-86 to I-88) · Totals: 💡 76 · ✅ 59 · ⏭️ 36_
+_Last updated: 2026-11-28 (16 opening, I-89 to I-91) · Totals: 💡 79 · ✅ 59 · ⏭️ 36_
 
 ---
 
@@ -80,6 +80,9 @@ _Last updated: 2026-11-28 (15 after-build, I-86 to I-88) · Totals: 💡 76 · �
 | I-86 | Add a non-colour mark per BMI category (dot shape or line style) on the weight chart | 15 after-build | Red and green can look alike to some colour-blind readers; words already carry the meaning, this adds a visual cue. |
 | I-87 | Show the weight change for the chosen range ("-2.1 lb in 30 days") next to the range toggle | 15 after-build | Home shows change since start only. Facts only, no advice. |
 | I-88 | Name the odd weigh-in when a BMI outside 10 to 80 turns the whole chart plain | 15 after-build | Today the chart goes plain with no reason shown. Factual wording ("This weigh-in looks unusual, check it"), no advice. |
+| I-89 | Still (no animation) shaker also in the Food screen header | 16 opening | Optional. |
+| I-90 | Faint "last 7 days" row of tiny bottles | 16 opening | Optional; facts only. |
+| I-91 | Quiet haptic tick on shake where the phone supports it | 16 opening | Optional; needs Reduce Motion respected. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
