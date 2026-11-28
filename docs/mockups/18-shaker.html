@@ -19,50 +19,54 @@
 </div></div>
 <script>
 const GOAL = 114;
-// Draws the shaker. level 0..1, angle in degrees (shake), slosh -1..1 tilts the surface.
+// Draws the shaker (inspired by tall faceted shaker bottles; original design). level 0..1, angle (shake), slosh -1..1.
 function shaker(level, angle = 0, slosh = 0) {
-  const W = 96, H = 182, top = 52, bot = 166, L0 = 18, R0 = 78, L1 = 22, R1 = 74; // body tapers slightly
+  const W = 96, H = 186, top = 62, bot = 174, L0 = 20, R0 = 76, L1 = 25, R1 = 71, ch = 7; // slim body, slight taper, chamfered base
   const xAt = (side, y) => side < 0 ? L1 + (L0 - L1) * (bot - y) / (bot - top) : R1 + (R0 - R1) * (bot - y) / (bot - top);
-  const body = `M${L0},${top} L${R0},${top} L${R1},${bot - 6} Q${R1},${bot} ${R1 - 6},${bot} L${L1 + 6},${bot} Q${L1},${bot} ${L1},${bot - 6} Z`;
-  const lvl = bot - 4 - (bot - top - 10) * Math.min(1, level);
+  const body = `M${L0},${top} L${R0},${top} L${R1},${bot - ch} L${R1 - ch},${bot} L${L1 + ch},${bot} L${L1},${bot - ch} Z`;
+  const lvl = bot - 3 - (bot - top - 8) * Math.min(1, level);
   const tilt = slosh * 7;
-  const surf = (dy) => `M0,${lvl - tilt + dy} C30,${lvl - tilt * 0.4 + dy - 2} 66,${lvl + tilt * 0.4 + dy + 2} 96,${lvl + tilt + dy}`;
+  const surf = `M0,${lvl - tilt} C30,${lvl - tilt * 0.4 - 2} 66,${lvl + tilt * 0.4 + 2} 96,${lvl + tilt}`;
+  // Flat panels: four vertical facets catching the light differently.
+  const cols = [L0, 34, 48, 62, R0], colsB = [L1, 36, 48, 60, R1], shades = [0.10, 0.0, 0.05, 0.16];
+  const facets = shades.map((a, i) => `<path d="M${cols[i]},${top} L${cols[i + 1]},${top} L${colsB[i + 1]},${bot} L${colsB[i]},${bot} Z" fill="#1d1a2b" opacity="${a}"/>`).join('');
+  const edges = [34, 48, 62].map((x, i) => `<line x1="${x}" y1="${top + 2}" x2="${colsB[i + 1]}" y2="${bot - 2}" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/>`).join('');
   let ticks = '';
   for (let g = 20; g < GOAL; g += 20) {
-    const y = bot - 4 - (bot - top - 10) * (g / GOAL), x = xAt(1, y);
-    // Printed scale, white with a faint dark edge so it reads over the shake and over the empty bottle.
-    ticks += `<line x1="${x - 9}" x2="${x - 3}" y1="${y}" y2="${y}" stroke="#fff" stroke-width="1.3" opacity=".9"/><line x1="${x - 9}" x2="${x - 3}" y1="${y + 1}" y2="${y + 1}" stroke="#3a2a22" stroke-width=".6" opacity=".35"/><text x="${x - 11}" y="${y + 3}" text-anchor="end" font-size="7.5" font-weight="700" fill="#fff" stroke="#3a2a22" stroke-opacity=".45" stroke-width=".7" paint-order="stroke">${g}</text>`;
+    const y = bot - 3 - (bot - top - 8) * (g / GOAL), x = 30 + (y - top) / (bot - top) * 2;
+    ticks += `<line x1="${x}" x2="${x + (g % 40 ? 5 : 9)}" y1="${y}" y2="${y}" stroke="#fff" stroke-width="1.2" opacity=".75"/><text x="${x + 11}" y="${y + 2.6}" font-size="7" font-weight="700" fill="#fff" opacity=".85" stroke="#2a2433" stroke-opacity=".35" stroke-width=".6" paint-order="stroke">${g}</text>`;
   }
-  const ridges = Array.from({ length: 15 }, (_, i) => `<rect x="${17 + i * 4.1}" y="40" width="1.4" height="13" fill="#000" opacity=".18"/>`).join('');
   return `<svg width="${W}" height="${H + 8}" viewBox="0 -4 ${W} ${H + 8}" role="img" aria-label="Protein shaker, ${Math.round(level * GOAL)} of ${GOAL} g">
   <defs>
     <clipPath id="b"><path d="${body}"/></clipPath>
-    <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".18" stop-color="#f3eeea" stop-opacity=".55"/><stop offset=".7" stop-color="#ebe4de" stop-opacity=".5"/><stop offset="1" stop-color="#d9d0c8" stop-opacity=".7"/></linearGradient>
-    <linearGradient id="shake" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9a6646"/><stop offset="1" stop-color="#6d4127"/></linearGradient>
-    <linearGradient id="shade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".12"/><stop offset=".25" stop-color="#000" stop-opacity="0"/><stop offset=".75" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
-    <linearGradient id="lid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4a423d"/><stop offset="1" stop-color="#2a2522"/></linearGradient>
+    <linearGradient id="tint" x1="0" x2="1"><stop offset="0" stop-color="#e7d9cf" stop-opacity=".85"/><stop offset=".5" stop-color="#efe5dc" stop-opacity=".7"/><stop offset="1" stop-color="#d7c6b9" stop-opacity=".9"/></linearGradient>
+    <linearGradient id="shake" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9a6646"/><stop offset="1" stop-color="#6a3f26"/></linearGradient>
+    <linearGradient id="lid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4b4542"/><stop offset=".55" stop-color="#2b2725"/><stop offset="1" stop-color="#1e1b1a"/></linearGradient>
+    <linearGradient id="lidSide" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
+    <linearGradient id="cover" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#b9634c"/><stop offset="1" stop-color="#8f4230"/></linearGradient>
     <radialGradient id="floor"><stop offset="0" stop-color="#3a2a22" stop-opacity=".22"/><stop offset="1" stop-color="#3a2a22" stop-opacity="0"/></radialGradient>
   </defs>
-  <ellipse cx="48" cy="${bot + 5}" rx="34" ry="5" fill="url(#floor)"/>
+  <ellipse cx="48" cy="${bot + 4}" rx="30" ry="4.5" fill="url(#floor)"/>
   <g transform="rotate(${angle} 48 ${bot})">
-    <path d="M66,36 C82,32 88,42 80,47" fill="none" stroke="#2f2a27" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="${body}" fill="url(#glass)"/>
+    <path d="${body}" fill="url(#tint)"/>
     <g clip-path="url(#b)">
-      <path d="${surf(0)} L96,${H} L0,${H} Z" fill="url(#shake)"/>
-      <path d="${surf(0)} L96,${lvl + tilt + 5} C66,${lvl + tilt * 0.4 + 7} 30,${lvl - tilt * 0.4 + 3} 0,${lvl - tilt + 5} Z" fill="#d8bfa3"/>
-      ${[[34, 0.4, 1.4], [52, 0.25, 1.1], [62, 0.55, 1.3], [41, 0.7, 1]].map(([x, f, r]) => `<circle cx="${x}" cy="${lvl + 8 + f * (bot - lvl - 12)}" r="${r}" fill="#fff" opacity=".22"/>`).join('')}
-      <rect x="0" y="${top}" width="96" height="${bot - top}" fill="url(#shade)"/>
+      <path d="${surf} L96,${H} L0,${H} Z" fill="url(#shake)"/>
+      <path d="${surf} L96,${lvl + tilt + 4} C66,${lvl + tilt * 0.4 + 6} 30,${lvl - tilt * 0.4 + 2} 0,${lvl - tilt + 4} Z" fill="#d8bfa3"/>
+      ${[[38, 0.4, 1.3], [55, 0.25, 1], [64, 0.6, 1.2]].map(([x, f, r]) => `<circle cx="${x}" cy="${lvl + 7 + f * (bot - lvl - 12)}" r="${r}" fill="#fff" opacity=".2"/>`).join('')}
+      ${facets}${edges}
     </g>
-    <path d="${body}" fill="none" stroke="#3a2a22" stroke-opacity=".28" stroke-width="1.2"/>
+    <path d="${body}" fill="none" stroke="#2a2433" stroke-opacity=".3" stroke-width="1"/>
     ${ticks}
-    <path d="M${L0 + 6},${top + 8} L${L1 + 5},${bot - 14}" stroke="#fff" stroke-width="3.2" stroke-linecap="round" opacity=".7"/>
-    <path d="M${L0 + 11},${top + 8} L${L1 + 9},${top + 40}" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
-    <rect x="15" y="40" width="66" height="14" rx="3" fill="url(#lid)"/>${ridges}
-    <rect x="15" y="40" width="66" height="3" rx="1.5" fill="#fff" opacity=".12"/>
-    <path d="M22,40 L25,35 Q27,33 31,33 L65,33 Q69,33 71,35 L74,40 Z" fill="url(#lid)"/>
-    <path d="M41,33 L42,29 Q43,27 45,27 L51,27 Q53,27 54,29 L55,33 Z" fill="#3a3330"/>
-    <rect x="45" y="25" width="6" height="3" rx="1.5" fill="#2a2522"/>
-    <rect x="30" y="34" width="36" height="1.5" rx=".75" fill="#fff" opacity=".1"/>
+    <path d="M${L0 + 4},${top + 6} L${L1 + 3},${bot - 12}" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".65"/>
+    <!-- wide rounded lid -->
+    <path d="M14,64 L14,56 C14,42 24,34 36,34 L60,34 C72,34 82,42 82,56 L82,64 Q82,66 80,66 L16,66 Q14,66 14,64 Z" fill="url(#lid)"/>
+    <path d="M14,64 L14,56 C14,42 24,34 36,34 L60,34 C72,34 82,42 82,56 L82,64 Q82,66 80,66 L16,66 Q14,66 14,64 Z" fill="url(#lidSide)"/>
+    <rect x="15" y="62" width="66" height="1.2" fill="#000" opacity=".35"/>
+    <!-- flip spout cover with carry loop -->
+    <path d="M30,38 L33,27 Q34,24 37,24 L59,24 Q62,24 63,27 L66,38 Z" fill="url(#cover)"/>
+    <rect x="39" y="27.5" width="18" height="6" rx="3" fill="#2b2725"/>
+    <rect x="31" y="36" width="34" height="2" rx="1" fill="#000" opacity=".25"/>
+    <rect x="34" y="25" width="28" height="1.2" rx=".6" fill="#fff" opacity=".25"/>
   </g></svg>`;
 }
 window.render = (level, angle, slosh, grams) => { document.getElementById('bottle').innerHTML = shaker(level, angle, slosh); if (grams !== undefined) document.getElementById('g').textContent = grams + ' g'; };
