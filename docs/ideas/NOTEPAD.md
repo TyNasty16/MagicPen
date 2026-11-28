@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-28 (17 after-build, I-97) · Totals: 💡 85 · ✅ 61 · ⏭️ 36_
+_Last updated: 2026-11-28 (18 opening, I-98 to I-99) · Totals: 💡 87 · ✅ 61 · ⏭️ 36_
 
 ---
 
@@ -89,6 +89,8 @@ _Last updated: 2026-11-28 (17 after-build, I-97) · Totals: 💡 85 · ✅ 61 ·
 | I-95 | Share the "Goal reached ✓" line style between the shaker and the glass so they read as a pair | 17 opening | Optional. |
 | I-96 | Tiny ripple only (no full pour) for rapid repeat quick-adds | 17 opening | Optional; keeps rapid taps calm. |
 | I-97 | Short "Added 8 fl oz, Undo" chip after a water quick-add | 17 after-build | A stray tap is easy and the pour makes it look deliberate. Same style as the "barely ate" Undo chip. |
+| I-98 | Tap the glass on the Food screen for an "Added today" list to fix a mistake | 18 opening | Replaces the removed chips; optional. |
+| I-99 | Quiet "Bonus cup 2" count label from the second bonus cup on | 18 opening | Suggested answer to an open question. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
