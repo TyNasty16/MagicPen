@@ -1,8 +1,9 @@
-// Protein shaker (workflow 16). Pure: what the shaker shows today and whether to play an animation.
-// The phone remembers, per day, the last protein total Home showed and whether the goal moment has played.
-// This memory stays on the phone: it is not backed up (a restore at worst changes the level without a shake).
+// Fill trackers for Home's protein shaker (workflow 16) and water glass (workflow 17). Pure: what each shows today
+// and whether to play an animation. The phone remembers, per day, the last total Home showed and whether the goal
+// moment has played. This memory stays on the phone: it is not backed up (a restore at worst changes a level quietly).
 
 export const SHAKER_KEY = 'steady.shaker';
+export const WATER_GLASS_KEY = 'steady.waterGlass';
 
 export interface ShakerMemory { date: string; lastTotal: number; goalShown: boolean }
 export type ShakerPlay = 'none' | 'shake' | 'goal';
@@ -20,7 +21,7 @@ export interface ShakerState {
 
 const fill = (total: number, target: number) => (target > 0 ? Math.min(1, Math.max(0, total / target)) : 0);
 
-export function shakerState(today: string, total: number, target: number, memory: ShakerMemory | null): ShakerState {
+export function fillState(today: string, total: number, target: number, memory: ShakerMemory | null): ShakerState {
   const atGoal = target > 0 && total >= target;
   // First look of the day (or ever): the level is set quietly, no animation. If the goal was already reached, it shows as reached.
   if (!memory || memory.date !== today) {
@@ -35,14 +36,17 @@ export function shakerState(today: string, total: number, target: number, memory
   return { from, level: fill(total, target), play: added ? 'shake' : 'none', reached: false, next: { date: today, lastTotal: total, goalShown: false } };
 }
 
-export function loadShakerMemory(): ShakerMemory | null {
+export function loadShakerMemory(key = SHAKER_KEY): ShakerMemory | null {
   try {
-    const v = JSON.parse(localStorage.getItem(SHAKER_KEY) ?? 'null') as ShakerMemory | null;
+    const v = JSON.parse(localStorage.getItem(key) ?? 'null') as ShakerMemory | null;
     return v && typeof v.date === 'string' && typeof v.lastTotal === 'number' && typeof v.goalShown === 'boolean' ? v : null;
   } catch {
     return null;
   }
 }
-export function saveShakerMemory(m: ShakerMemory): void {
-  try { localStorage.setItem(SHAKER_KEY, JSON.stringify(m)); } catch { /* storage blocked: it may shake again next time */ }
+export function saveShakerMemory(m: ShakerMemory, key = SHAKER_KEY): void {
+  try { localStorage.setItem(key, JSON.stringify(m)); } catch { /* storage blocked: it may shake again next time */ }
 }
+
+/** The protein shaker's name for the shared tracker (kept for its tests and callers). */
+export const shakerState = fillState;

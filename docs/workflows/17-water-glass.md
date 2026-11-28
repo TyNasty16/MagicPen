@@ -1,5 +1,5 @@
 # Workflow 17 — Water glass on Home
-Status: Draft
+Status: Approved
 Milestone: Post-plan add-on (not in PLAN.md §5). Same pattern as workflow 16 (built). Uses only water totals already stored.
 
 ## Ideas considered
@@ -96,4 +96,4 @@ Where these differ from the sections above, these win.
 
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — 2026-11-28 (all five answers yes; text as the shaker's, already approved)

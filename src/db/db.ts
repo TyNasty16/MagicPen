@@ -2,7 +2,7 @@ import Dexie, { type EntityTable } from 'dexie';
 import type { Activity, Sex, Targets } from '../lib/targets';
 import type { UnitSystem } from '../lib/units';
 import type { DrugId } from '../lib/drugs';
-import { SHAKER_KEY } from '../lib/shaker';
+import { SHAKER_KEY, WATER_GLASS_KEY } from '../lib/shaker';
 
 /** The single profile record. All measurements metric. */
 export interface Profile {
@@ -291,8 +291,8 @@ export const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.ale
 /** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
 export async function resetAllData(): Promise<void> {
   await db.transaction('rw', db.tables, () => Promise.all(db.tables.map((t) => t.clear())));
-  // UI_KEYS, plus the protein shaker's memory (not backed up, but Reset clears it: workflow 16).
-  for (const k of [...UI_KEYS, SHAKER_KEY]) {
+  // UI_KEYS, plus the shaker's and water glass's memory (not backed up, but Reset clears them: workflows 16, 17).
+  for (const k of [...UI_KEYS, SHAKER_KEY, WATER_GLASS_KEY]) {
     try { localStorage.removeItem(k); } catch { /* storage blocked: nothing saved there */ }
   }
 }
