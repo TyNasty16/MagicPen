@@ -51,7 +51,6 @@ function shaker(level, angle = 0, slosh = 0) {
       <path d="${surf(0)} L96,${H} L0,${H} Z" fill="url(#shake)"/>
       <path d="${surf(0)} L96,${lvl + tilt + 5} C66,${lvl + tilt * 0.4 + 7} 30,${lvl - tilt * 0.4 + 3} 0,${lvl - tilt + 5} Z" fill="#d8bfa3"/>
       ${[[34, 0.4, 1.4], [52, 0.25, 1.1], [62, 0.55, 1.3], [41, 0.7, 1]].map(([x, f, r]) => `<circle cx="${x}" cy="${lvl + 8 + f * (bot - lvl - 12)}" r="${r}" fill="#fff" opacity=".22"/>`).join('')}
-      <g opacity=".55" transform="translate(${50 + slosh * 4} ${bot - 15}) rotate(${slosh * 40})">${Array.from({ length: 5 }, (_, i) => `<ellipse rx="${8 - i * 0.6}" ry="${3 + i * 0.9}" transform="rotate(${i * 36})" fill="none" stroke="#d6d0cb" stroke-width=".9"/>`).join('')}</g>
       <rect x="0" y="${top}" width="96" height="${bot - top}" fill="url(#shade)"/>
     </g>
     <path d="${body}" fill="none" stroke="#3a2a22" stroke-opacity=".28" stroke-width="1.2"/>
