@@ -23,7 +23,7 @@ describe('goal moments take turns', () => {
     vi.useFakeTimers();
     const order: string[] = [];
     const p1 = goalTurn().then((release) => { order.push('protein'); return release; });
-    const p2 = goalTurn().then(() => order.push('water'));
+    const p2 = goalTurn().then((r) => { order.push('water'); return r; });
     const release = await p1;
     await Promise.resolve();
     expect(order).toEqual(['protein']);
@@ -31,7 +31,19 @@ describe('goal moments take turns', () => {
     await vi.advanceTimersByTimeAsync(900);
     expect(order).toEqual(['protein']);
     await vi.advanceTimersByTimeAsync(200);
-    await p2;
+    (await p2)(false); // done, so the queue is free for the next test
     expect(order).toEqual(['protein', 'water']);
+  });
+  it('a cancelled turn frees the next one at once, and a second release does nothing', async () => {
+    vi.useFakeTimers();
+    const order: string[] = [];
+    const first = goalTurn();
+    const second = goalTurn().then((release) => { order.push('second'); return release; });
+    const release = await first;
+    release(false);
+    release(true);
+    await vi.advanceTimersByTimeAsync(0);
+    (await second)(false);
+    expect(order).toEqual(['second']);
   });
 });

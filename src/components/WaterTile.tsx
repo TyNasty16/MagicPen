@@ -26,8 +26,10 @@ export default function WaterTile({ ml, targetMl, units, today }: { ml: number; 
   return (
     <section className="rounded-card bg-surface p-4 shadow-soft" aria-label="Water">
       <h2 className="mb-1 text-xs font-semibold uppercase tracking-[0.07em] text-muted">Water</h2>
-      <div role="img" aria-label={`Water ${amount} ${of}.${state.reached ? ' Goal reached.' : ''}`}>
-        <div className="flex items-end justify-between gap-1" aria-hidden>
+      {/* What a screen reader hears, and announced when the amount changes; the drawing below is decoration. */}
+      <p className="sr-only" aria-live="polite">{`Water ${amount} ${of}.${state.reached ? ' Goal reached.' : ''}`}</p>
+      <div aria-hidden>
+        <div className="flex items-end justify-between gap-1">
           <div className="min-w-0">
             <p className="font-serif text-2xl leading-none font-semibold whitespace-nowrap">{amount}</p>
             <p className="mt-1 text-xs whitespace-nowrap text-muted">{of}</p>

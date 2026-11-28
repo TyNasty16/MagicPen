@@ -22,7 +22,8 @@ export function ShakerDrawing({ pose, goal, width = 72 }: { pose: ShakerPose; go
   const tilt = slosh * 7;
   const surf = `M0,${lvl - tilt} C30,${lvl - tilt * 0.4 - 2} 66,${lvl + tilt * 0.4 + 2} 96,${lvl + tilt}`;
   const drinkEdge = TOP + (BOT - TOP) * level;
-  const pivotY = Math.abs(angle) > 26 ? (TOP + BOT) / 2 - 10 : BOT;
+  // The pivot moves smoothly from the base to the middle as the bottle tips, so it never jumps.
+  const pivotY = BOT + ((TOP + BOT) / 2 - 10 - BOT) * Math.min(1, Math.abs(angle) / 26);
   const marks: number[] = [];
   for (let g = 20; g < goal; g += 20) marks.push(g);
   const u = (n: string) => `url(#${id}${n})`;

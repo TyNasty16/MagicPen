@@ -1,5 +1,5 @@
 # Workflow 17 — Water glass on Home
-Status: Approved
+Status: Built
 Milestone: Post-plan add-on (not in PLAN.md §5). Same pattern as workflow 16 (built). Uses only water totals already stored.
 
 ## Ideas considered
@@ -97,3 +97,22 @@ Where these differ from the sections above, these win.
 
 ## Approval
 - [x] Approved by owner — 2026-11-28 (all five answers yes; text as the shaker's, already approved)
+
+## Build notes (2026-11-28)
+- **What was built:**
+  - `src/components/WaterGlass.tsx` (the drawing and the pour and drink sequences).
+  - `src/components/WaterTile.tsx`: the old bar is removed, and the "+ 8 fl oz" button stays outside the picture.
+  - `src/lib/useFillAnimation.ts`: one driver for the shaker and the glass, plus the goal turn-taking (protein first, then water about 1 s later).
+  - `fillState` in `src/lib/shaker.ts`, with a key per tracker. Water uses `steady.waterGlass`, which Reset clears.
+- **Units:** metric profiles keep the app's existing litres display, "1.2" "of 2.7 L". The "ml" in the plan's example was illustrative, and nothing else changes.
+- **Code review fixes:**
+  - The tilt pivot now moves smoothly, for both the glass and the shaker, so neither jumps sideways.
+  - Screen readers hear the new amount after "+ 8 fl oz", through one spoken line, and the drawing is decorative.
+  - Only goal moments wait for a milestone pop-up.
+  - A cancelled goal turn frees the next one at once.
+  - The ice stays visible while the glass is drunk.
+  - Tests added for the queue.
+- **Checks:**
+  - 387 tests pass, and the build passes.
+  - The mocked iPhone pass was fine: the pour on add, the protein goal first then the water goal, Reduce Motion going straight to the end state, and no errors or CSP violations. The shaker pass also still works.
+  - Screenshots: `docs/screenshots/17-1-water-pour.png` and `17-2-both-goals.png`.

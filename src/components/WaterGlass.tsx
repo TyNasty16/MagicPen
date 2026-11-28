@@ -66,7 +66,8 @@ export function GlassDrawing({ pose, width = 66 }: { pose: GlassPose; width?: nu
         <clipPath id={`${id}c`}><path d={BODY} /></clipPath>
       </defs>
       <ellipse cx="48" cy={BOT + 3} rx="30" ry="4" fill={u('f')} />
-      <g transform={`rotate(${angle} 48 ${Math.abs(angle) > 20 ? 96 : BOT})`}>
+      {/* The pivot moves smoothly from the base to the middle as the glass tips, so it never jumps. */}
+      <g transform={`rotate(${angle} 48 ${BOT + (96 - BOT) * Math.min(1, Math.abs(angle) / 20)})`}>
         <path d={BODY} fill={u('g')} />
         <g clipPath={u('c')}>
           {drink ? (
@@ -80,7 +81,7 @@ export function GlassDrawing({ pose, width = 66 }: { pose: GlassPose; width?: nu
             )
           )}
           {level > 0.06 && !drink && ICE.filter(([, d]) => iceY(d) < BOT - 10).map(([x, d, s, r]) => <Cube key={x} x={x} y={iceY(d)} s={s} r={r + bob * 6} opacity={d < 0 ? 0.8 : 0.5} />)}
-          {level <= 0.06 && !drink && LEFTOVER.map(([x, s, r], k) => <Cube key={x} x={x} y={BOT - 8 - s - (k === 3 ? 9 : 0)} s={s} r={r} opacity={0.85} />)}
+          {(level <= 0.06 || drink) && LEFTOVER.map(([x, s, r], k) => <Cube key={x} x={x} y={BOT - 8 - s - (k === 3 ? 9 : 0)} s={s} r={r} opacity={0.85} />)}
           {rings}
           {!drink && level > 0 && [[30, 0.5], [58, 0.3], [44, 0.78]].map(([x, k]) => <circle key={x} cx={x} cy={y + 12 + k * (BOT - y - 20)} r="1.4" fill="#fff" opacity=".6" />)}
         </g>
