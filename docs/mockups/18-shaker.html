@@ -45,7 +45,7 @@ function shaker(level, angle = 0, slosh = 0) {
   </defs>
   <ellipse cx="48" cy="${bot + 5}" rx="34" ry="5" fill="url(#floor)"/>
   <g transform="rotate(${angle} 48 ${bot})">
-    <path d="M66,30 C84,26 90,40 80,46" fill="none" stroke="#2f2a27" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M66,36 C82,32 88,42 80,47" fill="none" stroke="#2f2a27" stroke-width="3.5" stroke-linecap="round"/>
     <path d="${body}" fill="url(#glass)"/>
     <g clip-path="url(#b)">
       <path d="${surf(0)} L96,${H} L0,${H} Z" fill="url(#shake)"/>
@@ -59,10 +59,10 @@ function shaker(level, angle = 0, slosh = 0) {
     <path d="M${L0 + 11},${top + 8} L${L1 + 9},${top + 40}" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
     <rect x="15" y="40" width="66" height="14" rx="3" fill="url(#lid)"/>${ridges}
     <rect x="15" y="40" width="66" height="3" rx="1.5" fill="#fff" opacity=".12"/>
-    <path d="M24,40 L28,30 Q30,26 35,26 L61,26 Q66,26 68,30 L72,40 Z" fill="url(#lid)"/>
-    <path d="M40,26 L42,17 Q43,14 46,14 L50,14 Q53,14 54,17 L56,26 Z" fill="#3a3330"/>
-    <rect x="44" y="10" width="8" height="5" rx="2" fill="#2a2522"/>
-    <rect x="28" y="28" width="40" height="2" rx="1" fill="#fff" opacity=".1"/>
+    <path d="M22,40 L25,35 Q27,33 31,33 L65,33 Q69,33 71,35 L74,40 Z" fill="url(#lid)"/>
+    <path d="M41,33 L42,29 Q43,27 45,27 L51,27 Q53,27 54,29 L55,33 Z" fill="#3a3330"/>
+    <rect x="45" y="25" width="6" height="3" rx="1.5" fill="#2a2522"/>
+    <rect x="30" y="34" width="36" height="1.5" rx=".75" fill="#fff" opacity=".1"/>
   </g></svg>`;
 }
 window.render = (level, angle, slosh, grams) => { document.getElementById('bottle').innerHTML = shaker(level, angle, slosh); if (grams !== undefined) document.getElementById('g').textContent = grams + ' g'; };
