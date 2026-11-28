@@ -290,7 +290,8 @@ export const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.ale
 /** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
 export async function resetAllData(): Promise<void> {
   await db.transaction('rw', db.tables, () => Promise.all(db.tables.map((t) => t.clear())));
-  for (const k of UI_KEYS) {
+  // UI_KEYS, plus the protein shaker's memory (not backed up, but Reset clears it: workflow 16).
+  for (const k of [...UI_KEYS, 'steady.shaker']) {
     try { localStorage.removeItem(k); } catch { /* storage blocked: nothing saved there */ }
   }
 }
