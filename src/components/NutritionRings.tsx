@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
+import ProteinShaker from './ProteinShaker';
+import { loadShakerMemory, saveShakerMemory, shakerState, type ShakerState } from '../lib/shaker';
 import type { Targets } from '../lib/targets';
 import { whole, type Totals } from '../lib/nutrition';
 
@@ -83,25 +86,38 @@ function MiniRing({ frac: f, colour }: { frac: number; colour: string }) {
   );
 }
 
-/** Home's compact nutrition (workflow 15, owner change 2026-11-28): the protein goal in a larger ring, and today's calories. Carbs and fat are on the Food screen. */
-export function CompactNutritionRings({ totals, targets }: { totals: Totals; targets: Targets }) {
-  const summary = `Protein ${whole(totals.proteinG)} of ${targets.proteinG} g, calories ${whole(totals.kcal)} of ${targets.calories.toLocaleString()} kcal.`;
-  const S = 96, r = 42, len = 2 * Math.PI * r, p = Math.min(Math.max(frac(totals.proteinG, targets.proteinG), 0), 1);
+/**
+ * Home's compact nutrition (workflow 15, shaker from workflow 16): the protein goal as a shaker that fills,
+ * shakes when protein is added and is drunk when the goal is reached; today's calories below. Carbs and fat are on Food.
+ */
+export function CompactNutritionRings({ totals, targets, today }: { totals: Totals; targets: Targets; today: string }) {
+  const protein = Math.round(totals.proteinG);
+  const key = `${today}|${protein}|${targets.proteinG}`;
+  const handled = useRef<string>();
+  const [shaker, setShaker] = useState<ShakerState>(() => shakerState(today, protein, targets.proteinG, loadShakerMemory()));
+  const [settledKey, setSettledKey] = useState<string>(); // which state's animation has finished
+  // Work out (and remember) what to show once per change, so the animation plays once and not on every visit.
+  useEffect(() => {
+    if (handled.current === key) return;
+    handled.current = key;
+    const s = shakerState(today, protein, targets.proteinG, loadShakerMemory());
+    saveShakerMemory(s.next);
+    setShaker((cur) => (cur.play === s.play && cur.from === s.from && cur.level === s.level && cur.reached === s.reached ? cur : s));
+  }, [key, today, protein, targets.proteinG]);
+  // "Goal reached" appears once the goal moment has finished (straight away with Reduce Motion or after it played).
+  const reachedShown = shaker.reached && (shaker.play !== 'goal' || settledKey === key);
+  const summary = `Protein ${whole(totals.proteinG)} of ${targets.proteinG} g.${shaker.reached ? ' Goal reached.' : ''} Calories ${whole(totals.kcal)} of ${targets.calories.toLocaleString()} kcal.`;
   return (
     <div role="img" aria-label={summary}>
-      <div className="relative mx-auto" style={{ width: S, height: S }}>
-        <svg width={S} height={S} className="-rotate-90" aria-hidden>
-          <circle cx={S / 2} cy={S / 2} r={r} strokeWidth={9} fill="none" className="stroke-track" />
-          {p > 0 && <circle cx={S / 2} cy={S / 2} r={r} strokeWidth={9} fill="none" strokeLinecap="round" className="stroke-accent" strokeDasharray={len} strokeDashoffset={len * (1 - p)} />}
-        </svg>
-        <div className="absolute inset-0 grid place-items-center text-center" aria-hidden>
-          <div>
-            <div className="font-serif text-xl leading-none font-semibold">{whole(totals.proteinG)} g</div>
-            <div className="mt-0.5 text-[11px] text-muted">of {targets.proteinG}</div>
-          </div>
+      <div className="flex items-end justify-between gap-1" aria-hidden>
+        <div className="min-w-0">
+          <p className="font-serif text-2xl leading-none font-semibold whitespace-nowrap">{whole(totals.proteinG)} g</p>
+          <p className="mt-1 text-xs whitespace-nowrap text-muted">of {targets.proteinG}</p>
+          <p className="text-sm font-semibold">Protein</p>
+          <p className={`mt-1 text-xs font-semibold whitespace-nowrap text-[#3b7a57] ${reachedShown ? '' : 'invisible'}`}>Goal reached ✓</p>
         </div>
+        <ProteinShaker from={shaker.from} level={shaker.level} play={shaker.play} goal={targets.proteinG} onSettled={() => setSettledKey(key)} />
       </div>
-      <p className="mt-1 text-center text-sm font-semibold" aria-hidden>Protein</p>
       <div className="mt-2.5 flex items-center justify-center gap-2" aria-hidden>
         <MiniRing frac={frac(totals.kcal, targets.calories)} colour="stroke-clay" />
         <div className="leading-tight">

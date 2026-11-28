@@ -1,5 +1,5 @@
 # Workflow 16 — Protein shaker on Home
-Status: Approved
+Status: Built
 Milestone: Post-plan add-on (not in PLAN.md §5). Builds on workflow 15 (not yet merged). Uses only food totals already stored.
 
 ## Owner answers (2026-11-28)
@@ -113,3 +113,24 @@ You need to decide:
 
 ## Approval
 - [x] Approved by owner — 2026-11-28 (answers above; exact text approved; build after workflow 15 is merged)
+
+## Build notes (2026-11-28)
+- **What was built:**
+  - `src/lib/shaker.ts` holds the pure state, plus memory under `steady.shaker`. It is not backed up, and Reset clears it.
+  - `src/components/ProteinShaker.tsx` is the drawing ported from the mockup, with the animation driver.
+  - The Home tile now shows the shaker, the protein text, "Goal reached ✓" and the calories line.
+  - The milestone pop-up marks the page while it shows, so the goal moment waits for it to close.
+- **Code review fixes:**
+  - The first look of a day (or ever) sets the level quietly, as planned, and a goal already reached shows as reached without the animation.
+  - Lowering the target below today's total marks the goal reached without the animation.
+  - The scale numbers are larger with a darker edge, so they are readable at tile size.
+  - Reset uses the shared key name.
+  - Equal states don't re-render.
+- **Known, accepted:**
+  - The goal flag is saved when the sequence starts. If the app is closed during the 4 seconds, the next visit shows the empty bottle with "Goal reached ✓".
+  - A pop-up opening during the sequence could overlap it (rare).
+  - Each animation frame redraws the SVG. This is fine for a few seconds; watch for stutter on the real phone.
+- **Checks:**
+  - 381 tests pass, and the build passes.
+  - The mocked iPhone pass was fine: shake on add, the goal sequence ending empty with "Goal reached ✓", Reduce Motion going straight to the end state, and no errors or CSP violations.
+  - Screenshots: `docs/screenshots/16-0-home.png`, `16-2-goal.png` and `16-3-reduce-goal.png`. The mockup GIFs show the motion.

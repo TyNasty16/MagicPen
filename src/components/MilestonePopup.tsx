@@ -8,6 +8,11 @@ const SHOW_MS = 5000;
 export default function MilestonePopup({ celebration, onClose }: { celebration: Celebration; onClose: () => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [leaving, setLeaving] = useState(false);
+  // Lets the protein shaker wait for this pop-up to close before its goal moment (workflow 16).
+  useEffect(() => {
+    document.body.dataset.milestone = 'open';
+    return () => { delete document.body.dataset.milestone; };
+  }, []);
   useEffect(() => {
     setLeaving(false);
     const stop = canvas.current ? confettiBurst(canvas.current) : () => undefined;

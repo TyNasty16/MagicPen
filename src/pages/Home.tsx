@@ -84,7 +84,7 @@ export default function Home({ profile }: { profile: Profile }) {
 
           <div className="grid grid-cols-2 gap-3.5">
             <Tile title="Nutrition" href="#/food?from=home">
-              <CompactNutritionRings totals={totals} targets={targets} />
+              <CompactNutritionRings totals={totals} targets={targets} today={today} />
             </Tile>
             <Tile title="Water">
               <p className="font-serif text-2xl font-semibold" aria-live="polite">
