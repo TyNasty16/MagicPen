@@ -49,6 +49,8 @@ export const BMI_HINT: Partial<Record<ReturnType<typeof bmiColourStatus>, string
 
 /** A BMI that can't be right (a typing slip): colours are left off rather than guessing. */
 export const plausibleBmi = (value: number) => value >= 10 && value <= 80;
+/** BMI colours need at least 2 points and believable BMIs. Used by the chart and by Home's label, so they always agree. */
+export const bmiColoursOn = (values: number[], toBmi?: (v: number) => number) => !!toBmi && values.length >= 2 && values.every((v) => plausibleBmi(toBmi(v)));
 
 /** BMI from the latest weigh-in (or the profile's starting weight if none yet). Undefined without height. */
 export function currentBmi(profile: Pick<Profile, 'heightCm' | 'startWeightKg'>, weights: Pick<WeightEntry, 'date' | 'weightKg'>[]): number | undefined {

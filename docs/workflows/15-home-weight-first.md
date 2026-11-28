@@ -1,5 +1,5 @@
 # Workflow 15 — Home: weight chart first
-Status: Approved
+Status: Built
 Milestone: Post-plan add-on (not in PLAN.md §5). Uses only data already stored (height, birth year, weigh-ins, doses).
 
 ## Owner answers (2026-11-28)
@@ -146,3 +146,25 @@ The colours only describe. Nothing is advised.
 
 ## Approval
 - [x] Approved by owner — 2026-11-28 (answers above; 90 days default; exact text and range labels approved)
+
+## Build notes (2026-11-28)
+- **Built as approved.**
+  - **Home:** the full-width weight chart now comes first, with a 7 / 30 / 90 days / All choice. 90 is the default, and the choice is remembered on the phone (`steady.homeRange`). Nutrition is now a compact tile beside Water, with protein in a larger ring and small Carbs / Fat / Calories rings.
+  - **Line colours:** they follow the CDC adult BMI category, on Home and on the Body screen.
+  - **Sparkline:** removed.
+- **7-day range:** also added to the Body screen's range choice, which uses the same list.
+- **BMI colours on:** the 7-day average line on Body turns a dashed neutral brown, because blue now means Overweight.
+- **Code review fixes:**
+  - The Home BMI label shows the category only when the chart below shows colours, with the CDC note. Otherwise it shows a plain "BMI 28.1".
+  - Boundary points stay between the two weigh-ins, so the line never overshoots near a boundary.
+  - A tap near a boundary shows the nearest weigh-in.
+  - The tap highlight is kept for each colour.
+  - The average line no longer joins gaps on the plain chart.
+  - The tile header link meets the 44px tap target.
+  - The chart placeholder is the full chart height.
+  - Tests were added for these.
+- **Hints:** on Home, a missing height or birth year already shows "Set up your profile" in place of the tiles, so the BMI hints show on the Body screen.
+- **Checks:**
+  - 368 tests pass, and the build passes. The main bundle grew by about 1 KB, because the chart still loads only when drawn.
+  - The mocked iPhone runs had no errors and no CSP violations, and backup and restore still pass.
+  - Screenshots: `docs/screenshots/15-1-home-bmi.png` and `15-3-body-bmi.png`.

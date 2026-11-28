@@ -19,7 +19,7 @@ import { dailyWeights, latestWeightKg } from '../lib/weight';
 import { weighInStatus } from '../lib/weighIn';
 import { effectiveTargets } from '../lib/profileTargets';
 import { displayWeight, round1, weightUnit } from '../lib/units';
-import { BMI_HINT, bmiCategory, bmiChart, bmiColourStatus, bmiCat, bmiColour, currentBmi } from '../lib/body';
+import { BMI_HINT, bmiCategory, bmiChart, bmiColourStatus, bmiCat, bmiColour, bmiColoursOn, currentBmi, plausibleBmi } from '../lib/body';
 import { doseChanges, doseMarkLabel, filterRange, rangeStart, RANGES, type Range } from '../lib/range';
 
 // The chart library loads only when the chart is drawn, so Home opens fast.
@@ -145,10 +145,12 @@ function WeightTile({ profile, weights, injections, bmiNow }: { profile: Profile
   const status = bmiColourStatus(profile);
   const points = filterRange(daily.map((d) => ({ date: d.date, value: displayWeight(d.kg, u) })), range);
   const from = rangeStart(range);
-  const showBmi = bmiNow !== undefined && status === 'ok';
+  const fns = status === 'ok' ? bmiChart(profile.heightCm!, u) : undefined;
+  // The coloured category shows only when the chart below shows colours too (with the CDC note).
+  const showBmi = bmiNow !== undefined && plausibleBmi(bmiNow) && bmiColoursOn(points.map((p) => p.value), fns?.toBmi);
   return (
     <section className="rounded-card bg-surface p-4 shadow-soft" aria-label="Weight">
-      <a href="#/weight?from=home" className="mb-2 flex min-h-8 items-center justify-between text-xs font-semibold uppercase tracking-[0.07em] text-muted">
+      <a href="#/weight?from=home" className="mb-1 flex min-h-11 items-center justify-between text-xs font-semibold uppercase tracking-[0.07em] text-muted">
         <span>Weight</span>
         <ChevronIcon width={18} height={18} />
       </a>
@@ -175,7 +177,7 @@ function WeightTile({ profile, weights, injections, bmiNow }: { profile: Profile
             {points.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted">No weigh-ins in the last {range === '7d' ? '7' : range === '30d' ? '30' : '90'} days. Choose “All” to see earlier ones.</p>
             ) : (
-              <Suspense fallback={<div className="h-64" />}>
+              <Suspense fallback={<div className="min-h-[18.5rem]" />}>
                 <TrendChart
                   points={points}
                   seriesLabel="Weigh-ins"
@@ -185,7 +187,7 @@ function WeightTile({ profile, weights, injections, bmiNow }: { profile: Profile
                   goalNearWithin={u === 'imperial' ? 15 : 7}
                   window={from ? [from, dayKey(new Date())] : undefined}
                   doseMarks={doseChanges(injections).map((c) => ({ date: c.date, label: doseMarkLabel(c) }))}
-                  bmi={status === 'ok' ? bmiChart(profile.heightCm!, u) : undefined}
+                  bmi={fns}
                 />
               </Suspense>
             )}

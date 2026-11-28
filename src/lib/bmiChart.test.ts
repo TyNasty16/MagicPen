@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bmiCat, bmiCategory, bmiChart, bmiColourStatus, plausibleBmi } from './body';
+import { bmiCat, bmiCategory, bmiChart, bmiColoursOn, bmiColourStatus, plausibleBmi } from './body';
 import { bmiRows } from '../components/TrendChart';
 import { rangeStart } from './range';
 
@@ -45,6 +45,26 @@ describe('splitting the line at category boundaries', () => {
     expect(out.filter((r) => r.cross).map((r) => Math.round(r.value))).toEqual([210, 175]);
   });
   it('no crossing, no extra points', () => expect(bmiRows([row(0, 200), row(10, 196)], fns.toBmi, fns.valueAt)).toHaveLength(2));
+  it('rounding near a boundary never makes the line overshoot', () => {
+    const at = (b: number) => fns.valueAt(b);
+    for (const [a, z] of [[at(29.0), at(29.96)], [at(29.96), at(29.0)]]) {
+      const out = bmiRows([row(0, a), row(10, z)], fns.toBmi, fns.valueAt);
+      for (const r of out) expect(r.value).toBeGreaterThanOrEqual(Math.min(a, z) - 1e-9), expect(r.value).toBeLessThanOrEqual(Math.max(a, z) + 1e-9);
+    }
+  });
+  it('up then down across BMI 30 splits into red and blue pieces', () => {
+    const out = bmiRows([row(0, 206), row(10, 212), row(20, 206)], fns.toBmi, fns.valueAt);
+    expect(out.map((r) => (r.cross ? 'x' : r.cat))).toEqual(['over', 'x', 'ob1', 'x', 'over']);
+    expect(out[0].ob1).toBeUndefined(); // gaps keep the red line from joining the blue points
+    expect(out[4].ob1).toBeUndefined();
+  });
+  it('metric: BMI 30 at 1.78 m is 95.1 kg', () => expect(bmiChart(178, 'metric').valueAt(30)).toBeCloseTo(95.05, 1));
+  it('colours need 2 points and believable BMIs', () => {
+    expect(bmiColoursOn([200], fns.toBmi)).toBe(false);
+    expect(bmiColoursOn([200, 198], fns.toBmi)).toBe(true);
+    expect(bmiColoursOn([200, 20], fns.toBmi)).toBe(false); // a typing slip
+    expect(bmiColoursOn([200, 198], undefined)).toBe(false);
+  });
   it('the BMI shown matches the category: 24.96 counts as 25.0', () => expect(bmiCat(24.96)).toBe('over'));
 });
 

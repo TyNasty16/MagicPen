@@ -1,7 +1,7 @@
 import { CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, type TooltipProps } from 'recharts';
 import { fromDayKey } from '../lib/dates';
 import { doseNotesByPoint, placeDoseMarks } from '../lib/range';
-import { BMI_BOUNDARIES, BMI_CATS, bmiCat, bmiCategory, plausibleBmi, type BmiCat } from '../lib/body';
+import { BMI_BOUNDARIES, BMI_CATS, bmiCat, bmiCategory, bmiColoursOn, type BmiCat } from '../lib/body';
 
 // Validated pair (dataviz validator, light surface #fffaf5): terracotta values, blue 7-day average.
 const VALUE = '#a85540';
@@ -43,6 +43,8 @@ interface Props {
 type Row = { t: number; date: string; value: number; avg?: number; dose?: string; cat?: BmiCat; cross?: boolean } & Partial<Record<BmiCat, number>>;
 
 const round1 = (v: number) => Math.round(v * 10) / 10;
+/** The two categories meeting at a boundary: just below it and from it upwards (categories use BMI rounded to 1 decimal). */
+const catsAt = (x: number): [BmiCat, BmiCat] => [bmiCat(x - 0.1), bmiCat(x)];
 /**
  * Splits the line by BMI category: each point fills its category's series, and where the line crosses a category
  * boundary between two points an extra (unmarked) point sits exactly on the boundary in both series, so the colour
@@ -58,12 +60,16 @@ export function bmiRows(rows: Row[], toBmi: (v: number) => number, valueAt: (b: 
     if (!n) return;
     const nb = toBmi(n.value);
     const crossings = BMI_BOUNDARIES.filter((x) => (round1(b) < x) !== (round1(nb) < x)).map((x) => {
-      const v = valueAt(x);
+      // Kept between the two weigh-ins: with rounding, a point at BMI 29.96 already counts as 30.0.
+      const v = Math.min(Math.max(valueAt(x), Math.min(r.value, n.value)), Math.max(r.value, n.value));
       const f = (v - r.value) / (n.value - r.value || 1);
       return { x, v, t: r.t + (n.t - r.t) * Math.min(1, Math.max(0, f)) };
     });
     crossings.sort((p, q) => p.t - q.t);
-    for (const c of crossings) out.push({ t: c.t, date: '', value: c.v, cross: true, [bmiCat(c.x - 0.1)]: c.v, [bmiCat(c.x)]: c.v });
+    for (const c of crossings) {
+      const [below, above] = catsAt(c.x);
+      out.push({ t: c.t, date: '', value: c.v, cross: true, [below]: c.v, [above]: c.v });
+    }
   });
   return out;
 }
@@ -79,7 +85,7 @@ function niceStep(span: number): number {
 export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgLabel, goal, goalNearWithin = Infinity, window, doseMarks = [], photoDays, onPhoto, bmi }: Props) {
   const rows: Row[] = points.map((p) => ({ t: fromDayKey(p.date).getTime(), date: p.date, value: p.value, avg: p.avg }));
   // BMI colours need at least 2 points and believable BMIs (a typing slip leaves the plain line).
-  const bmiOn = !!bmi && rows.length >= 2 && rows.every((r) => plausibleBmi(bmi.toBmi(r.value)));
+  const bmiOn = bmiColoursOn(rows.map((r) => r.value), bmi?.toBmi);
   const data = rows.flatMap((r) => (r.avg === undefined ? [r.value] : [r.value, r.avg]));
   const goalNear = goal !== undefined && goal >= Math.min(...data) - goalNearWithin;
   const values = goalNear ? data.concat(goal) : data;
@@ -102,7 +108,7 @@ export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgL
   const chartRows = bmiOn ? bmiRows(rows, bmi!.toBmi, bmi!.valueAt) : rows;
   const latestBmi = bmiOn ? bmi!.toBmi(latest.value) : undefined;
   const catsShown = bmiOn ? BMI_CATS.filter((c) => rows.some((r) => bmiCat(bmi!.toBmi(r.value)) === c.id)) : [];
-  // Classes 2 and 3 share a colour, so they share one key entry.
+  // Classes 2 and 3 share a colour, so they share one key entry ("Obesity, class 2 and above"); keep whichever is shown first.
   const keyEntries = catsShown.filter((c) => c.id !== 'ob3' || !catsShown.some((d) => d.id === 'ob2')).map((c) => ({ colour: c.colour, label: c.id === 'ob2' || c.id === 'ob3' ? 'Obesity, class 2 and above' : c.label }));
   const bmiLines = bmiOn ? [25, 30].map((b) => ({ b, y: round1(bmi!.valueAt(b)) })) : [];
   const avgColour = bmiOn ? AVERAGE_WITH_BMI : AVERAGE;
@@ -147,8 +153,8 @@ export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgL
                 label={m.showLabel ? <DoseLabel text={m.label} nearRight={(m.t - domain[0]) / (domain[1] - domain[0] || 1) > 0.75} /> : undefined}
               />
             ))}
-            <Tooltip content={<ChartTooltip unit={unit} seriesLabel={pointLabel ?? seriesLabel} avgLabel={avgLabel} toBmi={bmiOn ? bmi!.toBmi : undefined} />} cursor={{ stroke: AXIS_TEXT, strokeWidth: 1 }} />
-            {avgLabel && !single && <Line dataKey="avg" stroke={avgColour} strokeWidth={bmiOn ? 2 : 2.5} strokeDasharray={bmiOn ? '4 3' : undefined} dot={false} activeDot={false} isAnimationActive={false} connectNulls />}
+            <Tooltip content={<ChartTooltip unit={unit} seriesLabel={pointLabel ?? seriesLabel} avgLabel={avgLabel} toBmi={bmiOn ? bmi!.toBmi : undefined} weighIns={rows} />} cursor={{ stroke: AXIS_TEXT, strokeWidth: 1 }} />
+            {avgLabel && !single && <Line dataKey="avg" stroke={avgColour} strokeWidth={bmiOn ? 2 : 2.5} strokeDasharray={bmiOn ? '4 3' : undefined} dot={false} activeDot={false} isAnimationActive={false} connectNulls={bmiOn} />}
             {bmiOn && BMI_CATS.filter((c) => chartRows.some((r) => r[c.id] !== undefined)).map((c) => (
               <Line
                 key={c.id}
@@ -157,7 +163,7 @@ export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgL
                 strokeWidth={3}
                 connectNulls={false}
                 dot={(p: { cx?: number; cy?: number; payload?: Row }) => (p.payload?.cross || p.payload?.cat !== c.id ? <g key={`${c.id}-${p.payload?.t}`} /> : <ValueDot key={`${c.id}-${p.payload?.date}`} cx={p.cx} cy={p.cy} date={p.payload?.date} photoDays={photoDays} onPhoto={onPhoto} colour={c.colour} />)}
-                activeDot={false}
+                activeDot={(p: { cx?: number; cy?: number; payload?: Row }) => (p.payload?.cross || p.payload?.cat !== c.id || p.cx === undefined ? <g key={`a-${c.id}`} /> : <circle key={`a-${c.id}`} cx={p.cx} cy={p.cy} r={6} fill={c.colour} stroke="#fffaf5" strokeWidth={2} />)}
                 isAnimationActive={false}
               />
             ))}
@@ -216,10 +222,11 @@ function LegendItem({ label, children }: { label: string; children: React.ReactN
   return <span className="inline-flex items-center gap-1.5">{children}{label}</span>;
 }
 
-function ChartTooltip({ active, payload, unit, seriesLabel, avgLabel, toBmi }: TooltipProps<number, string> & { unit: string; seriesLabel: string; avgLabel?: string; toBmi?: (v: number) => number }) {
+function ChartTooltip({ active, payload, unit, seriesLabel, avgLabel, toBmi, weighIns }: TooltipProps<number, string> & { unit: string; seriesLabel: string; avgLabel?: string; toBmi?: (v: number) => number; weighIns: Row[] }) {
   if (!active || !payload?.length) return null;
-  const row = payload[0].payload as Row;
-  if (row.cross) return null; // a boundary point, not a weigh-in
+  let row = payload[0].payload as Row;
+  // A boundary point isn't a weigh-in: show the nearest weigh-in instead.
+  if (row.cross) row = weighIns.reduce((best, r) => (Math.abs(r.t - row.t) < Math.abs(best.t - row.t) ? r : best), weighIns[0]);
   const b = toBmi?.(row.value);
   return (
     <div className="rounded-xl border border-line bg-surface px-3 py-2 text-xs text-ink shadow-soft">
