@@ -21,11 +21,18 @@ export interface ShakerState {
 const fill = (total: number, target: number) => (target > 0 ? Math.min(1, Math.max(0, total / target)) : 0);
 
 export function shakerState(today: string, total: number, target: number, memory: ShakerMemory | null): ShakerState {
-  const m: ShakerMemory = memory && memory.date === today ? memory : { date: today, lastTotal: 0, goalShown: false }; // a new day starts empty
+  const atGoal = target > 0 && total >= target;
+  // First look of the day (or ever): the level is set quietly, no animation. If the goal was already reached, it shows as reached.
+  if (!memory || memory.date !== today) {
+    return { from: atGoal ? 0 : fill(total, target), level: atGoal ? 0 : fill(total, target), play: 'none', reached: atGoal, next: { date: today, lastTotal: total, goalShown: atGoal } };
+  }
+  const m = memory;
   if (m.goalShown) return { from: 0, level: 0, play: 'none', reached: true, next: { ...m, lastTotal: total } };
   const from = fill(m.lastTotal, target);
-  if (target > 0 && total >= target) return { from, level: 0, play: 'goal', reached: true, next: { date: today, lastTotal: total, goalShown: true } };
-  return { from, level: fill(total, target), play: total > m.lastTotal ? 'shake' : 'none', reached: false, next: { date: today, lastTotal: total, goalShown: false } };
+  const added = total > m.lastTotal;
+  // The goal moment plays only when added protein reaches the goal (a lowered target just marks it reached).
+  if (atGoal) return { from, level: 0, play: added ? 'goal' : 'none', reached: true, next: { date: today, lastTotal: total, goalShown: true } };
+  return { from, level: fill(total, target), play: added ? 'shake' : 'none', reached: false, next: { date: today, lastTotal: total, goalShown: false } };
 }
 
 export function loadShakerMemory(): ShakerMemory | null {

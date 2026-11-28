@@ -102,7 +102,7 @@ export function CompactNutritionRings({ totals, targets, today }: { totals: Tota
     handled.current = key;
     const s = shakerState(today, protein, targets.proteinG, loadShakerMemory());
     saveShakerMemory(s.next);
-    setShaker(s);
+    setShaker((cur) => (cur.play === s.play && cur.from === s.from && cur.level === s.level && cur.reached === s.reached ? cur : s));
   }, [key, today, protein, targets.proteinG]);
   // "Goal reached" appears once the goal moment has finished (straight away with Reduce Motion or after it played).
   const reachedShown = shaker.reached && (shaker.play !== 'goal' || settledKey === key);

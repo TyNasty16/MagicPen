@@ -63,7 +63,7 @@ export function ShakerDrawing({ pose, goal, width = 72 }: { pose: ShakerPose; go
           return (
             <g key={g}>
               <line x1={x} x2={x + (g % 40 ? 5 : 9)} y1={y} y2={y} stroke="#fff" strokeWidth="1.2" opacity=".75" />
-              <text x={x + 11} y={y + 2.6} fontSize="7" fontWeight="700" fill="#fff" opacity=".85" stroke="#2a2433" strokeOpacity=".35" strokeWidth=".6" paintOrder="stroke">{g}</text>
+              <text x={x + 11} y={y + 3.4} fontSize="10" fontWeight="700" fill="#fff" stroke="#2a2433" strokeOpacity=".55" strokeWidth="1.4" paintOrder="stroke">{g}</text>
             </g>
           );
         })}
