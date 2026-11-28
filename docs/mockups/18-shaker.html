@@ -41,9 +41,12 @@ function lidB() {
     <path d="M15,68 L15,52 C15,40 24,32 36,32 L60,32 C72,32 81,40 81,52 L81,68 Z" fill="url(#lidSide)"/>
     ${Array.from({ length: 16 }, (_, i) => `<rect x="${17 + i * 4}" y="56" width="1.3" height="10" fill="#000" opacity=".22"/>`).join('')}
     <rect x="15" y="54" width="66" height="1.2" fill="#000" opacity=".35"/>
-    <path d="M33,34 L35,24 Q36,20 40,20 L56,20 Q60,20 61,24 L63,34 Z" fill="url(#cover)"/>
-    <rect x="41.5" y="23" width="13" height="6" rx="3" fill="#2b2725"/>
-    <path d="M36,21.5 L60,21.5" stroke="#fff" stroke-opacity=".3" stroke-width=".9"/>`;
+    ${(window.COVER || 0) > 0 ? `<ellipse cx="48" cy="33" rx="9" ry="3" fill="#120f0e"/><ellipse cx="48" cy="32.4" rx="7" ry="2" fill="#000"/>` : ''}
+    <g transform="rotate(${(window.COVER || 0) * 118} 63 33)">
+      <path d="M33,34 L35,24 Q36,20 40,20 L56,20 Q60,20 61,24 L63,34 Z" fill="url(#cover)"/>
+      <rect x="41.5" y="23" width="13" height="6" rx="3" fill="#2b2725"/>
+      <path d="M36,21.5 L60,21.5" stroke="#fff" stroke-opacity=".3" stroke-width=".9"/>
+    </g>`;
 }
 // Draws the shaker (inspired by tall faceted shaker bottles; original design). level 0..1, angle (shake), slosh -1..1.
 function shaker(level, angle = 0, slosh = 0) {
