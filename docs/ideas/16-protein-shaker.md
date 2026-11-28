@@ -30,3 +30,13 @@
 - Shaker on the Food screen header too, still (no animation).
 - A faint "last 7 days" row of tiny bottles.
 - A quiet haptic tick on shake where the phone supports it.
+
+## After-build improvements and follow-ups — 2026-11-28
+
+**What landed:** the Home protein ring is now the owner's shaker, with shake on add, a once-a-day goal sequence, and "Goal reached ✓" (381 tests pass; mocked iPhone pass fine).
+
+1. **Smoother motion (I-92).** Each frame redraws the SVG. If the real phone stutters, drive one grouped transform instead. Add "shaker smoothness" to the real-iPhone check (I-59).
+2. **Interrupted sequences (I-93).** Pause the goal sequence if a pop-up opens, and mark it seen only when it finishes, so a closed app still shows it once.
+3. **Empty bottle reads as "done" (I-94).** After the goal the bottle is empty, which could look like "nothing logged". A soft lid tint would separate them, with no new wording.
+
+**Felt off (from the notes; no screenshots checked here):** with no replay button, the only way to see the sequence again is a new day. A Settings "Preview" (I-74) would also help the real-phone check.

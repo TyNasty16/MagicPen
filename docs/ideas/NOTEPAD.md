@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-28 (16 opening, I-89 to I-91) · Totals: 💡 79 · ✅ 59 · ⏭️ 36_
+_Last updated: 2026-11-28 (16 after-build, I-92 to I-94) · Totals: 💡 82 · ✅ 60 · ⏭️ 36_
 
 ---
 
@@ -83,6 +83,9 @@ _Last updated: 2026-11-28 (16 opening, I-89 to I-91) · Totals: 💡 79 · ✅ 5
 | I-89 | Still (no animation) shaker also in the Food screen header | 16 opening | Optional. |
 | I-90 | Faint "last 7 days" row of tiny bottles | 16 opening | Optional; facts only. |
 | I-91 | Quiet haptic tick on shake where the phone supports it | 16 opening | Optional; needs Reduce Motion respected. |
+| I-92 | Move the shaker animation to CSS transforms on one group instead of redrawing the SVG every frame | 16 after-build | Only if it stutters on the real phone; add "shaker smoothness" to the I-59 check list. |
+| I-93 | If a pop-up opens mid-sequence, pause the goal sequence; save "seen" only when it finishes, so a closed app still gets to see it | 16 after-build | Both are known rare limits from 16. |
+| I-94 | Tint the lid softly after the goal so the empty bottle reads as "done", not "nothing logged" | 16 after-build | Calm colour only, no new text. A "Preview" for the sequence could join I-74. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
@@ -156,6 +159,7 @@ _Last updated: 2026-11-28 (16 opening, I-89 to I-91) · Totals: 💡 79 · ✅ 5
 | D-57 | Home: weight chart first, BMI-coloured line (CDC adult categories), compact Nutrition tile beside Water | 15 opening, Owner request | 15 — PR pending; colours also on the Body screen, Sparkline removed, 368 tests pass |
 | D-58 | Range toggle (7 / 30 / 90 days / All) on the Home weight chart (was I-84) | 15 opening | 15 — PR pending; 90 days default, choice remembered on the phone; 7 days also added to the Body screen |
 | D-59 | Tap details on the weight chart show BMI and category as words (was I-85) | 15 opening | 15 — PR pending; label, key, dotted line labels and tap details all use words |
+| D-60 | Protein shaker on Home: fills with protein, shakes on add, once-a-day goal sequence, "Goal reached ✓" (owner's design) | 16 opening, Owner request | 16 — PR pending; Reduce Motion respected, memory kept on the phone and not backed up, 381 tests pass |
 
 ## ⏭️ Skipped
 
