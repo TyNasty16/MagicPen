@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-28 (17 opening, I-95 to I-96) · Totals: 💡 84 · ✅ 60 · ⏭️ 36_
+_Last updated: 2026-11-28 (17 after-build, I-97) · Totals: 💡 85 · ✅ 61 · ⏭️ 36_
 
 ---
 
@@ -67,7 +67,7 @@ _Last updated: 2026-11-28 (17 opening, I-95 to I-96) · Totals: 💡 84 · ✅ 6
 | I-71 | Weekly "This week" line (days logged, weigh-in done) | 12 opening | Counts only, no streak. |
 | I-72 | "Clear milestones" button for a fresh start | 12 opening | Optional. |
 | I-73 | Revisit the milestone pop-up titles (NICE START … HISTORY MADE) | Owner, 2026-11-27 | Your request: the titles were approved for now; come back and change them later. |
-| I-74 | "Preview" button in Settings that plays a sample milestone pop-up | 12 after-build | There is nothing to look back on, so this is the only way to see the confetti and title again, or to check Reduce Motion. Sample text only, records nothing. |
+| I-74 | "Preview" button in Settings that plays a sample milestone pop-up | 12 after-build, 17 after-build | (17: could also replay the shaker and glass goal sequences.) There is nothing to look back on, so this is the only way to see the confetti and title again, or to check Reduce Motion. Sample text only, records nothing. |
 | I-75 | Stop the on-schedule streak re-showing a step after the injection weekday is changed | 12 after-build | Known rare limit from 12. Fix idea: tie the run to the first injection date only, ignoring the weekday. |
 | I-76 | Let a tap pass through to the screen underneath while the pop-up is open | 12 after-build | Owner chose "tap anywhere closes it", so the first tap is used up closing it. A pass-through would close it and still press the button. Owner decision needed. |
 | I-77 | Planned "major upgrade pass" every few months (React 19, Vite 8, TypeScript 7, recharts 3, vitest 5 …), one package family per change, with a note of which majors are held back | 13 opening, 13 after-build | Dependabot will stop proposing majors (change 13), so they need their own planned changes. Relates to I-29. Do soon: the ignore rule hides majors for good. |
@@ -88,12 +88,13 @@ _Last updated: 2026-11-28 (17 opening, I-95 to I-96) · Totals: 💡 84 · ✅ 6
 | I-94 | Tint the lid softly after the goal so the empty bottle reads as "done", not "nothing logged" | 16 after-build | Calm colour only, no new text. A "Preview" for the sequence could join I-74. |
 | I-95 | Share the "Goal reached ✓" line style between the shaker and the glass so they read as a pair | 17 opening | Optional. |
 | I-96 | Tiny ripple only (no full pour) for rapid repeat quick-adds | 17 opening | Optional; keeps rapid taps calm. |
+| I-97 | Short "Added 8 fl oz, Undo" chip after a water quick-add | 17 after-build | A stray tap is easy and the pour makes it look deliberate. Same style as the "barely ate" Undo chip. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
 | I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
 | I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
-| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build, 12 after-build, 15 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. From 12: confetti runs smoothly, Reduce Motion is respected, nothing repeats after reopening. |
+| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build, 12 after-build, 15 after-build, 17 after-build | (17: glass pour and drink smooth, Reduce Motion goes to the end state.) Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. From 12: confetti runs smoothly, Reduce Motion is respected, nothing repeats after reopening. |
 | I-67 | SHA-pin the GitHub Actions | 11 after-build | Left out of Phase 1 on purpose. Dependabot can keep the hashes fresh. |
 | I-68 | Check the live site's CSP after deploy (no policy errors in the console) | 11 after-build | The CSP is a meta tag and does not cover sw.js (GitHub Pages cannot send headers). |
 | I-69 | Show a plain build version and date in Settings | 11 after-build | Confirms the Home Screen copy has updated. Earlier "commit hash" idea was judged too developer-ish. |
@@ -162,6 +163,7 @@ _Last updated: 2026-11-28 (17 opening, I-95 to I-96) · Totals: 💡 84 · ✅ 6
 | D-58 | Range toggle (7 / 30 / 90 days / All) on the Home weight chart (was I-84) | 15 opening | 15 — PR pending; 90 days default, choice remembered on the phone; 7 days also added to the Body screen |
 | D-59 | Tap details on the weight chart show BMI and category as words (was I-85) | 15 opening | 15 — PR pending; label, key, dotted line labels and tap details all use words |
 | D-60 | Protein shaker on Home: fills with protein, shakes on add, once-a-day goal sequence, "Goal reached ✓" (owner's design) | 16 opening, Owner request | 16 — PR pending; Reduce Motion respected, memory kept on the phone and not backed up, 381 tests pass |
+| D-61 | Water glass on Home: ice, pour on add, goal drink, "+ 8 fl oz" button outside the picture (owner's design) | 17 opening, Owner request | 17 — PR pending; one shared fill driver with the shaker, protein goal first then water, Reduce Motion respected, 387 tests pass |
 
 ## ⏭️ Skipped
 

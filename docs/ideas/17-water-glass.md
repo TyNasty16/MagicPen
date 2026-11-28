@@ -22,3 +22,16 @@
 - Tiny ripple only (no pour) for a second quick-add within a few seconds, to keep rapid taps calm.
 
 **Watch-outs:** No medical wording is needed. The memory stays on the phone, outside backups, and Reset clears it. There is no new network or cost.
+
+## After-build improvements and follow-ups — 2026-11-28
+
+**What landed:** The Water tile's bar is now the owner's glass (ice, pour on add, goal drink), sharing one fill driver with the shaker, with protein's goal playing first and water's about a second later.
+
+1. **Undo for the last water add (new, I-97).** The "+ 8 fl oz" button sits where a stray tap is easy, and now the pour makes a mis-tap look deliberate. A short "Added 8 fl oz, Undo" chip, like the "barely ate" one, would fix it. Own data only, no wording needed.
+2. **Real-phone smoothness check (I-59, extended).** Only mocked runs were done. Add "glass pour and drink are smooth, Reduce Motion goes straight to the end state" to the owner's check list.
+3. **Preview of both goal sequences (joins I-74, I-94).** Goals play once a day, so the owner can't re-watch the drink or the protein-then-water order. One sample-only "Preview" button would cover the milestone pop-up and both tiles.
+
+**Felt off or worth knowing**
+- Metric profiles see litres ("1.2 of 2.7 L") while the plan's example said ml. That matches the rest of the app, so it is consistent, but a small amount like "0.25 L" may read oddly. Worth a look on the real phone.
+- The glass is drawn as decorative, so its meaning rests on the spoken line and the number text. That is fine, but the written number should stay clearly visible beside the glass.
+- I-95 (shared "Goal reached ✓" style) and I-96 (ripple for rapid taps) were not taken; both stay open.
