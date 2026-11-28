@@ -7,7 +7,7 @@
 </style></head><body><div class="wrap"><div class="grid">
 <div class="card" id="tile"><div style="display:flex;justify-content:space-between"><span class="eyebrow">NUTRITION</span><span class="muted">›</span></div>
  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:6px">
-  <div><span class="serif" style="font-size:24px;font-weight:600" id="g">84 g</span> <span class="muted" style="font-size:13px">of 114</span><div style="font-size:13px;font-weight:600">Protein</div></div>
+  <div style="white-space:nowrap"><span class="serif" style="font-size:24px;font-weight:600" id="g">84 g</span> <span class="muted" style="font-size:13px">of 114</span><div style="font-size:13px;font-weight:600">Protein</div><div id="goal" style="font-size:12px;font-weight:600;color:#3b7a57;margin-top:4px;visibility:hidden">Goal reached ✓</div></div>
   <div id="bottle"></div></div>
  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px">
   <svg width="34" height="34" style="transform:rotate(-90deg)"><circle cx="17" cy="17" r="13" fill="none" stroke="#efe5da" stroke-width="5"/><circle cx="17" cy="17" r="13" fill="none" stroke="#c8735a" stroke-width="5" stroke-linecap="round" stroke-dasharray="51.5 82"/></svg>
@@ -62,7 +62,7 @@ function shaker(level, angle = 0, slosh = 0) {
     const y = bot - 3 - (bot - top - 8) * (g / GOAL), x = 30 + (y - top) / (bot - top) * 2;
     ticks += `<line x1="${x}" x2="${x + (g % 40 ? 5 : 9)}" y1="${y}" y2="${y}" stroke="#fff" stroke-width="1.2" opacity=".75"/><text x="${x + 11}" y="${y + 2.6}" font-size="7" font-weight="700" fill="#fff" opacity=".85" stroke="#2a2433" stroke-opacity=".35" stroke-width=".6" paint-order="stroke">${g}</text>`;
   }
-  return `<svg width="${W}" height="${H + 8}" viewBox="0 -4 ${W} ${H + 8}" role="img" aria-label="Protein shaker, ${Math.round(level * GOAL)} of ${GOAL} g">
+  return `<svg width="${W}" height="${H + 8}" viewBox="0 -4 ${W} ${H + 8}" style="overflow:visible" role="img" aria-label="Protein shaker, ${Math.round(level * GOAL)} of ${GOAL} g">
   <defs>
     <clipPath id="b"><path d="${body}"/></clipPath>
     <linearGradient id="tint" x1="0" x2="1"><stop offset="0" stop-color="#e7d9cf" stop-opacity=".85"/><stop offset=".5" stop-color="#efe5dc" stop-opacity=".7"/><stop offset="1" stop-color="#d7c6b9" stop-opacity=".9"/></linearGradient>
@@ -73,11 +73,14 @@ function shaker(level, angle = 0, slosh = 0) {
     <radialGradient id="floor"><stop offset="0" stop-color="#3a2a22" stop-opacity=".22"/><stop offset="1" stop-color="#3a2a22" stop-opacity="0"/></radialGradient>
   </defs>
   <ellipse cx="48" cy="${bot + 4}" rx="30" ry="4.5" fill="url(#floor)"/>
-  <g transform="rotate(${angle} 48 ${bot})">
+  <g transform="rotate(${angle} 48 ${Math.abs(angle) > 26 ? (top + bot) / 2 - 10 : bot})">
     <path d="${body}" fill="url(#tint)"/>
     <g clip-path="url(#b)">
-      <path d="${surf} L96,${H} L0,${H} Z" fill="url(#shake)"/>
-      <path d="${surf} L96,${lvl + tilt + 4} C66,${lvl + tilt * 0.4 + 6} 30,${lvl - tilt * 0.4 + 2} 0,${lvl - tilt + 4} Z" fill="#d8bfa3"/>
+      ${window.DRINK
+        // Drinking: the shake runs to the lid end and drains from there.
+        ? `<path d="M0,0 L96,0 L96,${top + (bot - top) * level + 6} C66,${top + (bot - top) * level + 2} 30,${top + (bot - top) * level + 10} 0,${top + (bot - top) * level + 6} Z" fill="url(#shake)"/>`
+        : `<path d="${surf} L96,${H} L0,${H} Z" fill="url(#shake)"/>`}
+      ${window.DRINK || level <= 0 ? '' : `<path d="${surf} L96,${lvl + tilt + 4} C66,${lvl + tilt * 0.4 + 6} 30,${lvl - tilt * 0.4 + 2} 0,${lvl - tilt + 4} Z" fill="#d8bfa3"/>`}
       ${[[38, 0.4, 1.3], [55, 0.25, 1], [64, 0.6, 1.2]].map(([x, f, r]) => `<circle cx="${x}" cy="${lvl + 7 + f * (bot - lvl - 12)}" r="${r}" fill="#fff" opacity=".2"/>`).join('')}
       ${facets}${edges}
     </g>
@@ -87,6 +90,6 @@ function shaker(level, angle = 0, slosh = 0) {
     ${LID === 'b' ? lidB() : lidA()}
   </g></svg>`;
 }
-window.render = (level, angle, slosh, grams, lid) => { if (lid) LID = lid; document.getElementById('bottle').innerHTML = shaker(level, angle, slosh); if (grams !== undefined) document.getElementById('g').textContent = grams + ' g'; };
+window.render = (level, angle, slosh, grams, lid, goal) => { if (lid) LID = lid; document.getElementById('goal').style.visibility = goal ? 'visible' : 'hidden'; document.getElementById('bottle').innerHTML = shaker(level, angle, slosh); if (grams !== undefined) document.getElementById('g').textContent = grams + ' g'; };
 render(84 / GOAL, 0, 0);
 </script></body></html>
