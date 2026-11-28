@@ -1,0 +1,71 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Protein shaker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box} body{background:#f7f1ea;font-family:Inter,system-ui,sans-serif;color:#3a2a22;width:390px}
+.wrap{padding:16px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:#fffaf5;border-radius:22px;box-shadow:0 6px 18px rgb(80 50 30 / .08);padding:16px 14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:600;color:#6f5b4c} .muted{color:#6f5b4c} .serif{font-family:Georgia,serif}
+</style></head><body><div class="wrap"><div class="grid">
+<div class="card" id="tile"><div style="display:flex;justify-content:space-between"><span class="eyebrow">NUTRITION</span><span class="muted">›</span></div>
+ <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:6px">
+  <div><span class="serif" style="font-size:24px;font-weight:600" id="g">84 g</span> <span class="muted" style="font-size:13px">of 114</span><div style="font-size:13px;font-weight:600">Protein</div></div>
+  <div id="bottle"></div></div>
+ <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px">
+  <svg width="34" height="34" style="transform:rotate(-90deg)"><circle cx="17" cy="17" r="13" fill="none" stroke="#efe5da" stroke-width="5"/><circle cx="17" cy="17" r="13" fill="none" stroke="#c8735a" stroke-width="5" stroke-linecap="round" stroke-dasharray="51.5 82"/></svg>
+  <div style="line-height:1.15"><div style="font-size:14px;font-weight:600">1,240 <span style="font-size:12px;font-weight:400" class="muted">of 1,982</span></div><div style="font-size:11px" class="muted">Calories</div></div></div>
+</div>
+<div class="card"><div class="eyebrow">WATER</div><div style="margin-top:12px"><span class="serif" style="font-size:34px;font-weight:600">42</span> <span class="muted">/ 90 fl oz</span></div>
+<div style="height:8px;background:#efe5da;border-radius:4px;margin-top:10px"><div style="width:47%;height:100%;background:#2f6fb5;border-radius:4px"></div></div>
+<div style="border:1px solid #eadfd3;border-radius:16px;text-align:center;padding:12px 0;margin-top:16px;color:#a85540;font-weight:600;font-size:18px">+ 8 fl oz</div></div>
+</div></div>
+<script>
+const GOAL = 114;
+// Draws the shaker. level 0..1, angle in degrees (shake), slosh -1..1 tilts the surface.
+function shaker(level, angle = 0, slosh = 0) {
+  const W = 96, H = 182, top = 52, bot = 166, L0 = 18, R0 = 78, L1 = 22, R1 = 74; // body tapers slightly
+  const xAt = (side, y) => side < 0 ? L1 + (L0 - L1) * (bot - y) / (bot - top) : R1 + (R0 - R1) * (bot - y) / (bot - top);
+  const body = `M${L0},${top} L${R0},${top} L${R1},${bot - 6} Q${R1},${bot} ${R1 - 6},${bot} L${L1 + 6},${bot} Q${L1},${bot} ${L1},${bot - 6} Z`;
+  const lvl = bot - 4 - (bot - top - 10) * Math.min(1, level);
+  const tilt = slosh * 7;
+  const surf = (dy) => `M0,${lvl - tilt + dy} C30,${lvl - tilt * 0.4 + dy - 2} 66,${lvl + tilt * 0.4 + dy + 2} 96,${lvl + tilt + dy}`;
+  let ticks = '';
+  for (let g = 20; g < GOAL; g += 20) {
+    const y = bot - 4 - (bot - top - 10) * (g / GOAL), x = xAt(1, y);
+    // Printed scale, white with a faint dark edge so it reads over the shake and over the empty bottle.
+    ticks += `<line x1="${x - 9}" x2="${x - 3}" y1="${y}" y2="${y}" stroke="#fff" stroke-width="1.3" opacity=".9"/><line x1="${x - 9}" x2="${x - 3}" y1="${y + 1}" y2="${y + 1}" stroke="#3a2a22" stroke-width=".6" opacity=".35"/><text x="${x - 11}" y="${y + 3}" text-anchor="end" font-size="7.5" font-weight="700" fill="#fff" stroke="#3a2a22" stroke-opacity=".45" stroke-width=".7" paint-order="stroke">${g}</text>`;
+  }
+  const ridges = Array.from({ length: 15 }, (_, i) => `<rect x="${17 + i * 4.1}" y="40" width="1.4" height="13" fill="#000" opacity=".18"/>`).join('');
+  return `<svg width="${W}" height="${H + 8}" viewBox="0 -4 ${W} ${H + 8}" role="img" aria-label="Protein shaker, ${Math.round(level * GOAL)} of ${GOAL} g">
+  <defs>
+    <clipPath id="b"><path d="${body}"/></clipPath>
+    <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".18" stop-color="#f3eeea" stop-opacity=".55"/><stop offset=".7" stop-color="#ebe4de" stop-opacity=".5"/><stop offset="1" stop-color="#d9d0c8" stop-opacity=".7"/></linearGradient>
+    <linearGradient id="shake" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9a6646"/><stop offset="1" stop-color="#6d4127"/></linearGradient>
+    <linearGradient id="shade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".12"/><stop offset=".25" stop-color="#000" stop-opacity="0"/><stop offset=".75" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+    <linearGradient id="lid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4a423d"/><stop offset="1" stop-color="#2a2522"/></linearGradient>
+    <radialGradient id="floor"><stop offset="0" stop-color="#3a2a22" stop-opacity=".22"/><stop offset="1" stop-color="#3a2a22" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="48" cy="${bot + 5}" rx="34" ry="5" fill="url(#floor)"/>
+  <g transform="rotate(${angle} 48 ${bot})">
+    <path d="M66,30 C84,26 90,40 80,46" fill="none" stroke="#2f2a27" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="${body}" fill="url(#glass)"/>
+    <g clip-path="url(#b)">
+      <path d="${surf(0)} L96,${H} L0,${H} Z" fill="url(#shake)"/>
+      <path d="${surf(0)} L96,${lvl + tilt + 5} C66,${lvl + tilt * 0.4 + 7} 30,${lvl - tilt * 0.4 + 3} 0,${lvl - tilt + 5} Z" fill="#d8bfa3"/>
+      ${[[34, 0.4, 1.4], [52, 0.25, 1.1], [62, 0.55, 1.3], [41, 0.7, 1]].map(([x, f, r]) => `<circle cx="${x}" cy="${lvl + 8 + f * (bot - lvl - 12)}" r="${r}" fill="#fff" opacity=".22"/>`).join('')}
+      <g opacity=".55" transform="translate(${50 + slosh * 4} ${bot - 15}) rotate(${slosh * 40})">${Array.from({ length: 5 }, (_, i) => `<ellipse rx="${8 - i * 0.6}" ry="${3 + i * 0.9}" transform="rotate(${i * 36})" fill="none" stroke="#d6d0cb" stroke-width=".9"/>`).join('')}</g>
+      <rect x="0" y="${top}" width="96" height="${bot - top}" fill="url(#shade)"/>
+    </g>
+    <path d="${body}" fill="none" stroke="#3a2a22" stroke-opacity=".28" stroke-width="1.2"/>
+    ${ticks}
+    <path d="M${L0 + 6},${top + 8} L${L1 + 5},${bot - 14}" stroke="#fff" stroke-width="3.2" stroke-linecap="round" opacity=".7"/>
+    <path d="M${L0 + 11},${top + 8} L${L1 + 9},${top + 40}" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+    <rect x="15" y="40" width="66" height="14" rx="3" fill="url(#lid)"/>${ridges}
+    <rect x="15" y="40" width="66" height="3" rx="1.5" fill="#fff" opacity=".12"/>
+    <path d="M24,40 L28,30 Q30,26 35,26 L61,26 Q66,26 68,30 L72,40 Z" fill="url(#lid)"/>
+    <path d="M40,26 L42,17 Q43,14 46,14 L50,14 Q53,14 54,17 L56,26 Z" fill="#3a3330"/>
+    <rect x="44" y="10" width="8" height="5" rx="2" fill="#2a2522"/>
+    <rect x="28" y="28" width="40" height="2" rx="1" fill="#fff" opacity=".1"/>
+  </g></svg>`;
+}
+window.render = (level, angle, slosh, grams) => { document.getElementById('bottle').innerHTML = shaker(level, angle, slosh); if (grams !== undefined) document.getElementById('g').textContent = grams + ' g'; };
+render(84 / GOAL, 0, 0);
+</script></body></html>
