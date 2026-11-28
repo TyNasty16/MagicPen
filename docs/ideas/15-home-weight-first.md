@@ -31,3 +31,19 @@
 
 ### Watch-outs
 CDC wording is only what you gave me. Do not add any "healthy" or "goal" advice. Everything stays on the device and costs $0.
+
+## After-build improvements and follow-ups — 2026-11-28
+
+**What landed:** Home now leads with a full-width weight chart (7 / 30 / 90 days / All, 90 default) coloured by CDC adult BMI category, with a compact Nutrition tile beside Water; the Body chart uses the same colours.
+
+1. **Colour-blind cue (I-86).** Add a non-colour mark per category (dot shape or line style). Red and green can still look alike; words help but a visual cue would too.
+2. **Change over the chosen range (I-87).** Beside the toggle, show "-2.1 lb in 30 days". Home shows only change since start, so the toggle changes the chart but not the number.
+3. **Explain a plain chart (I-88).** One typo weigh-in (BMI outside 10 to 80) turns the whole line plain with no reason shown. A factual note naming that weigh-in would help.
+4. **Real-iPhone check (added to I-59).** Colours in daylight, chart taps, range toggle, no layout jump when the chart loads.
+
+Still open from the opening pass: I-83, a "Plain line" switch in Profile.
+
+**Felt off:**
+- The BMI hints ("Add your height in Profile...") only appear on the Body screen, because Home shows "Set up your profile" instead. That is consistent, but Home never says why colours are missing.
+- The 7-day average line on Body is now dashed brown because blue means Overweight. It works, but it differs from the old look.
+- The Home BMI label drops the category word when colours are off, so the same tile can read "BMI 28.1" or "BMI 28.1 · Overweight" depending on profile data. That is correct but may surprise.

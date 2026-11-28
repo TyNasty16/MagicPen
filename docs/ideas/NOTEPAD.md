@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-28 (15 opening, I-83 to I-85) · Totals: 💡 75 · ✅ 56 · ⏭️ 36_
+_Last updated: 2026-11-28 (15 after-build, I-86 to I-88) · Totals: 💡 76 · ✅ 59 · ⏭️ 36_
 
 ---
 
@@ -77,14 +77,15 @@ _Last updated: 2026-11-28 (15 opening, I-83 to I-85) · Totals: 💡 75 · ✅ 5
 | I-81 | Before/after screenshot check for every screen after a redesign | 14 opening | Keeps screens consistent. |
 | I-82 | Bullet-journal redesign: dot-grid pages, washi-tape section labels, bullet-journal signifiers, sticky notes, handwritten notes (Caveat, self-hosted) | Owner, 2026-11-27 | Your idea, parked: not sure yet. Mockups: `docs/screenshots/14-bujo-screen-*.png` (Home, Doses, Body, Food) and `14-bujo-1-dot-grid.png` (the weight chart you liked). Questions still open: handwriting for numbers?, tape colours, Symptoms and Profile screens. |
 | I-83 | Profile switch "Plain line" to turn off the BMI colours on weight charts | 15 opening | Accessibility and comfort option; stored on the phone. |
-| I-84 | Range toggle (30 days / 90 days / All) on the Home weight chart | 15 opening | Home view may feel crowded or sparse otherwise. |
-| I-85 | Tap details on the weight chart show BMI and category as words | 15 opening | Colour is never the only signal. |
+| I-86 | Add a non-colour mark per BMI category (dot shape or line style) on the weight chart | 15 after-build | Red and green can look alike to some colour-blind readers; words already carry the meaning, this adds a visual cue. |
+| I-87 | Show the weight change for the chosen range ("-2.1 lb in 30 days") next to the range toggle | 15 after-build | Home shows change since start only. Facts only, no advice. |
+| I-88 | Name the odd weigh-in when a BMI outside 10 to 80 turns the whole chart plain | 15 after-build | Today the chart goes plain with no reason shown. Factual wording ("This weigh-in looks unusual, check it"), no advice. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
 | I-57 | Password reminder: "write it down" check and optional hint | 10 after-build | A forgotten password cannot be recovered. A hint stored in the file header would be unencrypted, so the owner must be warned. Could also ask once, a week later, "Do you still have your password?" |
 | I-58 | Restore preview that compares the backup with what is on the phone | 10 after-build | e.g. "Backup: 12 injections, 40 weights. On this phone: 14 injections, 43 weights." Facts only. Helps avoid restoring over newer data. |
-| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build, 12 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. From 12: confetti runs smoothly, Reduce Motion is respected, nothing repeats after reopening. |
+| I-59 | Real-iPhone check that the Share sheet offers Calendar for the .ics reminder | 10 after-build, 11 after-build, 12 after-build, 15 after-build | Owner check after release. If it does not, fall back to a download link or a "Copy to Files" step. Same check list covers Dropbox sign-in, Back up now and Restore, plus (from 11) barcode scan, photo pick, report share and a Home Screen update, since only mocked runs were done against the new CSP. From 12: confetti runs smoothly, Reduce Motion is respected, nothing repeats after reopening. |
 | I-67 | SHA-pin the GitHub Actions | 11 after-build | Left out of Phase 1 on purpose. Dependabot can keep the hashes fresh. |
 | I-68 | Check the live site's CSP after deploy (no policy errors in the console) | 11 after-build | The CSP is a meta tag and does not cover sw.js (GitHub Pages cannot send headers). |
 | I-69 | Show a plain build version and date in Settings | 11 after-build | Confirms the Home Screen copy has updated. Earlier "commit hash" idea was judged too developer-ish. |
@@ -149,6 +150,9 @@ _Last updated: 2026-11-28 (15 opening, I-83 to I-85) · Totals: 💡 75 · ✅ 5
 | D-54 | Milestone celebrations: weight lost, injections logged, on-schedule and logging streaks, weigh-in weeks, time on treatment (was I-63) | Owner, 2026-11-27 | 12 — PR pending; 5-second pop-up with confetti and escalating titles, no end to the lists, recorded so nothing shows twice, restore-safe |
 | D-55 | Off switch for milestones, and no praise for eating less (was I-70) | 12 opening | 12 — built in: "Show milestones" and "Show weight milestones" switches; "barely ate" mark and food amounts never earn anything |
 | D-56 | Dependabot only proposes small, safe npm updates (patch and minor; security fixes still arrive) | 13 opening (approach 1, recommended) | 13 — PR pending; `ignore` rule for majors in `.github/dependabot.yml`, Actions left as is. Owner still to enable "Dependabot security updates" |
+| D-57 | Home: weight chart first, BMI-coloured line (CDC adult categories), compact Nutrition tile beside Water | 15 opening, Owner request | 15 — PR pending; colours also on the Body screen, Sparkline removed, 368 tests pass |
+| D-58 | Range toggle (7 / 30 / 90 days / All) on the Home weight chart (was I-84) | 15 opening | 15 — PR pending; 90 days default, choice remembered on the phone; 7 days also added to the Body screen |
+| D-59 | Tap details on the weight chart show BMI and category as words (was I-85) | 15 opening | 15 — PR pending; label, key, dotted line labels and tap details all use words |
 
 ## ⏭️ Skipped
 
