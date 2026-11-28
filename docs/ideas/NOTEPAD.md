@@ -5,7 +5,7 @@ The Ideas agent adds new ideas here on every pass (status **Suggested**); when a
 
 **Status key:** 💡 Suggested (open) · ✅ Done · ⏭️ Skipped (with reason)
 
-_Last updated: 2026-11-28 (16 after-build, I-92 to I-94) · Totals: 💡 82 · ✅ 60 · ⏭️ 36_
+_Last updated: 2026-11-28 (17 opening, I-95 to I-96) · Totals: 💡 84 · ✅ 60 · ⏭️ 36_
 
 ---
 
@@ -86,6 +86,8 @@ _Last updated: 2026-11-28 (16 after-build, I-92 to I-94) · Totals: 💡 82 · �
 | I-92 | Move the shaker animation to CSS transforms on one group instead of redrawing the SVG every frame | 16 after-build | Only if it stutters on the real phone; add "shaker smoothness" to the I-59 check list. |
 | I-93 | If a pop-up opens mid-sequence, pause the goal sequence; save "seen" only when it finishes, so a closed app still gets to see it | 16 after-build | Both are known rare limits from 16. |
 | I-94 | Tint the lid softly after the goal so the empty bottle reads as "done", not "nothing logged" | 16 after-build | Calm colour only, no new text. A "Preview" for the sequence could join I-74. |
+| I-95 | Share the "Goal reached ✓" line style between the shaker and the glass so they read as a pair | 17 opening | Optional. |
+| I-96 | Tiny ripple only (no full pour) for rapid repeat quick-adds | 17 opening | Optional; keeps rapid taps calm. |
 | I-64 | After a password change, offer "Back up now with the new password" | 11 second look | Keeps the newest Dropbox copy on the new password. |
 | I-65 | Re-usable security tick-list in the docs, re-checked quarterly | 11 second look | Owner checklist split into "Now" and "When you have time". |
 | I-66 | Show "Last backed up" next to the Home Screen notice | 11 second look | Makes the real protection visible. |
