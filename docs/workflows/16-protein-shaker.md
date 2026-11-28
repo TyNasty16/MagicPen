@@ -1,5 +1,5 @@
 # Workflow 16 — Protein shaker on Home
-Status: Draft
+Status: Approved
 Milestone: Post-plan add-on (not in PLAN.md §5). Builds on workflow 15 (not yet merged). Uses only food totals already stored.
 
 ## Owner answers (2026-11-28)
@@ -112,4 +112,4 @@ You need to decide:
 - No replay button? (default: yes)
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — 2026-11-28 (answers above; exact text approved; build after workflow 15 is merged)
