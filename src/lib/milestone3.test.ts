@@ -14,7 +14,7 @@ describe('BMI', () => {
     expect(bmiCategory(18.5)).toBe('Healthy weight');
     expect(bmiCategory(24.9)).toBe('Healthy weight');
     expect(bmiCategory(25)).toBe('Overweight');
-    expect(bmiCategory(30)).toBe('Obesity');
+    expect(bmiCategory(30)).toBe('Obesity, class 1');
   });
 });
 
