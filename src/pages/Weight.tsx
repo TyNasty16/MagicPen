@@ -4,6 +4,7 @@ import { CameraIcon, PlusIcon } from '../components/icons';
 import PhotoViewer from '../components/PhotoViewer';
 import { Button, Card, Field, inputClass, ScreenHeader } from '../components/ui';
 import TrendChart from '../components/TrendChart';
+import { BMI_HINT, bmiChart, bmiColourStatus } from '../lib/body';
 import Segmented from '../components/Segmented';
 import Measurements from './Measurements';
 import { deleteWeight, getPhoto, listInjections, listWeights, saveWeighIn, weightIdsWithPhotos, type Profile, type WeightEntry } from '../db/db';
@@ -97,7 +98,7 @@ function Weight({ profile, startAdding, focusPhoto, range, setRange }: { profile
             {daily.length === 0 ? (
               <p className="text-sm text-muted">Log your first weigh-in to start your graph.</p>
             ) : points.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted">No weigh-ins in the last {range === '30d' ? '30' : '90'} days. Choose “All” to see earlier ones.</p>
+              <p className="py-8 text-center text-sm text-muted">No weigh-ins in the last {range === '7d' ? '7' : range === '30d' ? '30' : '90'} days. Choose “All” to see earlier ones.</p>
             ) : (
               <TrendChart
                 points={points}
@@ -111,8 +112,10 @@ function Weight({ profile, startAdding, focusPhoto, range, setRange }: { profile
                 doseMarks={doseMarks}
                 photoDays={photoDays}
                 onPhoto={(id) => setViewing({ id, caption: caption(byId.get(id)!) })}
+                bmi={bmiColourStatus(profile) === 'ok' ? bmiChart(profile.heightCm!, u) : undefined}
               />
             )}
+            {points.length > 1 && BMI_HINT[bmiColourStatus(profile)] && <p className="mt-2 text-xs text-muted">{BMI_HINT[bmiColourStatus(profile)]}</p>}
           </Card>
           <Button className="flex w-full items-center justify-center gap-2" onClick={() => setEditing('new')}>
             <PlusIcon width={20} height={20} /> Log weight

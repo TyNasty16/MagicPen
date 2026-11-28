@@ -285,7 +285,7 @@ export const addAppointmentTakingDraft = (a: Appointment) =>
 export const saveAppointment = (a: Appointment) => db.appointments.put(a);
 export const deleteAppointment = (id: number) => db.appointments.delete(id);
 
-export const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck', 'steady.barcodeNoticeAck', 'steady.homeScreenTipDismissed'];
+export const UI_KEYS = ['steady.helpShownOn', 'steady.alertsHidden', 'steady.alertsSeen', 'steady.offNoticeAck', 'steady.barcodeNoticeAck', 'steady.homeScreenTipDismissed', 'steady.homeRange'];
 
 /** Deletes everything the owner has entered, in one transaction, then the saved screen preferences. */
 export async function resetAllData(): Promise<void> {

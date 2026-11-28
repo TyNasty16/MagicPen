@@ -1,9 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks';
+import { lazy, Suspense, useState } from 'react';
 import { PlusIcon, SyringeIcon } from '../components/icons';
 import GearMenu from '../components/GearMenu';
 import { Tile } from '../components/ui';
-import NutritionRings from '../components/NutritionRings';
-import Sparkline from '../components/Sparkline';
+import { ChevronIcon } from '../components/icons';
+import Segmented from '../components/Segmented';
+import { CompactNutritionRings } from '../components/NutritionRings';
 import { addWater, listFoodLogSince, listInjections, listSymptoms, listWaterSince, listWeights, type Injection, type Profile } from '../db/db';
 import { symptomLabel } from '../lib/symptoms';
 import AlertCards from '../components/AlertCards';
@@ -17,7 +19,13 @@ import { dailyWeights, latestWeightKg } from '../lib/weight';
 import { weighInStatus } from '../lib/weighIn';
 import { effectiveTargets } from '../lib/profileTargets';
 import { displayWeight, round1, weightUnit } from '../lib/units';
-import { currentBmi } from '../lib/body';
+import { BMI_HINT, bmiCategory, bmiChart, bmiColourStatus, bmiCat, bmiColour, currentBmi } from '../lib/body';
+import { doseChanges, doseMarkLabel, filterRange, rangeStart, RANGES, type Range } from '../lib/range';
+
+// The chart library loads only when the chart is drawn, so Home opens fast.
+const TrendChart = lazy(() => import('../components/TrendChart'));
+const RANGE_KEY = 'steady.homeRange';
+const readRange = (): Range => { try { const v = localStorage.getItem(RANGE_KEY); return RANGES.some((r) => r.id === v) ? (v as Range) : '90d'; } catch { return '90d'; } };
 import { useNow } from '../lib/useNow';
 
 // Items without an href are not built yet and show as "Soon" (all are built as of Milestone 5).
@@ -47,9 +55,6 @@ export default function Home({ profile }: { profile: Profile }) {
   const waterMl = water.filter((w) => w.date === today).reduce((s, w) => s + w.ml, 0);
   const quickWater = waterQuickAdds(profile.units)[0];
   const lastSymptom = symptoms[0];
-  const daily = dailyWeights(weights);
-  const latest = daily.at(-1);
-  const unit = weightUnit(profile.units);
   const bmiNow = currentBmi(profile, weights);
 
   return (
@@ -75,28 +80,11 @@ export default function Home({ profile }: { profile: Profile }) {
           <WeighInCard dayKeys={weights.map((w) => w.date)} now={now} />
           <DoseHero last={injections[0]} weekday={profile.injectionWeekday} now={now} />
 
-          <Tile title="Today's nutrition" href="#/food?from=home">
-            <NutritionRings totals={totals} targets={targets} />
-          </Tile>
+          <WeightTile profile={profile} weights={weights} injections={injections} bmiNow={bmiNow} />
 
           <div className="grid grid-cols-2 gap-3.5">
-            <Tile title="Weight" href="#/weight?from=home">
-              {latest ? (
-                <>
-                  <p className="font-serif text-2xl font-semibold">{displayWeight(latest.kg, profile.units)} <span className="font-sans text-xs text-muted">{unit}</span></p>
-                  {profile.startWeightKg && <p className="text-xs text-muted">{changeText(latest.kg - profile.startWeightKg, profile.units)}</p>}
-                  {bmiNow !== undefined && <p className="text-xs text-muted">BMI {round1(bmiNow)}</p>}
-                  <Sparkline values={daily.slice(-30).map((d) => d.kg)} />
-                </>
-              ) : (
-                <>
-                  <p className="font-serif text-2xl font-semibold">
-                    {Math.round(displayWeight(profile.startWeightKg!, profile.units))} <span aria-label="to">→</span> {Math.round(displayWeight(profile.goalWeightKg!, profile.units))}
-                  </p>
-                  <p className="text-xs text-muted">{unit} · start → goal</p>
-                  <p className="mt-2 text-xs font-medium text-accent">Log your first weigh-in</p>
-                </>
-              )}
+            <Tile title="Nutrition" href="#/food?from=home">
+              <CompactNutritionRings totals={totals} targets={targets} />
             </Tile>
             <Tile title="Water">
               <p className="font-serif text-2xl font-semibold" aria-live="polite">
@@ -140,6 +128,80 @@ export default function Home({ profile }: { profile: Profile }) {
         </>
       )}
     </div>
+  );
+}
+
+/** The weight chart, first on Home (workflow 15): line colours follow BMI category; a choice of 7, 30, 90 days or All. */
+function WeightTile({ profile, weights, injections, bmiNow }: { profile: Profile; weights: { date: string; weightKg: number }[]; injections: Injection[]; bmiNow?: number }) {
+  const [range, setRangeState] = useState<Range>(readRange);
+  const setRange = (r: Range) => {
+    setRangeState(r);
+    try { localStorage.setItem(RANGE_KEY, r); } catch { /* storage blocked: kept for this visit */ }
+  };
+  const u = profile.units;
+  const unit = weightUnit(u);
+  const daily = dailyWeights(weights);
+  const latest = daily.at(-1);
+  const status = bmiColourStatus(profile);
+  const points = filterRange(daily.map((d) => ({ date: d.date, value: displayWeight(d.kg, u) })), range);
+  const from = rangeStart(range);
+  const showBmi = bmiNow !== undefined && status === 'ok';
+  return (
+    <section className="rounded-card bg-surface p-4 shadow-soft" aria-label="Weight">
+      <a href="#/weight?from=home" className="mb-2 flex min-h-8 items-center justify-between text-xs font-semibold uppercase tracking-[0.07em] text-muted">
+        <span>Weight</span>
+        <ChevronIcon width={18} height={18} />
+      </a>
+      {latest ? (
+        <>
+          <div className="flex items-end justify-between gap-3">
+            <p className="font-serif text-4xl leading-none font-semibold">{displayWeight(latest.kg, u)} <span className="font-sans text-sm text-muted">{unit}</span></p>
+            <div className="text-right text-sm">
+              {profile.startWeightKg && <p className="font-semibold text-accent">{changeText(latest.kg - profile.startWeightKg, u)}</p>}
+              {bmiNow !== undefined && (
+                <p className="text-muted">
+                  {showBmi && <span aria-hidden className="mr-1.5 inline-block size-2 rounded-full" style={{ background: bmiColour(bmiCat(bmiNow)) }} />}
+                  BMI {round1(bmiNow).toFixed(1)}{showBmi ? ` · ${bmiCategory(bmiNow)}` : ''}
+                </p>
+              )}
+            </div>
+          </div>
+          {daily.length > 1 && (
+            <div className="mt-3">
+              <Segmented label="Graph range" value={range} onChange={setRange} options={RANGES} small />
+            </div>
+          )}
+          <div className="mt-3">
+            {points.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted">No weigh-ins in the last {range === '7d' ? '7' : range === '30d' ? '30' : '90'} days. Choose “All” to see earlier ones.</p>
+            ) : (
+              <Suspense fallback={<div className="h-64" />}>
+                <TrendChart
+                  points={points}
+                  seriesLabel="Weigh-ins"
+                  pointLabel="Weigh-in"
+                  unit={unit}
+                  goal={profile.goalWeightKg === undefined ? undefined : displayWeight(profile.goalWeightKg, u)}
+                  goalNearWithin={u === 'imperial' ? 15 : 7}
+                  window={from ? [from, dayKey(new Date())] : undefined}
+                  doseMarks={doseChanges(injections).map((c) => ({ date: c.date, label: doseMarkLabel(c) }))}
+                  bmi={status === 'ok' ? bmiChart(profile.heightCm!, u) : undefined}
+                />
+              </Suspense>
+            )}
+            {points.length > 1 && BMI_HINT[status] && <p className="mt-2 text-xs text-muted">{BMI_HINT[status]}</p>}
+          </div>
+        </>
+      ) : (
+        <a href="#/weight?from=home&add=1" className="block">
+          <p className="font-serif text-2xl font-semibold">
+            {Math.round(displayWeight(profile.startWeightKg!, u))} <span aria-label="to">→</span> {Math.round(displayWeight(profile.goalWeightKg!, u))}
+          </p>
+          <p className="text-xs text-muted">{unit} · start → goal</p>
+          <p className="mt-2 text-xs font-medium text-accent">Log your first weigh-in</p>
+        </a>
+      )}
+    </section>
   );
 }
 

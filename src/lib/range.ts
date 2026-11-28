@@ -3,8 +3,9 @@ import type { Injection } from '../db/db';
 import { drugName, drugOf, type DrugId } from './drugs';
 import { addDays, dayKey, fromDayKey, startOfDay } from './dates';
 
-export type Range = '30d' | '90d' | 'all';
+export type Range = '7d' | '30d' | '90d' | 'all';
 export const RANGES: { id: Range; label: string }[] = [
+  { id: '7d', label: '7 days' },
   { id: '30d', label: '30 days' },
   { id: '90d', label: '90 days' },
   { id: 'all', label: 'All' },
@@ -13,7 +14,7 @@ export const RANGES: { id: Range; label: string }[] = [
 /** First day (YYYY-MM-DD) included in the range, or undefined for All. */
 export function rangeStart(range: Range, today = new Date()): string | undefined {
   if (range === 'all') return undefined;
-  return dayKey(addDays(startOfDay(today), -(range === '30d' ? 29 : 89)));
+  return dayKey(addDays(startOfDay(today), -({ '7d': 6, '30d': 29, '90d': 89 }[range])));
 }
 
 export function filterRange<T extends { date: string }>(rows: T[], range: Range, today = new Date()): T[] {

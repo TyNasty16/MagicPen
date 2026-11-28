@@ -1,5 +1,5 @@
 # Workflow 15 — Home: weight chart first
-Status: Draft
+Status: Approved
 Milestone: Post-plan add-on (not in PLAN.md §5). Uses only data already stored (height, birth year, weigh-ins, doses).
 
 ## Owner answers (2026-11-28)
@@ -145,4 +145,4 @@ The colours only describe. Nothing is advised.
 - Treat someone as an adult only if this year minus birth year is 21 or more? (yes)
 
 ## Approval
-- [ ] Approved by owner — date:
+- [x] Approved by owner — 2026-11-28 (answers above; 90 days default; exact text and range labels approved)

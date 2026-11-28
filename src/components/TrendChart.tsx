@@ -1,6 +1,7 @@
 import { CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis, type TooltipProps } from 'recharts';
 import { fromDayKey } from '../lib/dates';
 import { doseNotesByPoint, placeDoseMarks } from '../lib/range';
+import { BMI_BOUNDARIES, BMI_CATS, bmiCat, bmiCategory, plausibleBmi, type BmiCat } from '../lib/body';
 
 // Validated pair (dataviz validator, light surface #fffaf5): terracotta values, blue 7-day average.
 const VALUE = '#a85540';
@@ -9,6 +10,8 @@ const GRID = '#eadfd3';
 const AXIS_TEXT = '#6f5b4c';
 const DOSE = '#8a7464';
 const DAY = 864e5;
+const AVERAGE_WITH_BMI = '#6f5b4c'; // blue means Overweight when BMI colours are on, so the average turns neutral
+export const BMI_NOTE = 'Line colour shows adult BMI category for your height (CDC). BMI is a screening measure, not a diagnosis.';
 
 export interface TrendPoint {
   date: string; // YYYY-MM-DD
@@ -33,9 +36,37 @@ interface Props {
   doseMarks?: DoseMark[];
   photoDays?: Map<string, number>; // day → weigh-in id with a photo
   onPhoto?: (weightId: number, date: string) => void;
+  /** BMI colours (workflow 15): converts a shown value to BMI and back. Pass only when the profile allows it (height, adult). */
+  bmi?: { toBmi: (value: number) => number; valueAt: (bmi: number) => number };
 }
 
-interface Row { t: number; date: string; value: number; avg?: number; dose?: string }
+type Row = { t: number; date: string; value: number; avg?: number; dose?: string; cat?: BmiCat; cross?: boolean } & Partial<Record<BmiCat, number>>;
+
+const round1 = (v: number) => Math.round(v * 10) / 10;
+/**
+ * Splits the line by BMI category: each point fills its category's series, and where the line crosses a category
+ * boundary between two points an extra (unmarked) point sits exactly on the boundary in both series, so the colour
+ * changes right there.
+ */
+export function bmiRows(rows: Row[], toBmi: (v: number) => number, valueAt: (b: number) => number): Row[] {
+  const out: Row[] = [];
+  rows.forEach((r, i) => {
+    const b = toBmi(r.value);
+    const cat = bmiCat(b);
+    out.push({ ...r, cat, [cat]: r.value });
+    const n = rows[i + 1];
+    if (!n) return;
+    const nb = toBmi(n.value);
+    const crossings = BMI_BOUNDARIES.filter((x) => (round1(b) < x) !== (round1(nb) < x)).map((x) => {
+      const v = valueAt(x);
+      const f = (v - r.value) / (n.value - r.value || 1);
+      return { x, v, t: r.t + (n.t - r.t) * Math.min(1, Math.max(0, f)) };
+    });
+    crossings.sort((p, q) => p.t - q.t);
+    for (const c of crossings) out.push({ t: c.t, date: '', value: c.v, cross: true, [bmiCat(c.x - 0.1)]: c.v, [bmiCat(c.x)]: c.v });
+  });
+  return out;
+}
 
 const fmtDay = (t: number) => new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
@@ -45,8 +76,10 @@ function niceStep(span: number): number {
   return 100;
 }
 
-export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgLabel, goal, goalNearWithin = Infinity, window, doseMarks = [], photoDays, onPhoto }: Props) {
+export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgLabel, goal, goalNearWithin = Infinity, window, doseMarks = [], photoDays, onPhoto, bmi }: Props) {
   const rows: Row[] = points.map((p) => ({ t: fromDayKey(p.date).getTime(), date: p.date, value: p.value, avg: p.avg }));
+  // BMI colours need at least 2 points and believable BMIs (a typing slip leaves the plain line).
+  const bmiOn = !!bmi && rows.length >= 2 && rows.every((r) => plausibleBmi(bmi.toBmi(r.value)));
   const data = rows.flatMap((r) => (r.avg === undefined ? [r.value] : [r.value, r.avg]));
   const goalNear = goal !== undefined && goal >= Math.min(...data) - goalNearWithin;
   const values = goalNear ? data.concat(goal) : data;
@@ -66,12 +99,23 @@ export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgL
     if (n) r.dose = n.join('; ');
   }
   const latest = rows[rows.length - 1];
+  const chartRows = bmiOn ? bmiRows(rows, bmi!.toBmi, bmi!.valueAt) : rows;
+  const latestBmi = bmiOn ? bmi!.toBmi(latest.value) : undefined;
+  const catsShown = bmiOn ? BMI_CATS.filter((c) => rows.some((r) => bmiCat(bmi!.toBmi(r.value)) === c.id)) : [];
+  // Classes 2 and 3 share a colour, so they share one key entry.
+  const keyEntries = catsShown.filter((c) => c.id !== 'ob3' || !catsShown.some((d) => d.id === 'ob2')).map((c) => ({ colour: c.colour, label: c.id === 'ob2' || c.id === 'ob3' ? 'Obesity, class 2 and above' : c.label }));
+  const bmiLines = bmiOn ? [25, 30].map((b) => ({ b, y: round1(bmi!.valueAt(b)) })) : [];
+  const avgColour = bmiOn ? AVERAGE_WITH_BMI : AVERAGE;
 
   return (
     <figure>
       <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-        <LegendItem label={seriesLabel}><svg width="18" height="10" aria-hidden><line x1="0" y1="5" x2="18" y2="5" stroke={VALUE} strokeWidth="1.5" /><circle cx="9" cy="5" r="4" fill={VALUE} stroke="#fffaf5" strokeWidth="2" /></svg></LegendItem>
-        {avgLabel && <LegendItem label={avgLabel}><svg width="18" height="10" aria-hidden><line x1="0" y1="5" x2="18" y2="5" stroke={AVERAGE} strokeWidth="2.5" /></svg></LegendItem>}
+        {bmiOn ? (
+          keyEntries.map((k) => <LegendItem key={k.label} label={k.label}><svg width="18" height="10" aria-hidden><line x1="0" y1="5" x2="18" y2="5" stroke={k.colour} strokeWidth="3" strokeLinecap="round" /></svg></LegendItem>)
+        ) : (
+          <LegendItem label={seriesLabel}><svg width="18" height="10" aria-hidden><line x1="0" y1="5" x2="18" y2="5" stroke={VALUE} strokeWidth="1.5" /><circle cx="9" cy="5" r="4" fill={VALUE} stroke="#fffaf5" strokeWidth="2" /></svg></LegendItem>
+        )}
+        {avgLabel && <LegendItem label={avgLabel}><svg width="18" height="10" aria-hidden><line x1="0" y1="5" x2="18" y2="5" stroke={avgColour} strokeWidth="2.5" strokeDasharray={bmiOn ? '4 3' : undefined} /></svg></LegendItem>}
         {marks.length > 0 && <LegendItem label="Dose change"><svg width="10" height="12" aria-hidden><line x1="5" y1="0" x2="5" y2="12" stroke={DOSE} strokeWidth="1.5" strokeDasharray="2 2" /></svg></LegendItem>}
         {goal !== undefined && (
           <LegendItem label={`Goal ${goal} ${unit}${goalNear ? '' : ' (below chart)'}`}>
@@ -82,14 +126,17 @@ export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgL
       <div
         className="h-56"
         role="img"
-        aria-label={`${seriesLabel} graph: ${rows.length} days. Latest ${latest.value} ${unit}${latest.avg !== undefined ? `, 7-day average ${latest.avg} ${unit}` : ''}.${marks.length ? ` Dose changes: ${marks.map((m) => `${m.label} on ${fmtDay(m.t)}`).join(', ')}.` : ''}`}
+        aria-label={`${seriesLabel} graph: ${rows.length} days. Latest ${latest.value} ${unit}${latest.avg !== undefined ? `, 7-day average ${latest.avg} ${unit}` : ''}.${marks.length ? ` Dose changes: ${marks.map((m) => `${m.label} on ${fmtDay(m.t)}`).join(', ')}.` : ''}${latestBmi !== undefined ? ` Latest BMI ${round1(latestBmi).toFixed(1)}, ${bmiCategory(latestBmi)}.` : ''}`}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={rows} margin={{ top: 30, right: 12, bottom: 0, left: -12 }}>
+          <ComposedChart data={chartRows} margin={{ top: 30, right: 12, bottom: 0, left: -12 }}>
             <CartesianGrid vertical={false} stroke={GRID} />
             <XAxis dataKey="t" type="number" scale="time" domain={domain} tickFormatter={fmtDay} tick={{ fill: AXIS_TEXT, fontSize: 11 }} axisLine={{ stroke: GRID }} tickLine={false} minTickGap={24} />
             <YAxis domain={[lo, hi]} ticks={ticks} tick={{ fill: AXIS_TEXT, fontSize: 11 }} axisLine={false} tickLine={false} width={44} />
             {goalNear && <ReferenceLine y={goal} stroke={AXIS_TEXT} strokeDasharray="4 3" strokeWidth={1.5} />}
+            {bmiLines.filter((l) => l.y >= lo && l.y <= hi).map((l) => (
+              <ReferenceLine key={l.b} y={l.y} stroke={AXIS_TEXT} strokeDasharray="1 3" strokeWidth={1} label={{ value: `BMI ${l.b}`, position: 'insideTopRight', fill: AXIS_TEXT, fontSize: 10 }} />
+            ))}
             {marks.map((m) => (
               <ReferenceLine
                 key={m.date + m.label}
@@ -100,30 +147,43 @@ export default function TrendChart({ points, seriesLabel, pointLabel, unit, avgL
                 label={m.showLabel ? <DoseLabel text={m.label} nearRight={(m.t - domain[0]) / (domain[1] - domain[0] || 1) > 0.75} /> : undefined}
               />
             ))}
-            <Tooltip content={<ChartTooltip unit={unit} seriesLabel={pointLabel ?? seriesLabel} avgLabel={avgLabel} />} cursor={{ stroke: AXIS_TEXT, strokeWidth: 1 }} />
-            {avgLabel && !single && <Line dataKey="avg" stroke={AVERAGE} strokeWidth={2.5} dot={false} activeDot={false} isAnimationActive={false} />}
-            <Line
+            <Tooltip content={<ChartTooltip unit={unit} seriesLabel={pointLabel ?? seriesLabel} avgLabel={avgLabel} toBmi={bmiOn ? bmi!.toBmi : undefined} />} cursor={{ stroke: AXIS_TEXT, strokeWidth: 1 }} />
+            {avgLabel && !single && <Line dataKey="avg" stroke={avgColour} strokeWidth={bmiOn ? 2 : 2.5} strokeDasharray={bmiOn ? '4 3' : undefined} dot={false} activeDot={false} isAnimationActive={false} connectNulls />}
+            {bmiOn && BMI_CATS.filter((c) => chartRows.some((r) => r[c.id] !== undefined)).map((c) => (
+              <Line
+                key={c.id}
+                dataKey={c.id}
+                stroke={c.colour}
+                strokeWidth={3}
+                connectNulls={false}
+                dot={(p: { cx?: number; cy?: number; payload?: Row }) => (p.payload?.cross || p.payload?.cat !== c.id ? <g key={`${c.id}-${p.payload?.t}`} /> : <ValueDot key={`${c.id}-${p.payload?.date}`} cx={p.cx} cy={p.cy} date={p.payload?.date} photoDays={photoDays} onPhoto={onPhoto} colour={c.colour} />)}
+                activeDot={false}
+                isAnimationActive={false}
+              />
+            ))}
+            {!bmiOn && <Line
               dataKey="value"
               stroke={VALUE}
               strokeWidth={1.5}
               dot={(p: { cx?: number; cy?: number; payload?: Row }) => <ValueDot key={p.payload?.date} cx={p.cx} cy={p.cy} date={p.payload?.date} photoDays={photoDays} onPhoto={onPhoto} />}
               activeDot={{ r: 6, fill: VALUE, stroke: '#fffaf5', strokeWidth: 2 }}
               isAnimationActive={false}
-            />
+            />}
           </ComposedChart>
         </ResponsiveContainer>
       </div>
+      {bmiOn && <figcaption className="mt-2 text-[11px] leading-snug text-muted">{BMI_NOTE}</figcaption>}
     </figure>
   );
 }
 
 /** Data point; on days with a photo, a camera badge above it opens the photo (44px tap area). */
-function ValueDot({ cx, cy, date, photoDays, onPhoto }: { cx?: number; cy?: number; date?: string; photoDays?: Map<string, number>; onPhoto?: (id: number, date: string) => void }) {
+function ValueDot({ cx, cy, date, photoDays, onPhoto, colour = VALUE }: { cx?: number; cy?: number; date?: string; photoDays?: Map<string, number>; onPhoto?: (id: number, date: string) => void; colour?: string }) {
   if (cx === undefined || cy === undefined) return null;
   const photoId = date ? photoDays?.get(date) : undefined;
   return (
     <g>
-      <circle cx={cx} cy={cy} r={4} fill={VALUE} stroke="#fffaf5" strokeWidth={2} />
+      <circle cx={cx} cy={cy} r={4} fill={colour} stroke="#fffaf5" strokeWidth={2} />
       {photoId !== undefined && date && (
         <g
           className="cursor-pointer"
@@ -156,13 +216,16 @@ function LegendItem({ label, children }: { label: string; children: React.ReactN
   return <span className="inline-flex items-center gap-1.5">{children}{label}</span>;
 }
 
-function ChartTooltip({ active, payload, unit, seriesLabel, avgLabel }: TooltipProps<number, string> & { unit: string; seriesLabel: string; avgLabel?: string }) {
+function ChartTooltip({ active, payload, unit, seriesLabel, avgLabel, toBmi }: TooltipProps<number, string> & { unit: string; seriesLabel: string; avgLabel?: string; toBmi?: (v: number) => number }) {
   if (!active || !payload?.length) return null;
   const row = payload[0].payload as Row;
+  if (row.cross) return null; // a boundary point, not a weigh-in
+  const b = toBmi?.(row.value);
   return (
     <div className="rounded-xl border border-line bg-surface px-3 py-2 text-xs text-ink shadow-soft">
       <p className="mb-1 font-semibold">{fmtDay(row.t)}</p>
       <p>{seriesLabel}: {row.value} {unit}</p>
+      {b !== undefined && <p>BMI {round1(b).toFixed(1)} · {bmiCategory(b)}</p>}
       {avgLabel && row.avg !== undefined && <p>{avgLabel}: {row.avg} {unit}</p>}
       {row.dose && <p className="mt-1 text-muted">Dose changed: {row.dose}</p>}
     </div>
