@@ -2,6 +2,14 @@
 Status: Draft
 Milestone: Post-plan add-on (not in PLAN.md §5). Uses only data already stored (height, birth year, weigh-ins, doses).
 
+## Owner answers (2026-11-28)
+1. Weight screen chart gets the same colours: yes.
+2. Home chart range: a choice of 7 days, 30 days, 90 days or All, owner's addition. Proposed: 90 days selected by default, and the choice is remembered on the phone.
+3. No-height hint: yes.
+4. Birth-year hint: yes.
+5. Underweight in purple #6A4C93: yes.
+6. Age counts as 20 or older only when the year difference is 21 or more: yes.
+
 ## Ideas considered
 Ideas file: [docs/ideas/15-home-weight-first.md](../ideas/15-home-weight-first.md). Its owner decisions are binding. Mockups: `docs/screenshots/15-mock-home-swap.png` and `docs/screenshots/15-mock-weight-bmi-line-red.png` (sources in `docs/mockups/`). Chosen approach: reuse `TrendChart` (it already draws goal line, dose marks, key and tap details) instead of extending `Sparkline`, loaded lazily on Home so Home does not pull in the chart library up front. One pure function in `body.ts` works out category and colour segments. `NutritionRings` gets a compact variant. The old Home weight tile and `Sparkline` are no longer used on Home.
 
